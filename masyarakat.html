@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Masyarakat - Pelayanan Keswan</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="styles.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-navy">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">
+                <i class="fas fa-paw me-2"></i>
+                Dashboard Masyarakat
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#dashboard">Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#layanan">Layanan</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#riwayat">Riwayat</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#profil">Profil</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html">
+                            <i class="fas fa-home me-1"></i>Homepage
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <div class="dropdown">
+                            <button class="btn btn-outline-light dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown">
+                                <i class="fas fa-user me-1"></i><span id="userDisplayName">Masyarakat</span>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li><a class="dropdown-item" href="#profil">
+                                    <i class="fas fa-user me-2"></i>Profil
+                                </a></li>
+                                <li><a class="dropdown-item" href="#riwayat">
+                                    <i class="fas fa-history me-2"></i>Riwayat
+                                </a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item text-danger" href="#" onclick="confirmLogout()">
+                                    <i class="fas fa-sign-out-alt me-2"></i>Logout
+                                </a></li>
+                            </ul>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Dashboard Section -->
+    <section id="dashboard" class="py-5">
+        <div class="container">
+            <div class="row mb-4">
+                <div class="col-12">
+                    <h2 class="display-5 fw-bold text-navy mb-3">Dashboard Masyarakat</h2>
+                    <p class="lead text-muted">Selamat datang, <span id="userName">Pengguna</span>!</p>
+                </div>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="row g-4 mb-5">
+                <div class="col-lg-3 col-md-6">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-paw"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="totalHewan">0</h3>
+                            <p>Hewan Terdaftar</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-calendar-check"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="totalLayanan">0</h3>
+                            <p>Total Layanan</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-syringe"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="totalVaksinasi">0</h3>
+                            <p>Vaksinasi</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-video"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="totalTelemedicine">0</h3>
+                            <p>Telemedicine</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="row g-4">
+                <div class="col-lg-8">
+                    <div class="card">
+                        <div class="card-header bg-navy text-white">
+                            <h5 class="mb-0">
+                                <i class="fas fa-tasks me-2"></i>Layanan Terbaru
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Tanggal</th>
+                                            <th>Hewan</th>
+                                            <th>Layanan</th>
+                                            <th>Status</th>
+                                            <th>Aksi</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="recentServicesTable">
+                                        <!-- Data will be loaded here -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="card">
+                        <div class="card-header bg-navy text-white">
+                            <h5 class="mb-0">
+                                <i class="fas fa-plus-circle me-2"></i>Layanan Cepat
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="d-grid gap-2">
+                                <button class="btn btn-navy" onclick="showNewServiceModal()">
+                                    <i class="fas fa-stethoscope me-2"></i>Pengobatan Hewan
+                                </button>
+                                <button class="btn btn-navy" onclick="showVaccinationModal()">
+                                    <i class="fas fa-syringe me-2"></i>Vaksinasi Rabies
+                                </button>
+                                <button class="btn btn-navy" onclick="showTelemedicineModal()">
+                                    <i class="fas fa-video me-2"></i>Telemedicine
+                                </button>
+                                <button class="btn btn-navy" onclick="showAnimalModal()">
+                                    <i class="fas fa-paw me-2"></i>Daftar Hewan
+                                </button>
+                                <hr>
+                                <button class="btn btn-outline-secondary" onclick="goToHomepage()">
+                                    <i class="fas fa-home me-2"></i>Kembali ke Homepage
+                                </button>
+                                <button class="btn btn-outline-danger" onclick="confirmLogout()">
+                                    <i class="fas fa-sign-out-alt me-2"></i>Logout
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Layanan Section -->
+    <section id="layanan" class="py-5 bg-light">
+        <div class="container">
+            <div class="row mb-4">
+                <div class="col-12">
+                    <h2 class="display-5 fw-bold text-navy mb-3">Layanan Kesehatan Hewan</h2>
+                    <p class="lead text-muted">Pilih layanan yang Anda butuhkan</p>
+                </div>
+            </div>
+
+            <div class="row g-4">
+                <div class="col-lg-4">
+                    <div class="service-card">
+                        <div class="service-icon">
+                            <i class="fas fa-stethoscope"></i>
+                        </div>
+                        <h4>Pengobatan Hewan</h4>
+                        <p>Layanan pengobatan hewan dengan dokter hewan berpengalaman</p>
+                        <button class="btn btn-navy w-100" onclick="showNewServiceModal()">
+                            <i class="fas fa-plus me-2"></i>Ajukan Layanan
+                        </button>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="service-card">
+                        <div class="service-icon">
+                            <i class="fas fa-syringe"></i>
+                        </div>
+                        <h4>Vaksinasi Rabies</h4>
+                        <p>Program vaksinasi rabies untuk mencegah penularan penyakit</p>
+                        <button class="btn btn-navy w-100" onclick="showVaccinationModal()">
+                            <i class="fas fa-plus me-2"></i>Daftar Vaksinasi
+                        </button>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="service-card">
+                        <div class="service-icon">
+                            <i class="fas fa-video"></i>
+                        </div>
+                        <h4>Telemedicine</h4>
+                        <p>Konsultasi kesehatan hewan secara online</p>
+                        <button class="btn btn-navy w-100" onclick="showTelemedicineModal()">
+                            <i class="fas fa-plus me-2"></i>Mulai Konsultasi
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Riwayat Section -->
+    <section id="riwayat" class="py-5">
+        <div class="container">
+            <div class="row mb-4">
+                <div class="col-12">
+                    <h2 class="display-5 fw-bold text-navy mb-3">Riwayat Layanan</h2>
+                    <p class="lead text-muted">Lihat riwayat layanan kesehatan hewan Anda</p>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header bg-navy text-white">
+                            <h5 class="mb-0">
+                                <i class="fas fa-history me-2"></i>Riwayat Layanan
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Tanggal</th>
+                                            <th>Hewan</th>
+                                            <th>Jenis Layanan</th>
+                                            <th>Status</th>
+                                            <th>Catatan</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="historyTable">
+                                        <!-- Data will be loaded here -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Profil Section -->
+    <section id="profil" class="py-5 bg-light">
+        <div class="container">
+            <div class="row mb-4">
+                <div class="col-12">
+                    <h2 class="display-5 fw-bold text-navy mb-3">Profil Saya</h2>
+                    <p class="lead text-muted">Kelola informasi profil dan hewan peliharaan</p>
+                </div>
+            </div>
+
+            <div class="row g-4">
+                <div class="col-lg-6">
+                    <div class="card">
+                        <div class="card-header bg-navy text-white">
+                            <h5 class="mb-0">
+                                <i class="fas fa-user me-2"></i>Informasi Profil
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div id="profileInfo">
+                                <!-- Profile info will be loaded here -->
+                            </div>
+                            <button class="btn btn-navy" onclick="showEditProfileModal()">
+                                <i class="fas fa-edit me-2"></i>Edit Profil
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="card">
+                        <div class="card-header bg-navy text-white">
+                            <h5 class="mb-0">
+                                <i class="fas fa-paw me-2"></i>Hewan Peliharaan
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div id="animalsList">
+                                <!-- Animals list will be loaded here -->
+                            </div>
+                            <button class="btn btn-navy" onclick="showAnimalModal()">
+                                <i class="fas fa-plus me-2"></i>Tambah Hewan
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- New Service Modal -->
+    <div class="modal fade" id="newServiceModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-navy text-white">
+                    <h5 class="modal-title">
+                        <i class="fas fa-stethoscope me-2"></i>Ajukan Layanan Pengobatan
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="newServiceForm">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Pilih Hewan <span class="text-danger">*</span></label>
+                                <select class="form-select" id="animalSelect" required>
+                                    <option value="">Pilih Hewan</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Jenis Layanan <span class="text-danger">*</span></label>
+                                <select class="form-select" id="serviceType" required>
+                                    <option value="">Pilih Layanan</option>
+                                    <option value="konsultasi">Konsultasi</option>
+                                    <option value="pemeriksaan">Pemeriksaan</option>
+                                    <option value="pengobatan">Pengobatan</option>
+                                    <option value="operasi">Operasi</option>
+                                </select>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label">Keluhan/Gejala <span class="text-danger">*</span></label>
+                                <textarea class="form-control" id="symptoms" rows="3" required></textarea>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Tanggal Layanan <span class="text-danger">*</span></label>
+                                <input type="datetime-local" class="form-control" id="serviceDate" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Prioritas</label>
+                                <select class="form-select" id="priority">
+                                    <option value="normal">Normal</option>
+                                    <option value="urgent">Mendesak</option>
+                                    <option value="emergency">Darurat</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="mt-4">
+                            <button type="submit" class="btn btn-navy w-100">
+                                <i class="fas fa-paper-plane me-2"></i>Ajukan Layanan
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Vaccination Modal -->
+    <div class="modal fade" id="vaccinationModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-navy text-white">
+                    <h5 class="modal-title">
+                        <i class="fas fa-syringe me-2"></i>Daftar Vaksinasi Rabies
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="vaccinationForm">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Pilih Hewan <span class="text-danger">*</span></label>
+                                <select class="form-select" id="vaccAnimalSelect" required>
+                                    <option value="">Pilih Hewan</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Jenis Vaksin <span class="text-danger">*</span></label>
+                                <select class="form-select" id="vaccineType" required>
+                                    <option value="">Pilih Vaksin</option>
+                                    <option value="rabies">Vaksin Rabies</option>
+                                    <option value="dhpp">DHPP (Anjing)</option>
+                                    <option value="fvr">FVR (Kucing)</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Tanggal Vaksinasi <span class="text-danger">*</span></label>
+                                <input type="datetime-local" class="form-control" id="vaccinationDate" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Prioritas</label>
+                                <select class="form-select" id="vaccPriority">
+                                    <option value="normal">Normal</option>
+                                    <option value="urgent">Mendesak</option>
+                                </select>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label">Catatan</label>
+                                <textarea class="form-control" id="vaccinationNotes" rows="3"></textarea>
+                            </div>
+                        </div>
+                        <div class="mt-4">
+                            <button type="submit" class="btn btn-navy w-100">
+                                <i class="fas fa-syringe me-2"></i>Daftar Vaksinasi
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Telemedicine Modal -->
+    <div class="modal fade" id="telemedicineModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-navy text-white">
+                    <h5 class="modal-title">
+                        <i class="fas fa-video me-2"></i>Telemedicine
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="telemedicineForm">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Pilih Hewan <span class="text-danger">*</span></label>
+                                <select class="form-select" id="teleAnimalSelect" required>
+                                    <option value="">Pilih Hewan</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Tanggal Konsultasi <span class="text-danger">*</span></label>
+                                <input type="datetime-local" class="form-control" id="teleDate" required>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label">Keluhan/Gejala <span class="text-danger">*</span></label>
+                                <textarea class="form-control" id="teleSymptoms" rows="3" required></textarea>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label">Prioritas</label>
+                                <select class="form-select" id="telePriority">
+                                    <option value="normal">Normal</option>
+                                    <option value="urgent">Mendesak</option>
+                                    <option value="emergency">Darurat</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="mt-4">
+                            <button type="submit" class="btn btn-navy w-100">
+                                <i class="fas fa-video me-2"></i>Mulai Konsultasi
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Animal Modal -->
+    <div class="modal fade" id="animalModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-navy text-white">
+                    <h5 class="modal-title">
+                        <i class="fas fa-paw me-2"></i>Tambah Hewan
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="animalForm">
+                        <div class="mb-3">
+                            <label class="form-label">Nama Hewan <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="animalName" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Jenis Hewan <span class="text-danger">*</span></label>
+                            <select class="form-select" id="animalType" required>
+                                <option value="">Pilih Jenis</option>
+                                <option value="anjing">Anjing</option>
+                                <option value="kucing">Kucing</option>
+                                <option value="burung">Burung</option>
+                                <option value="kelinci">Kelinci</option>
+                                <option value="lainnya">Lainnya</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Umur Hewan</label>
+                            <input type="text" class="form-control" id="animalAge" placeholder="Contoh: 2 tahun">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Jenis Kelamin</label>
+                            <select class="form-select" id="animalGender">
+                                <option value="">Pilih Jenis Kelamin</option>
+                                <option value="jantan">Jantan</option>
+                                <option value="betina">Betina</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Deskripsi</label>
+                            <textarea class="form-control" id="animalDescription" rows="3"></textarea>
+                        </div>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-navy">
+                                <i class="fas fa-save me-2"></i>Simpan Hewan
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Logout Confirmation Modal -->
+    <div class="modal fade" id="logoutModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title">
+                        <i class="fas fa-sign-out-alt me-2"></i>Konfirmasi Logout
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Apakah Anda yakin ingin logout dari dashboard masyarakat?</p>
+                    <p class="text-muted">Anda akan diarahkan kembali ke halaman utama.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-2"></i>Batal
+                    </button>
+                    <button type="button" class="btn btn-danger" onclick="logout()">
+                        <i class="fas fa-sign-out-alt me-2"></i>Logout
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <!-- Supabase JS -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- Supabase Config -->
+    <script src="supabase-config.js"></script>
+    <!-- Supabase Integration -->
+    <script src="supabase-integration.js"></script>
+    <!-- Database Connection Checker -->
+    <script src="check-database-connection.js"></script>
+    <script src="config.js"></script>
+    <script src="demo-data.js"></script>
+    <script src="script.js"></script>
+    <script src="masyarakat.js"></script>
+</body>
+</html>

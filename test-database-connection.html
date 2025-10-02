@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Database Connection - Pelayanan Keswan</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+            min-height: 100vh;
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .test-container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            margin: 2rem auto;
+            max-width: 800px;
+        }
+        
+        .test-header {
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: 20px 20px 0 0;
+            text-align: center;
+        }
+        
+        .test-body {
+            padding: 2rem;
+        }
+        
+        .test-item {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .test-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        .test-status {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        
+        .status-success {
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #a7f3d0;
+        }
+        
+        .status-error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fca5a5;
+        }
+        
+        .status-warning {
+            background: #fef3c7;
+            color: #92400e;
+            border: 1px solid #fde68a;
+        }
+        
+        .status-info {
+            background: #dbeafe;
+            color: #1e40af;
+            border: 1px solid #93c5fd;
+        }
+        
+        .test-details {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: white;
+            border-radius: 8px;
+            border-left: 4px solid #3b82f6;
+        }
+        
+        .test-log {
+            background: #1f2937;
+            color: #f9fafb;
+            padding: 1rem;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            max-height: 300px;
+            overflow-y: auto;
+            margin-top: 1rem;
+        }
+        
+        .btn-test {
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+            border: none;
+            color: white;
+            padding: 0.75rem 2rem;
+            border-radius: 25px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-test:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.3);
+        }
+        
+        .spinner-border-sm {
+            width: 1rem;
+            height: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="test-container">
+            <div class="test-header">
+                <h1><i class="fas fa-database me-3"></i>Test Database Connection</h1>
+                <p class="mb-0">Pelayanan Keswan - Supabase Integration Test</p>
+            </div>
+            
+            <div class="test-body">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h3><i class="fas fa-cogs me-2"></i>Connection Tests</h3>
+                            <button class="btn btn-test" onclick="runAllTests()">
+                                <i class="fas fa-play me-2"></i>Run All Tests
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Test Results -->
+                <div id="testResults">
+                    <!-- Test items will be populated here -->
+                </div>
+                
+                <!-- Test Log -->
+                <div class="mt-4">
+                    <h5><i class="fas fa-terminal me-2"></i>Test Log</h5>
+                    <div id="testLog" class="test-log">
+                        <div class="text-muted">Click "Run All Tests" to start testing...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-config.js"></script>
+    <script src="supabase-integration.js"></script>
+    <script src="supabase-test.js"></script>
+    
+    <script>
+        // Test configuration
+        const testConfig = {
+            supabaseUrl: 'https://your-project-ref.supabase.co',
+            supabaseKey: 'your-anon-key',
+            testUser: {
+                nik: '9999999999999999',
+                password: 'test123'
+            }
+        };
+        
+        // Test results storage
+        let testResults = [];
+        let testLog = [];
+        
+        // Logging function
+        function log(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = `[${timestamp}] ${message}`;
+            testLog.push(logEntry);
+            
+            const logElement = document.getElementById('testLog');
+            logElement.innerHTML = testLog.join('\n');
+            logElement.scrollTop = logElement.scrollHeight;
+            
+            console.log(logEntry);
+        }
+        
+        // Test functions
+        async function testSupabaseConnection() {
+            log('🔍 Testing Supabase connection...', 'info');
+            
+            try {
+                if (typeof supabaseClient === 'undefined') {
+                    throw new Error('Supabase client not found');
+                }
+                
+                log('✅ Supabase client found', 'success');
+                
+                // Test basic connection
+                const { data, error } = await supabaseClient
+                    .from('users')
+                    .select('count')
+                    .limit(1);
+                
+                if (error) {
+                    throw new Error(`Connection failed: ${error.message}`);
+                }
+                
+                log('✅ Supabase connection successful', 'success');
+                return { success: true, message: 'Connection successful' };
+                
+            } catch (error) {
+                log(`❌ Supabase connection failed: ${error.message}`, 'error');
+                return { success: false, message: error.message };
+            }
+        }
+        
+        async function testDatabaseTables() {
+            log('🔍 Testing database tables...', 'info');
+            
+            const tables = ['users', 'animals', 'services', 'medicines', 'vaccinations', 'telemedicine_sessions'];
+            const results = {};
+            
+            for (const table of tables) {
+                try {
+                    const { data, error } = await supabaseClient
+                        .from(table)
+                        .select('count')
+                        .limit(1);
+                    
+                    if (error) {
+                        log(`❌ Table ${table} error: ${error.message}`, 'error');
+                        results[table] = false;
+                    } else {
+                        log(`✅ Table ${table} accessible`, 'success');
+                        results[table] = true;
+                    }
+                } catch (error) {
+                    log(`❌ Table ${table} test failed: ${error.message}`, 'error');
+                    results[table] = false;
+                }
+            }
+            
+            const allAccessible = Object.values(results).every(result => result === true);
+            return { success: allAccessible, message: `Tables test: ${allAccessible ? 'All accessible' : 'Some tables failed'}`, data: results };
+        }
+        
+        async function testUserRegistration() {
+            log('🔍 Testing user registration...', 'info');
+            
+            try {
+                const testUser = {
+                    nik: '9999999999999999',
+                    full_name: 'Test User',
+                    email: 'test@example.com',
+                    phone: '08123456789',
+                    address: 'Test Address',
+                    password: 'test123',
+                    role: 'masyarakat',
+                    status: 'active'
+                };
+                
+                const result = await UserService.register(testUser);
+                
+                if (result.success) {
+                    log('✅ User registration successful', 'success');
+                    return { success: true, message: 'Registration successful' };
+                } else {
+                    log(`❌ User registration failed: ${result.error}`, 'error');
+                    return { success: false, message: result.error };
+                }
+            } catch (error) {
+                log(`❌ User registration test failed: ${error.message}`, 'error');
+                return { success: false, message: error.message };
+            }
+        }
+        
+        async function testUserLogin() {
+            log('🔍 Testing user login...', 'info');
+            
+            try {
+                const result = await UserService.login('9999999999999999', 'test123');
+                
+                if (result.success) {
+                    log('✅ User login successful', 'success');
+                    return { success: true, message: 'Login successful' };
+                } else {
+                    log(`❌ User login failed: ${result.error}`, 'error');
+                    return { success: false, message: result.error };
+                }
+            } catch (error) {
+                log(`❌ User login test failed: ${error.message}`, 'error');
+                return { success: false, message: error.message };
+            }
+        }
+        
+        async function testAnimalManagement() {
+            log('🔍 Testing animal management...', 'info');
+            
+            try {
+                const testAnimal = {
+                    name: 'Test Animal',
+                    type: 'anjing',
+                    age: '2 tahun',
+                    gender: 'jantan',
+                    description: 'Test animal description',
+                    owner_nik: '9999999999999999'
+                };
+                
+                const result = await AnimalService.addAnimal(testAnimal);
+                
+                if (result.success) {
+                    log('✅ Animal management successful', 'success');
+                    return { success: true, message: 'Animal management successful' };
+                } else {
+                    log(`❌ Animal management failed: ${result.error}`, 'error');
+                    return { success: false, message: result.error };
+                }
+            } catch (error) {
+                log(`❌ Animal management test failed: ${error.message}`, 'error');
+                return { success: false, message: error.message };
+            }
+        }
+        
+        async function testServiceManagement() {
+            log('🔍 Testing service management...', 'info');
+            
+            try {
+                const testService = {
+                    animal_id: 'test-animal-id',
+                    animal_name: 'Test Animal',
+                    animal_type: 'anjing',
+                    service_type: 'pengobatan',
+                    symptoms: 'Test symptoms',
+                    service_date: new Date().toISOString(),
+                    priority: 'normal',
+                    status: 'pending',
+                    owner_nik: '9999999999999999',
+                    owner_name: 'Test User',
+                    notes: 'Test service notes'
+                };
+                
+                const result = await ServiceService.addService(testService);
+                
+                if (result.success) {
+                    log('✅ Service management successful', 'success');
+                    return { success: true, message: 'Service management successful' };
+                } else {
+                    log(`❌ Service management failed: ${result.error}`, 'error');
+                    return { success: false, message: result.error };
+                }
+            } catch (error) {
+                log(`❌ Service management test failed: ${error.message}`, 'error');
+                return { success: false, message: error.message };
+            }
+        }
+        
+        async function testMedicineManagement() {
+            log('🔍 Testing medicine management...', 'info');
+            
+            try {
+                const result = await MedicineService.getAllMedicines();
+                
+                if (result.success) {
+                    log('✅ Medicine management successful', 'success');
+                    return { success: true, message: 'Medicine management successful' };
+                } else {
+                    log(`❌ Medicine management failed: ${result.error}`, 'error');
+                    return { success: false, message: result.error };
+                }
+            } catch (error) {
+                log(`❌ Medicine management test failed: ${error.message}`, 'error');
+                return { success: false, message: error.message };
+            }
+        }
+        
+        async function testStatistics() {
+            log('🔍 Testing statistics...', 'info');
+            
+            try {
+                const result = await StatsService.getDashboardStats();
+                
+                if (result.success) {
+                    log('✅ Statistics successful', 'success');
+                    log(`📊 Stats: ${JSON.stringify(result.data)}`, 'info');
+                    return { success: true, message: 'Statistics successful', data: result.data };
+                } else {
+                    log(`❌ Statistics failed: ${result.error}`, 'error');
+                    return { success: false, message: result.error };
+                }
+            } catch (error) {
+                log(`❌ Statistics test failed: ${error.message}`, 'error');
+                return { success: false, message: error.message };
+            }
+        }
+        
+        // Display test results
+        function displayTestResult(testName, result) {
+            const testResultsContainer = document.getElementById('testResults');
+            
+            const testItem = document.createElement('div');
+            testItem.className = 'test-item';
+            
+            const statusClass = result.success ? 'status-success' : 'status-error';
+            const statusText = result.success ? 'SUCCESS' : 'FAILED';
+            const icon = result.success ? 'fa-check-circle' : 'fa-times-circle';
+            
+            testItem.innerHTML = `
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h5><i class="fas ${icon} me-2"></i>${testName}</h5>
+                        <p class="mb-0">${result.message}</p>
+                    </div>
+                    <span class="test-status ${statusClass}">${statusText}</span>
+                </div>
+                ${result.data ? `
+                    <div class="test-details">
+                        <strong>Details:</strong>
+                        <pre class="mb-0 mt-2">${JSON.stringify(result.data, null, 2)}</pre>
+                    </div>
+                ` : ''}
+            `;
+            
+            testResultsContainer.appendChild(testItem);
+        }
+        
+        // Run all tests
+        async function runAllTests() {
+            log('🚀 Starting database connection tests...', 'info');
+            log('=====================================', 'info');
+            
+            // Clear previous results
+            document.getElementById('testResults').innerHTML = '';
+            testResults = [];
+            testLog = [];
+            
+            // Run tests
+            const tests = [
+                { name: 'Supabase Connection', fn: testSupabaseConnection },
+                { name: 'Database Tables', fn: testDatabaseTables },
+                { name: 'User Registration', fn: testUserRegistration },
+                { name: 'User Login', fn: testUserLogin },
+                { name: 'Animal Management', fn: testAnimalManagement },
+                { name: 'Service Management', fn: testServiceManagement },
+                { name: 'Medicine Management', fn: testMedicineManagement },
+                { name: 'Statistics', fn: testStatistics }
+            ];
+            
+            for (const test of tests) {
+                try {
+                    const result = await test.fn();
+                    testResults.push({ name: test.name, result });
+                    displayTestResult(test.name, result);
+                } catch (error) {
+                    const result = { success: false, message: error.message };
+                    testResults.push({ name: test.name, result });
+                    displayTestResult(test.name, result);
+                }
+            }
+            
+            // Summary
+            const successCount = testResults.filter(r => r.result.success).length;
+            const totalCount = testResults.length;
+            
+            log('=====================================', 'info');
+            log(`📊 Test Results: ${successCount}/${totalCount} tests passed`, 'info');
+            
+            if (successCount === totalCount) {
+                log('🎉 All tests passed! Database connection is working correctly.', 'success');
+            } else {
+                log('⚠️ Some tests failed. Check the errors above.', 'warning');
+            }
+            
+            return { success: successCount === totalCount, results: testResults };
+        }
+        
+        // Auto-run tests on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            log('🔧 Database connection test page loaded', 'info');
+            log('Click "Run All Tests" to start testing...', 'info');
+        });
+    </script>
+</body>
+</html>

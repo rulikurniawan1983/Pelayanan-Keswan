@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Administrator - Pelayanan Keswan</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.css" rel="stylesheet">
+    <link href="styles.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-navy">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">
+                <i class="fas fa-paw me-2"></i>
+                Panel Administrator
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#dashboard">Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#analytics">Analisis</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#reports">Laporan</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#management">Manajemen</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html">
+                            <i class="fas fa-home me-1"></i>Homepage
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <div class="dropdown">
+                            <button class="btn btn-outline-light dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown">
+                                <i class="fas fa-user me-1"></i><span id="userDisplayName">Admin</span>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li><a class="dropdown-item" href="#">
+                                    <i class="fas fa-user me-2"></i>Profil
+                                </a></li>
+                                <li><a class="dropdown-item" href="#">
+                                    <i class="fas fa-cog me-2"></i>Pengaturan
+                                </a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item text-danger" href="#" onclick="confirmLogout()">
+                                    <i class="fas fa-sign-out-alt me-2"></i>Logout
+                                </a></li>
+                            </ul>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Dashboard Section -->
+    <section id="dashboard" class="py-5">
+        <div class="container">
+            <div class="row mb-4">
+                <div class="col-12">
+                    <h2 class="display-5 fw-bold text-navy mb-3">Dashboard Administrator</h2>
+                    <p class="lead text-muted">Analisis dan statistik pelayanan kesehatan hewan</p>
+                </div>
+            </div>
+
+            <!-- Key Metrics -->
+            <div class="row g-4 mb-5">
+                <div class="col-lg-3 col-md-6">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="totalUsers">0</h3>
+                            <p>Total Pengguna</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-calendar-check"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="totalServices">0</h3>
+                            <p>Total Layanan</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-syringe"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="totalVaccinations">0</h3>
+                            <p>Total Vaksinasi</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-video"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="totalTelemedicine">0</h3>
+                            <p>Total Telemedicine</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts Row -->
+            <div class="row g-4 mb-5">
+                <div class="col-lg-8">
+                    <div class="card">
+                        <div class="card-header bg-navy text-white">
+                            <h5 class="mb-0">
+                                <i class="fas fa-chart-line me-2"></i>Trend Layanan Bulanan
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="monthlyTrendChart" height="300"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="card">
+                        <div class="card-header bg-navy text-white">
+                            <h5 class="mb-0">
+                                <i class="fas fa-chart-pie me-2"></i>Distribusi Layanan
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="serviceDistributionChart" height="300"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Activity -->
+            <div class="row g-4">
+                <div class="col-lg-8">
+                    <div class="card">
+                        <div class="card-header bg-navy text-white">
+                            <h5 class="mb-0">
+                                <i class="fas fa-history me-2"></i>Aktivitas Terbaru
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Tanggal</th>
+                                            <th>Layanan</th>
+                                            <th>Hewan</th>
+                                            <th>Pemilik</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="recentActivityTable">
+                                        <!-- Data will be loaded here -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="card">
+                        <div class="card-header bg-navy text-white">
+                            <h5 class="mb-0">
+                                <i class="fas fa-exclamation-triangle me-2"></i>Alert & Notifikasi
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div id="alertsContainer">
+                                <!-- Alerts will be loaded here -->
+                            </div>
+                            <hr>
+                            <div class="d-grid gap-2">
+                                <button class="btn btn-outline-secondary" onclick="goToHomepage()">
+                                    <i class="fas fa-home me-2"></i>Kembali ke Homepage
+                                </button>
+                                <button class="btn btn-outline-danger" onclick="confirmLogout()">
+                                    <i class="fas fa-sign-out-alt me-2"></i>Logout
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Analytics Section -->
+    <section id="analytics" class="py-5 bg-light">
+        <div class="container">
+            <div class="row mb-4">
+                <div class="col-12">
+                    <h2 class="display-5 fw-bold text-navy mb-3">Analisis Mendalam</h2>
+                    <p class="lead text-muted">Analisis detail performa layanan dan tren</p>
+                </div>
+            </div>
+
+            <div class="row g-4">
+                <div class="col-lg-6">
+                    <div class="card">
+                        <div class="card-header bg-navy text-white">
+                            <h5 class="mb-0">
+                                <i class="fas fa-chart-bar me-2"></i>Layanan per Bulan
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="monthlyServicesChart" height="250"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="card">
+                        <div class="card-header bg-navy text-white">
+                            <h5 class="mb-0">
+                                <i class="fas fa-chart-area me-2"></i>Trend Vaksinasi
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="vaccinationTrendChart" height="250"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="card">
+                        <div class="card-header bg-navy text-white">
+                            <h5 class="mb-0">
+                                <i class="fas fa-chart-doughnut me-2"></i>Jenis Hewan
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="animalTypeChart" height="250"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="card">
+                        <div class="card-header bg-navy text-white">
+                            <h5 class="mb-0">
+                                <i class="fas fa-chart-line me-2"></i>Kepuasan Layanan
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="satisfactionChart" height="250"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Reports Section -->
+    <section id="reports" class="py-5">
+        <div class="container">
+            <div class="row mb-4">
+                <div class="col-12">
+                    <h2 class="display-5 fw-bold text-navy mb-3">Laporan & Export</h2>
+                    <p class="lead text-muted">Generate laporan dan export data</p>
+                </div>
+            </div>
+
+            <div class="row g-4">
+                <div class="col-lg-4">
+                    <div class="card">
+                        <div class="card-body text-center">
+                            <div class="report-icon mb-3">
+                                <i class="fas fa-file-pdf"></i>
+                            </div>
+                            <h5>Laporan Bulanan</h5>
+                            <p class="text-muted">Generate laporan aktivitas bulanan</p>
+                            <button class="btn btn-navy" onclick="generateMonthlyReport()">
+                                <i class="fas fa-download me-2"></i>Generate PDF
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="card">
+                        <div class="card-body text-center">
+                            <div class="report-icon mb-3">
+                                <i class="fas fa-file-excel"></i>
+                            </div>
+                            <h5>Export Data</h5>
+                            <p class="text-muted">Export data ke format Excel</p>
+                            <button class="btn btn-navy" onclick="exportToExcel()">
+                                <i class="fas fa-download me-2"></i>Export Excel
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="card">
+                        <div class="card-body text-center">
+                            <div class="report-icon mb-3">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                            <h5>Statistik Detail</h5>
+                            <p class="text-muted">Lihat statistik mendalam</p>
+                            <button class="btn btn-navy" onclick="showDetailedStats()">
+                                <i class="fas fa-chart-bar me-2"></i>Lihat Statistik
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Management Section -->
+    <section id="management" class="py-5 bg-light">
+        <div class="container">
+            <div class="row mb-4">
+                <div class="col-12">
+                    <h2 class="display-5 fw-bold text-navy mb-3">Manajemen Sistem</h2>
+                    <p class="lead text-muted">Kelola pengguna, obat, dan konfigurasi sistem</p>
+                </div>
+            </div>
+
+            <div class="row g-4">
+                <div class="col-lg-6">
+                    <div class="card">
+                        <div class="card-header bg-navy text-white">
+                            <h5 class="mb-0">
+                                <i class="fas fa-users me-2"></i>Manajemen Pengguna
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>NIK</th>
+                                            <th>Nama</th>
+                                            <th>Email</th>
+                                            <th>Status</th>
+                                            <th>Aksi</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="usersTable">
+                                        <!-- Data will be loaded here -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="card">
+                        <div class="card-header bg-navy text-white">
+                            <h5 class="mb-0">
+                                <i class="fas fa-pills me-2"></i>Stock Obat
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Nama Obat</th>
+                                            <th>Stock</th>
+                                            <th>Status</th>
+                                            <th>Aksi</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="stockTable">
+                                        <!-- Data will be loaded here -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Detailed Stats Modal -->
+    <div class="modal fade" id="detailedStatsModal" tabindex="-1">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header bg-navy text-white">
+                    <h5 class="modal-title">
+                        <i class="fas fa-chart-bar me-2"></i>Statistik Detail
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row g-4">
+                        <div class="col-lg-6">
+                            <h6>Metrik Kunci</h6>
+                            <div class="row g-3">
+                                <div class="col-6">
+                                    <div class="stat-item">
+                                        <h4 class="text-navy" id="avgServiceTime">0</h4>
+                                        <p class="text-muted">Rata-rata Waktu Layanan (menit)</p>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="stat-item">
+                                        <h4 class="text-navy" id="completionRate">0%</h4>
+                                        <p class="text-muted">Tingkat Penyelesaian</p>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="stat-item">
+                                        <h4 class="text-navy" id="satisfactionScore">0</h4>
+                                        <p class="text-muted">Skor Kepuasan</p>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="stat-item">
+                                        <h4 class="text-navy" id="revenue">Rp 0</h4>
+                                        <p class="text-muted">Pendapatan Bulan Ini</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <h6>Trend 6 Bulan Terakhir</h6>
+                            <canvas id="sixMonthTrendChart" height="200"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Logout Confirmation Modal -->
+    <div class="modal fade" id="logoutModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title">
+                        <i class="fas fa-sign-out-alt me-2"></i>Konfirmasi Logout
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Apakah Anda yakin ingin logout dari panel administrator?</p>
+                    <p class="text-muted">Anda akan diarahkan kembali ke halaman utama.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-2"></i>Batal
+                    </button>
+                    <button type="button" class="btn btn-danger" onclick="logout()">
+                        <i class="fas fa-sign-out-alt me-2"></i>Logout
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <!-- Supabase JS -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- Supabase Config -->
+    <script src="supabase-config.js"></script>
+    <!-- Supabase Integration -->
+    <script src="supabase-integration.js"></script>
+    <!-- Database Connection Checker -->
+    <script src="check-database-connection.js"></script>
+    <script src="config.js"></script>
+    <script src="demo-data.js"></script>
+    <script src="script.js"></script>
+    <script src="admin.js"></script>
+</body>
+</html>

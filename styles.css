@@ -1,0 +1,3429 @@
+/* Custom CSS Variables */
+:root {
+    --navy-primary: #1e3a8a;
+    --navy-secondary: #1e40af;
+    --navy-light: #3b82f6;
+    --navy-dark: #1e293b;
+    --gradient-primary: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+    --gradient-secondary: linear-gradient(135deg, #1e40af 0%, #60a5fa 100%);
+    --shadow-soft: 0 10px 25px rgba(30, 58, 138, 0.1);
+    --shadow-medium: 0 15px 35px rgba(30, 58, 138, 0.15);
+    --shadow-strong: 0 20px 40px rgba(30, 58, 138, 0.2);
+}
+
+/* Base Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+    color: #1a202c;
+    overflow-x: hidden;
+    font-size: 16px;
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    min-height: 100vh;
+}
+
+/* Navigation */
+.navbar {
+    padding: 1rem 0;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 20px rgba(30, 58, 138, 0.1);
+    backdrop-filter: blur(10px);
+    background: rgba(30, 58, 138, 0.95) !important;
+}
+
+.navbar-brand {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: white !important;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.bg-navy {
+    background: var(--gradient-primary) !important;
+}
+
+.nav-link {
+    font-weight: 500;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.nav-link:hover {
+    color: #60a5fa !important;
+    transform: translateY(-2px);
+}
+
+.nav-link::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    bottom: -5px;
+    left: 50%;
+    background: #60a5fa;
+    transition: all 0.3s ease;
+    transform: translateX(-50%);
+}
+
+.nav-link:hover::after {
+    width: 100%;
+}
+
+/* Hero Section */
+.hero-section {
+    background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 50%, #60a5fa 100%);
+    min-height: 80vh;
+    display: flex;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+    padding: 4rem 0;
+}
+
+.hero-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"><defs><radialGradient id="a" cx="50%" cy="50%"><stop offset="0%" stop-color="%23ffffff" stop-opacity="0.1"/><stop offset="100%" stop-color="%23ffffff" stop-opacity="0"/></radialGradient></defs><circle cx="200" cy="200" r="100" fill="url(%23a)"/><circle cx="800" cy="300" r="150" fill="url(%23a)"/><circle cx="400" cy="700" r="120" fill="url(%23a)"/></svg>');
+    opacity: 0.3;
+}
+
+.hero-section .container {
+    position: relative;
+    z-index: 2;
+}
+
+.hero-image {
+    text-align: center;
+    position: relative;
+}
+
+.hero-icon {
+    font-size: 12rem;
+    color: rgba(255, 255, 255, 0.15);
+    animation: float 6s ease-in-out infinite;
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-20px); }
+}
+
+/* Buttons */
+.btn {
+    border-radius: 12px;
+    padding: 12px 24px;
+    font-weight: 600;
+    text-transform: none;
+    letter-spacing: 0.5px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border: none;
+    position: relative;
+    overflow: hidden;
+    font-size: 0.9rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s;
+}
+
+.btn:hover::before {
+    left: 100%;
+}
+
+.btn-primary {
+    background: var(--gradient-secondary);
+    box-shadow: var(--shadow-medium);
+}
+
+.btn-primary:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-strong);
+}
+
+.btn-navy {
+    background: var(--gradient-primary);
+    color: white;
+    box-shadow: var(--shadow-medium);
+}
+
+.btn-navy:hover {
+    background: var(--gradient-secondary);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-strong);
+    color: white;
+}
+
+.btn-outline-light:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.3);
+    transform: translateY(-2px);
+}
+
+/* Service Cards */
+.service-card {
+    background: white;
+    padding: 2.5rem 2rem;
+    border-radius: 20px;
+    text-align: center;
+    box-shadow: 0 8px 32px rgba(30, 58, 138, 0.08);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 1px solid rgba(30, 58, 138, 0.05);
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+    backdrop-filter: blur(10px);
+}
+
+.service-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: var(--gradient-primary);
+    transform: scaleX(0);
+    transition: transform 0.3s ease;
+}
+
+.service-card:hover::before {
+    transform: scaleX(1);
+}
+
+.service-card:hover {
+    transform: translateY(-10px);
+    box-shadow: var(--shadow-strong);
+}
+
+.service-icon {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.5rem;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 8px 24px rgba(59, 130, 246, 0.3);
+}
+
+.service-icon i {
+    font-size: 2rem;
+    color: white;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+}
+
+.service-card:hover .service-icon {
+    transform: scale(1.1) rotate(5deg);
+}
+
+.service-card h4 {
+    color: #1e40af;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    font-size: 1.3rem;
+    line-height: 1.4;
+}
+
+.service-card p {
+    color: #64748b;
+    line-height: 1.7;
+    font-size: 0.95rem;
+    margin-bottom: 1.5rem;
+}
+
+/* About Section */
+.about-image {
+    text-align: center;
+    position: relative;
+}
+
+.about-icon {
+    font-size: 12rem;
+    color: var(--navy-light);
+    opacity: 0.3;
+    animation: pulse 4s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); opacity: 0.3; }
+    50% { transform: scale(1.05); opacity: 0.5; }
+}
+
+.stat-item {
+    text-align: center;
+    padding: 1.5rem;
+    background: white;
+    border-radius: 15px;
+    box-shadow: var(--shadow-soft);
+    transition: all 0.3s ease;
+}
+
+.stat-item:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-medium);
+}
+
+.stat-item h3 {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.text-navy {
+    color: var(--navy-primary) !important;
+}
+
+/* Contact Cards */
+.contact-card {
+    background: white;
+    padding: 1.5rem 1rem;
+    border-radius: 15px;
+    text-align: center;
+    box-shadow: var(--shadow-soft);
+    transition: all 0.3s ease;
+    border: 1px solid rgba(30, 58, 138, 0.1);
+    height: 100%;
+}
+
+.contact-card:hover {
+    transform: translateY(-8px);
+    box-shadow: var(--shadow-strong);
+}
+
+.contact-icon {
+    width: 45px;
+    height: 45px;
+    background: var(--gradient-primary);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1rem;
+    transition: all 0.3s ease;
+}
+
+.contact-icon i {
+    font-size: 1.2rem;
+    color: white;
+}
+
+.contact-card:hover .contact-icon {
+    transform: scale(1.1);
+}
+
+.contact-card h5 {
+    color: var(--navy-primary);
+    font-weight: 700;
+    margin-bottom: 0.3rem;
+    font-size: 1rem;
+}
+
+/* Footer */
+footer {
+    background: var(--gradient-primary) !important;
+    position: relative;
+}
+
+footer::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+}
+
+/* Modal Styles */
+.modal-content {
+    border: none;
+    border-radius: 24px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+    backdrop-filter: blur(20px);
+    background: rgba(255, 255, 255, 0.95);
+}
+
+.modal-header {
+    border-radius: 24px 24px 0 0;
+    border-bottom: none;
+    padding: 1.5rem 2rem;
+    background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%) !important;
+}
+
+.modal-body {
+    padding: 2rem;
+}
+
+.form-control, .form-select {
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 12px 16px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    font-size: 0.95rem;
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(10px);
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+    background: rgba(255, 255, 255, 0.95);
+    transform: translateY(-2px);
+}
+
+.form-label {
+    font-weight: 600;
+    color: #1e40af;
+    margin-bottom: 0.75rem;
+    font-size: 0.9rem;
+}
+
+/* Utility Classes */
+.bg-light {
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%) !important;
+}
+
+/* Compact Spacing */
+.py-5 {
+    padding-top: 2rem !important;
+    padding-bottom: 2rem !important;
+}
+
+.mb-5 {
+    margin-bottom: 2rem !important;
+}
+
+.mb-4 {
+    margin-bottom: 1.5rem !important;
+}
+
+.mb-3 {
+    margin-bottom: 1rem !important;
+}
+
+.g-4 {
+    gap: 1.5rem !important;
+}
+
+.g-3 {
+    gap: 1rem !important;
+}
+
+/* Masyarakat Dashboard Styles */
+.masyarakat-dashboard {
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    min-height: 100vh;
+}
+
+.masyarakat-card {
+    background: white;
+    border-radius: 15px;
+    box-shadow: var(--shadow-soft);
+    transition: all 0.3s ease;
+    border: 1px solid rgba(30, 58, 138, 0.1);
+}
+
+.masyarakat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-medium);
+}
+
+.masyarakat-icon {
+    width: 50px;
+    height: 50px;
+    background: var(--gradient-primary);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1rem;
+    transition: all 0.3s ease;
+}
+
+.masyarakat-icon i {
+    font-size: 1.2rem;
+    color: white;
+}
+
+.masyarakat-card:hover .masyarakat-icon {
+    transform: scale(1.1);
+}
+
+.text-muted {
+    color: #64748b !important;
+}
+
+/* Landscape Orientation */
+@media (orientation: landscape) {
+    body {
+        font-size: 14px;
+        line-height: 1.4;
+    }
+    
+    .container {
+        max-width: 100%;
+        padding: 0 0.5rem;
+    }
+    
+    .navbar {
+        padding: 0.3rem 0;
+    }
+    
+    .navbar-brand {
+        font-size: 1.1rem;
+    }
+    
+    .hero {
+        min-height: 60vh;
+        padding: 2rem 0;
+    }
+    
+    .hero h1 {
+        font-size: 2rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .hero p {
+        font-size: 1rem;
+        margin-bottom: 1rem;
+    }
+    
+    .hero-icon {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+    }
+    
+    .service-card {
+        padding: 1rem;
+        margin-bottom: 1rem;
+    }
+    
+    .service-card h5 {
+        font-size: 1rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .service-card p {
+        font-size: 0.85rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .stat-item {
+        padding: 1rem;
+        margin-bottom: 1rem;
+    }
+    
+    .stat-item h3 {
+        font-size: 1.5rem;
+        margin-bottom: 0.3rem;
+    }
+    
+    .stat-item p {
+        font-size: 0.8rem;
+    }
+    
+    .card {
+        margin-bottom: 1rem;
+    }
+    
+    .card-header {
+        padding: 0.5rem 0.75rem;
+    }
+    
+    .card-body {
+        padding: 0.75rem;
+    }
+    
+    .btn {
+        padding: 0.4rem 0.8rem;
+        font-size: 0.85rem;
+    }
+    
+    .modal-dialog {
+        max-width: 90%;
+        margin: 0.5rem auto;
+    }
+    
+    .modal-header {
+        padding: 0.5rem 0.75rem;
+    }
+    
+    .modal-body {
+        padding: 0.75rem;
+    }
+    
+    .form-control {
+        padding: 0.4rem 0.6rem;
+        font-size: 0.85rem;
+    }
+    
+    .form-label {
+        font-size: 0.85rem;
+        margin-bottom: 0.3rem;
+    }
+    
+    .table {
+        font-size: 0.8rem;
+    }
+    
+    .table th,
+    .table td {
+        padding: 0.3rem 0.5rem;
+    }
+    
+    .dropdown-menu {
+        font-size: 0.85rem;
+        padding: 0.3rem 0;
+    }
+    
+    .dropdown-item {
+        padding: 0.4rem 1rem;
+    }
+    
+    /* Dashboard specific landscape styles */
+    .dashboard-header {
+        padding: 1rem 0;
+    }
+    
+    .dashboard-header h1 {
+        font-size: 1.8rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .dashboard-header p {
+        font-size: 0.9rem;
+    }
+    
+    .stats-grid {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+    }
+    
+    .stats-card {
+        padding: 1rem;
+    }
+    
+    .stats-card h3 {
+        font-size: 1.5rem;
+    }
+    
+    .stats-card p {
+        font-size: 0.8rem;
+    }
+    
+    .content-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .content-card {
+        padding: 1rem;
+    }
+    
+    .content-card h4 {
+        font-size: 1.1rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .content-card p {
+        font-size: 0.85rem;
+    }
+    
+    /* Form styles for landscape */
+    .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+    }
+    
+    .form-group {
+        margin-bottom: 0.75rem;
+    }
+    
+    .form-group label {
+        font-size: 0.85rem;
+        margin-bottom: 0.3rem;
+    }
+    
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        padding: 0.4rem 0.6rem;
+        font-size: 0.85rem;
+    }
+    
+    /* Table styles for landscape */
+    .table-responsive {
+        font-size: 0.8rem;
+    }
+    
+    .table th,
+    .table td {
+        padding: 0.3rem 0.5rem;
+        white-space: nowrap;
+    }
+    
+    /* Button styles for landscape */
+    .btn-group .btn {
+        padding: 0.3rem 0.6rem;
+        font-size: 0.8rem;
+    }
+    
+    .btn-sm {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.75rem;
+    }
+    
+    /* Modal styles for landscape */
+    .modal-dialog {
+        max-width: 90%;
+        margin: 0.5rem auto;
+    }
+    
+    .modal-content {
+        max-height: 90vh;
+        overflow-y: auto;
+    }
+    
+    .modal-header {
+        padding: 0.5rem 0.75rem;
+    }
+    
+    .modal-body {
+        padding: 0.75rem;
+    }
+    
+    .modal-footer {
+        padding: 0.5rem 0.75rem;
+    }
+    
+    /* Navigation styles for landscape */
+    .navbar-nav {
+        flex-direction: row;
+    }
+    
+    .navbar-nav .nav-link {
+        padding: 0.3rem 0.6rem;
+        font-size: 0.85rem;
+    }
+    
+    .navbar-nav .btn {
+        padding: 0.3rem 0.6rem;
+        font-size: 0.8rem;
+    }
+    
+    /* Footer styles for landscape */
+    .footer {
+        padding: 1rem 0;
+    }
+    
+    .footer h5 {
+        font-size: 1rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .footer p,
+    .footer a {
+        font-size: 0.8rem;
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .hero-section {
+        text-align: center;
+        padding: 2rem 0;
+    }
+    
+    .hero-icon {
+        font-size: 8rem;
+    }
+    
+    .about-icon {
+        font-size: 8rem;
+    }
+    
+    .display-4 {
+        font-size: 2.5rem;
+    }
+    
+    .display-5 {
+        font-size: 2rem;
+    }
+    
+    .service-card, .contact-card {
+        margin-bottom: 2rem;
+    }
+    
+    .btn {
+        padding: 10px 20px;
+        font-size: 0.9rem;
+    }
+}
+
+/* Landscape specific for mobile devices */
+@media (orientation: landscape) and (max-width: 768px) {
+    .hero {
+        min-height: 50vh;
+        padding: 1rem 0;
+    }
+    
+    .hero h1 {
+        font-size: 1.8rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .hero p {
+        font-size: 0.9rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .hero-icon {
+        font-size: 3rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .navbar {
+        padding: 0.2rem 0;
+    }
+    
+    .navbar-brand {
+        font-size: 1rem;
+    }
+    
+    .navbar-nav .nav-link {
+        padding: 0.2rem 0.5rem;
+        font-size: 0.8rem;
+    }
+    
+    .navbar-nav .btn {
+        padding: 0.2rem 0.5rem;
+        font-size: 0.75rem;
+    }
+    
+    .service-card {
+        padding: 0.8rem;
+        margin-bottom: 0.8rem;
+    }
+    
+    .service-card h5 {
+        font-size: 0.9rem;
+        margin-bottom: 0.3rem;
+    }
+    
+    .service-card p {
+        font-size: 0.75rem;
+        margin-bottom: 0.3rem;
+    }
+    
+    .stat-item {
+        padding: 0.8rem;
+        margin-bottom: 0.8rem;
+    }
+    
+    .stat-item h3 {
+        font-size: 1.2rem;
+        margin-bottom: 0.2rem;
+    }
+    
+    .stat-item p {
+        font-size: 0.7rem;
+    }
+    
+    .card {
+        margin-bottom: 0.8rem;
+    }
+    
+    .card-header {
+        padding: 0.4rem 0.6rem;
+    }
+    
+    .card-body {
+        padding: 0.6rem;
+    }
+    
+    .btn {
+        padding: 0.3rem 0.6rem;
+        font-size: 0.75rem;
+    }
+    
+    .modal-dialog {
+        max-width: 95%;
+        margin: 0.3rem auto;
+    }
+    
+    .modal-header {
+        padding: 0.4rem 0.6rem;
+    }
+    
+    .modal-body {
+        padding: 0.6rem;
+    }
+    
+    .form-control {
+        padding: 0.3rem 0.5rem;
+        font-size: 0.75rem;
+    }
+    
+    .form-label {
+        font-size: 0.75rem;
+        margin-bottom: 0.2rem;
+    }
+    
+    .table {
+        font-size: 0.7rem;
+    }
+    
+    .table th,
+    .table td {
+        padding: 0.2rem 0.4rem;
+    }
+    
+    .dropdown-menu {
+        font-size: 0.75rem;
+        padding: 0.2rem 0;
+    }
+    
+    .dropdown-item {
+        padding: 0.3rem 0.8rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .hero-icon {
+        font-size: 6rem;
+    }
+    
+    .about-icon {
+        font-size: 6rem;
+    }
+    
+    .display-4 {
+        font-size: 2rem;
+    }
+    
+    .service-card, .contact-card {
+        padding: 2rem 1.5rem;
+    }
+    
+    .modal-body {
+        padding: 1.5rem;
+    }
+}
+
+/* Landscape specific for small mobile devices */
+@media (orientation: landscape) and (max-width: 576px) {
+    .hero {
+        min-height: 40vh;
+        padding: 0.8rem 0;
+    }
+    
+    .hero h1 {
+        font-size: 1.5rem;
+        margin-bottom: 0.3rem;
+    }
+    
+    .hero p {
+        font-size: 0.8rem;
+        margin-bottom: 0.3rem;
+    }
+    
+    .hero-icon {
+        font-size: 2.5rem;
+        margin-bottom: 0.3rem;
+    }
+    
+    .navbar {
+        padding: 0.1rem 0;
+    }
+    
+    .navbar-brand {
+        font-size: 0.9rem;
+    }
+    
+    .navbar-nav .nav-link {
+        padding: 0.1rem 0.4rem;
+        font-size: 0.7rem;
+    }
+    
+    .navbar-nav .btn {
+        padding: 0.1rem 0.4rem;
+        font-size: 0.7rem;
+    }
+    
+    .service-card {
+        padding: 0.6rem;
+        margin-bottom: 0.6rem;
+    }
+    
+    .service-card h5 {
+        font-size: 0.8rem;
+        margin-bottom: 0.2rem;
+    }
+    
+    .service-card p {
+        font-size: 0.7rem;
+        margin-bottom: 0.2rem;
+    }
+    
+    .stat-item {
+        padding: 0.6rem;
+        margin-bottom: 0.6rem;
+    }
+    
+    .stat-item h3 {
+        font-size: 1rem;
+        margin-bottom: 0.1rem;
+    }
+    
+    .stat-item p {
+        font-size: 0.6rem;
+    }
+    
+    .card {
+        margin-bottom: 0.6rem;
+    }
+    
+    .card-header {
+        padding: 0.3rem 0.5rem;
+    }
+    
+    .card-body {
+        padding: 0.5rem;
+    }
+    
+    .btn {
+        padding: 0.2rem 0.4rem;
+        font-size: 0.7rem;
+    }
+    
+    .modal-dialog {
+        max-width: 98%;
+        margin: 0.2rem auto;
+    }
+    
+    .modal-header {
+        padding: 0.3rem 0.5rem;
+    }
+    
+    .modal-body {
+        padding: 0.5rem;
+    }
+    
+    .form-control {
+        padding: 0.2rem 0.4rem;
+        font-size: 0.7rem;
+    }
+    
+    .form-label {
+        font-size: 0.7rem;
+        margin-bottom: 0.1rem;
+    }
+    
+    .table {
+        font-size: 0.6rem;
+    }
+    
+    .table th,
+    .table td {
+        padding: 0.1rem 0.3rem;
+    }
+    
+    .dropdown-menu {
+        font-size: 0.7rem;
+        padding: 0.1rem 0;
+    }
+    
+    .dropdown-item {
+        padding: 0.2rem 0.6rem;
+    }
+}
+
+/* Landscape specific for tablet devices */
+@media (orientation: landscape) and (min-width: 769px) and (max-width: 1024px) {
+    .hero {
+        min-height: 70vh;
+        padding: 2.5rem 0;
+    }
+    
+    .hero h1 {
+        font-size: 2.2rem;
+        margin-bottom: 0.8rem;
+    }
+    
+    .hero p {
+        font-size: 1.1rem;
+        margin-bottom: 1.2rem;
+    }
+    
+    .hero-icon {
+        font-size: 3.5rem;
+        margin-bottom: 1.2rem;
+    }
+    
+    .navbar {
+        padding: 0.4rem 0;
+    }
+    
+    .navbar-brand {
+        font-size: 1.2rem;
+    }
+    
+    .navbar-nav .nav-link {
+        padding: 0.4rem 0.8rem;
+        font-size: 0.9rem;
+    }
+    
+    .navbar-nav .btn {
+        padding: 0.4rem 0.8rem;
+        font-size: 0.85rem;
+    }
+    
+    .service-card {
+        padding: 1.2rem;
+        margin-bottom: 1.2rem;
+    }
+    
+    .service-card h5 {
+        font-size: 1.1rem;
+        margin-bottom: 0.6rem;
+    }
+    
+    .service-card p {
+        font-size: 0.9rem;
+        margin-bottom: 0.6rem;
+    }
+    
+    .stat-item {
+        padding: 1.2rem;
+        margin-bottom: 1.2rem;
+    }
+    
+    .stat-item h3 {
+        font-size: 1.6rem;
+        margin-bottom: 0.4rem;
+    }
+    
+    .stat-item p {
+        font-size: 0.85rem;
+    }
+    
+    .card {
+        margin-bottom: 1.2rem;
+    }
+    
+    .card-header {
+        padding: 0.6rem 0.8rem;
+    }
+    
+    .card-body {
+        padding: 0.8rem;
+    }
+    
+    .btn {
+        padding: 0.5rem 0.9rem;
+        font-size: 0.9rem;
+    }
+    
+    .modal-dialog {
+        max-width: 85%;
+        margin: 0.8rem auto;
+    }
+    
+    .modal-header {
+        padding: 0.6rem 0.8rem;
+    }
+    
+    .modal-body {
+        padding: 0.8rem;
+    }
+    
+    .form-control {
+        padding: 0.5rem 0.7rem;
+        font-size: 0.9rem;
+    }
+    
+    .form-label {
+        font-size: 0.9rem;
+        margin-bottom: 0.4rem;
+    }
+    
+    .table {
+        font-size: 0.85rem;
+    }
+    
+    .table th,
+    .table td {
+        padding: 0.4rem 0.6rem;
+    }
+    
+    .dropdown-menu {
+        font-size: 0.9rem;
+        padding: 0.4rem 0;
+    }
+    
+    .dropdown-item {
+        padding: 0.5rem 1.2rem;
+    }
+}
+
+/* Landscape specific for desktop devices */
+@media (orientation: landscape) and (min-width: 1025px) {
+    .hero {
+        min-height: 80vh;
+        padding: 3rem 0;
+    }
+    
+    .hero h1 {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+    }
+    
+    .hero p {
+        font-size: 1.2rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .hero-icon {
+        font-size: 4rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .navbar {
+        padding: 0.5rem 0;
+    }
+    
+    .navbar-brand {
+        font-size: 1.3rem;
+    }
+    
+    .navbar-nav .nav-link {
+        padding: 0.5rem 1rem;
+        font-size: 1rem;
+    }
+    
+    .navbar-nav .btn {
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
+    }
+    
+    .service-card {
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .service-card h5 {
+        font-size: 1.2rem;
+        margin-bottom: 0.8rem;
+    }
+    
+    .service-card p {
+        font-size: 1rem;
+        margin-bottom: 0.8rem;
+    }
+    
+    .stat-item {
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .stat-item h3 {
+        font-size: 1.8rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .stat-item p {
+        font-size: 0.9rem;
+    }
+    
+    .card {
+        margin-bottom: 1.5rem;
+    }
+    
+    .card-header {
+        padding: 0.8rem 1rem;
+    }
+    
+    .card-body {
+        padding: 1rem;
+    }
+    
+    .btn {
+        padding: 0.6rem 1.2rem;
+        font-size: 1rem;
+    }
+    
+    .modal-dialog {
+        max-width: 80%;
+        margin: 1rem auto;
+    }
+    
+    .modal-header {
+        padding: 0.8rem 1rem;
+    }
+    
+    .modal-body {
+        padding: 1rem;
+    }
+    
+    .form-control {
+        padding: 0.6rem 0.8rem;
+        font-size: 1rem;
+    }
+    
+    .form-label {
+        font-size: 1rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .table {
+        font-size: 0.9rem;
+    }
+    
+    .table th,
+    .table td {
+        padding: 0.5rem 0.8rem;
+    }
+    
+    .dropdown-menu {
+        font-size: 1rem;
+        padding: 0.5rem 0;
+    }
+    
+    .dropdown-item {
+        padding: 0.6rem 1.5rem;
+    }
+}
+
+/* Animation Classes */
+.fade-in {
+    animation: fadeIn 0.6s ease-in;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Landscape specific for ultra-wide screens */
+@media (orientation: landscape) and (min-width: 1440px) {
+    .hero {
+        min-height: 90vh;
+        padding: 4rem 0;
+    }
+    
+    .hero h1 {
+        font-size: 3rem;
+        margin-bottom: 1.2rem;
+    }
+    
+    .hero p {
+        font-size: 1.4rem;
+        margin-bottom: 2rem;
+    }
+    
+    .hero-icon {
+        font-size: 5rem;
+        margin-bottom: 2rem;
+    }
+    
+    .navbar {
+        padding: 0.6rem 0;
+    }
+    
+    .navbar-brand {
+        font-size: 1.5rem;
+    }
+    
+    .navbar-nav .nav-link {
+        padding: 0.6rem 1.2rem;
+        font-size: 1.1rem;
+    }
+    
+    .navbar-nav .btn {
+        padding: 0.6rem 1.2rem;
+        font-size: 1rem;
+    }
+    
+    .service-card {
+        padding: 2rem;
+        margin-bottom: 2rem;
+    }
+    
+    .service-card h5 {
+        font-size: 1.4rem;
+        margin-bottom: 1rem;
+    }
+    
+    .service-card p {
+        font-size: 1.1rem;
+        margin-bottom: 1rem;
+    }
+    
+    .stat-item {
+        padding: 2rem;
+        margin-bottom: 2rem;
+    }
+    
+    .stat-item h3 {
+        font-size: 2.2rem;
+        margin-bottom: 0.8rem;
+    }
+    
+    .stat-item p {
+        font-size: 1rem;
+    }
+    
+    .card {
+        margin-bottom: 2rem;
+    }
+    
+    .card-header {
+        padding: 1rem 1.2rem;
+    }
+    
+    .card-body {
+        padding: 1.2rem;
+    }
+    
+    .btn {
+        padding: 0.8rem 1.5rem;
+        font-size: 1.1rem;
+    }
+    
+    .modal-dialog {
+        max-width: 75%;
+        margin: 1.5rem auto;
+    }
+    
+    .modal-header {
+        padding: 1rem 1.2rem;
+    }
+    
+    .modal-body {
+        padding: 1.2rem;
+    }
+    
+    .form-control {
+        padding: 0.8rem 1rem;
+        font-size: 1.1rem;
+    }
+    
+    .form-label {
+        font-size: 1.1rem;
+        margin-bottom: 0.6rem;
+    }
+    
+    .table {
+        font-size: 1rem;
+    }
+    
+    .table th,
+    .table td {
+        padding: 0.6rem 1rem;
+    }
+    
+    .dropdown-menu {
+        font-size: 1.1rem;
+        padding: 0.6rem 0;
+    }
+    
+    .dropdown-item {
+        padding: 0.8rem 1.8rem;
+    }
+}
+
+/* Landscape specific for 4K screens */
+@media (orientation: landscape) and (min-width: 2560px) {
+    .hero {
+        min-height: 95vh;
+        padding: 5rem 0;
+    }
+    
+    .hero h1 {
+        font-size: 4rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .hero p {
+        font-size: 1.8rem;
+        margin-bottom: 2.5rem;
+    }
+    
+    .hero-icon {
+        font-size: 6rem;
+        margin-bottom: 2.5rem;
+    }
+    
+    .navbar {
+        padding: 0.8rem 0;
+    }
+    
+    .navbar-brand {
+        font-size: 1.8rem;
+    }
+    
+    .navbar-nav .nav-link {
+        padding: 0.8rem 1.5rem;
+        font-size: 1.3rem;
+    }
+    
+    .navbar-nav .btn {
+        padding: 0.8rem 1.5rem;
+        font-size: 1.2rem;
+    }
+    
+    .service-card {
+        padding: 2.5rem;
+        margin-bottom: 2.5rem;
+    }
+    
+    .service-card h5 {
+        font-size: 1.8rem;
+        margin-bottom: 1.2rem;
+    }
+    
+    .service-card p {
+        font-size: 1.4rem;
+        margin-bottom: 1.2rem;
+    }
+    
+    .stat-item {
+        padding: 2.5rem;
+        margin-bottom: 2.5rem;
+    }
+    
+    .stat-item h3 {
+        font-size: 2.8rem;
+        margin-bottom: 1rem;
+    }
+    
+    .stat-item p {
+        font-size: 1.2rem;
+    }
+    
+    .card {
+        margin-bottom: 2.5rem;
+    }
+    
+    .card-header {
+        padding: 1.2rem 1.5rem;
+    }
+    
+    .card-body {
+        padding: 1.5rem;
+    }
+    
+    .btn {
+        padding: 1rem 2rem;
+        font-size: 1.3rem;
+    }
+    
+    .modal-dialog {
+        max-width: 70%;
+        margin: 2rem auto;
+    }
+    
+    .modal-header {
+        padding: 1.2rem 1.5rem;
+    }
+    
+    .modal-body {
+        padding: 1.5rem;
+    }
+    
+    .form-control {
+        padding: 1rem 1.2rem;
+        font-size: 1.3rem;
+    }
+    
+    .form-label {
+        font-size: 1.3rem;
+        margin-bottom: 0.8rem;
+    }
+    
+    .table {
+        font-size: 1.2rem;
+    }
+    
+    .table th,
+    .table td {
+        padding: 0.8rem 1.2rem;
+    }
+    
+    .dropdown-menu {
+        font-size: 1.3rem;
+        padding: 0.8rem 0;
+    }
+    
+    .dropdown-item {
+        padding: 1rem 2.2rem;
+    }
+}
+
+.slide-in-left {
+    animation: slideInLeft 0.6s ease-out;
+}
+
+/* Landscape specific for all screen sizes - general optimizations */
+@media (orientation: landscape) {
+    /* Optimize scrolling for landscape */
+    html {
+        scroll-behavior: smooth;
+    }
+    
+    /* Optimize container width for landscape */
+    .container {
+        max-width: 100%;
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
+    }
+    
+    /* Optimize grid layouts for landscape */
+    .row {
+        margin-left: -0.25rem;
+        margin-right: -0.25rem;
+    }
+    
+    .col,
+    [class*="col-"] {
+        padding-left: 0.25rem;
+        padding-right: 0.25rem;
+    }
+    
+    /* Optimize spacing for landscape */
+    .mb-4 {
+        margin-bottom: 1rem !important;
+    }
+    
+    .mb-5 {
+        margin-bottom: 1.5rem !important;
+    }
+    
+    .mt-4 {
+        margin-top: 1rem !important;
+    }
+    
+    .mt-5 {
+        margin-top: 1.5rem !important;
+    }
+    
+    .py-4 {
+        padding-top: 1rem !important;
+        padding-bottom: 1rem !important;
+    }
+    
+    .py-5 {
+        padding-top: 1.5rem !important;
+        padding-bottom: 1.5rem !important;
+    }
+    
+    /* Optimize text for landscape */
+    .text-center {
+        text-align: center !important;
+    }
+    
+    .text-left {
+        text-align: left !important;
+    }
+    
+    .text-right {
+        text-align: right !important;
+    }
+    
+    /* Optimize flexbox for landscape */
+    .d-flex {
+        display: flex !important;
+    }
+    
+    .justify-content-center {
+        justify-content: center !important;
+    }
+    
+    .justify-content-between {
+        justify-content: space-between !important;
+    }
+    
+    .align-items-center {
+        align-items: center !important;
+    }
+    
+    /* Optimize visibility for landscape */
+    .d-none {
+        display: none !important;
+    }
+    
+    .d-block {
+        display: block !important;
+    }
+    
+    .d-inline {
+        display: inline !important;
+    }
+    
+    .d-inline-block {
+        display: inline-block !important;
+    }
+    
+    /* Optimize positioning for landscape */
+    .position-relative {
+        position: relative !important;
+    }
+    
+    .position-absolute {
+        position: absolute !important;
+    }
+    
+    .position-fixed {
+        position: fixed !important;
+    }
+    
+    .position-sticky {
+        position: sticky !important;
+    }
+    
+    /* Optimize overflow for landscape */
+    .overflow-hidden {
+        overflow: hidden !important;
+    }
+    
+    .overflow-auto {
+        overflow: auto !important;
+    }
+    
+    .overflow-scroll {
+        overflow: scroll !important;
+    }
+    
+    /* Optimize borders for landscape */
+    .border {
+        border: 1px solid #dee2e6 !important;
+    }
+    
+    .border-0 {
+        border: 0 !important;
+    }
+    
+    .border-top {
+        border-top: 1px solid #dee2e6 !important;
+    }
+    
+    .border-bottom {
+        border-bottom: 1px solid #dee2e6 !important;
+    }
+    
+    .border-left {
+        border-left: 1px solid #dee2e6 !important;
+    }
+    
+    .border-right {
+        border-right: 1px solid #dee2e6 !important;
+    }
+    
+    /* Optimize shadows for landscape */
+    .shadow {
+        box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075) !important;
+    }
+    
+    .shadow-sm {
+        box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075) !important;
+    }
+    
+    .shadow-lg {
+        box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.175) !important;
+    }
+    
+    .shadow-none {
+        box-shadow: none !important;
+    }
+    
+    /* Optimize rounded corners for landscape */
+    .rounded {
+        border-radius: 0.25rem !important;
+    }
+    
+    .rounded-sm {
+        border-radius: 0.125rem !important;
+    }
+    
+    .rounded-lg {
+        border-radius: 0.5rem !important;
+    }
+    
+    .rounded-circle {
+        border-radius: 50% !important;
+    }
+    
+    .rounded-0 {
+        border-radius: 0 !important;
+    }
+    
+    /* Optimize opacity for landscape */
+    .opacity-25 {
+        opacity: 0.25 !important;
+    }
+    
+    .opacity-50 {
+        opacity: 0.5 !important;
+    }
+    
+    .opacity-75 {
+        opacity: 0.75 !important;
+    }
+    
+    .opacity-100 {
+        opacity: 1 !important;
+    }
+    
+    /* Optimize transitions for landscape */
+    .transition {
+        transition: all 0.15s ease-in-out !important;
+    }
+    
+    .transition-fast {
+        transition: all 0.1s ease-in-out !important;
+    }
+    
+    .transition-slow {
+        transition: all 0.3s ease-in-out !important;
+    }
+    
+    /* Optimize transforms for landscape */
+    .transform {
+        transform: translateZ(0) !important;
+    }
+    
+    .transform-gpu {
+        transform: translate3d(0, 0, 0) !important;
+    }
+    
+    /* Optimize will-change for landscape */
+    .will-change-auto {
+        will-change: auto !important;
+    }
+    
+    .will-change-scroll {
+        will-change: scroll-position !important;
+    }
+    
+    .will-change-contents {
+        will-change: contents !important;
+    }
+    
+    .will-change-transform {
+        will-change: transform !important;
+    }
+}
+
+@keyframes slideInLeft {
+    from { opacity: 0; transform: translateX(-50px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
+/* Landscape specific for all screen sizes - performance optimizations */
+@media (orientation: landscape) {
+    /* Optimize performance for landscape */
+    * {
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+    
+    /* Optimize images for landscape */
+    img {
+        max-width: 100%;
+        height: auto;
+        image-rendering: -webkit-optimize-contrast;
+        image-rendering: crisp-edges;
+    }
+    
+    /* Optimize videos for landscape */
+    video {
+        max-width: 100%;
+        height: auto;
+    }
+    
+    /* Optimize iframes for landscape */
+    iframe {
+        max-width: 100%;
+        height: auto;
+    }
+    
+    /* Optimize canvas for landscape */
+    canvas {
+        max-width: 100%;
+        height: auto;
+    }
+    
+    /* Optimize SVG for landscape */
+    svg {
+        max-width: 100%;
+        height: auto;
+    }
+    
+    /* Optimize tables for landscape */
+    table {
+        width: 100%;
+        table-layout: fixed;
+    }
+    
+    /* Optimize forms for landscape */
+    form {
+        width: 100%;
+    }
+    
+    /* Optimize inputs for landscape */
+    input,
+    select,
+    textarea {
+        width: 100%;
+        box-sizing: border-box;
+    }
+    
+    /* Optimize buttons for landscape */
+    button {
+        width: auto;
+        min-width: fit-content;
+    }
+    
+    /* Optimize links for landscape */
+    a {
+        text-decoration: none;
+        color: inherit;
+    }
+    
+    /* Optimize lists for landscape */
+    ul,
+    ol {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+    
+    /* Optimize headings for landscape */
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        margin: 0;
+        padding: 0;
+        font-weight: inherit;
+        font-size: inherit;
+        line-height: inherit;
+    }
+    
+    /* Optimize paragraphs for landscape */
+    p {
+        margin: 0;
+        padding: 0;
+    }
+    
+    /* Optimize divs for landscape */
+    div {
+        box-sizing: border-box;
+    }
+    
+    /* Optimize sections for landscape */
+    section {
+        box-sizing: border-box;
+    }
+    
+    /* Optimize articles for landscape */
+    article {
+        box-sizing: border-box;
+    }
+    
+    /* Optimize headers for landscape */
+    header {
+        box-sizing: border-box;
+    }
+    
+    /* Optimize footers for landscape */
+    footer {
+        box-sizing: border-box;
+    }
+    
+    /* Optimize navs for landscape */
+    nav {
+        box-sizing: border-box;
+    }
+    
+    /* Optimize mains for landscape */
+    main {
+        box-sizing: border-box;
+    }
+    
+    /* Optimize asides for landscape */
+    aside {
+        box-sizing: border-box;
+    }
+    
+    /* Optimize figures for landscape */
+    figure {
+        box-sizing: border-box;
+    }
+    
+    /* Optimize figcaptions for landscape */
+    figcaption {
+        box-sizing: border-box;
+    }
+    
+    /* Optimize details for landscape */
+    details {
+        box-sizing: border-box;
+    }
+    
+    /* Optimize summaries for landscape */
+    summary {
+        box-sizing: border-box;
+    }
+    
+    /* Optimize marks for landscape */
+    mark {
+        box-sizing: border-box;
+    }
+    
+    /* Optimize times for landscape */
+    time {
+        box-sizing: border-box;
+    }
+    
+    /* Optimize meters for landscape */
+    meter {
+        box-sizing: border-box;
+    }
+    
+    /* Optimize progress for landscape */
+    progress {
+        box-sizing: border-box;
+    }
+    
+    /* Optimize outputs for landscape */
+    output {
+        box-sizing: border-box;
+    }
+    
+    /* Optimize datalists for landscape */
+    datalist {
+        box-sizing: border-box;
+    }
+    
+    /* Optimize fieldsets for landscape */
+    fieldset {
+        box-sizing: border-box;
+    }
+    
+    /* Optimize legends for landscape */
+    legend {
+        box-sizing: border-box;
+    }
+    
+    /* Optimize labels for landscape */
+    label {
+        box-sizing: border-box;
+    }
+    
+    /* Optimize spans for landscape */
+    span {
+        box-sizing: border-box;
+    }
+    
+    /* Optimize smalls for landscape */
+    small {
+        box-sizing: border-box;
+    }
+    
+    /* Optimize strongs for landscape */
+    strong {
+        box-sizing: border-box;
+    }
+    
+    /* Optimize ems for landscape */
+    em {
+        box-sizing: border-box;
+    }
+    
+    /* Optimize italics for landscape */
+    i {
+        box-sizing: border-box;
+    }
+    
+    /* Optimize bolds for landscape */
+    b {
+        box-sizing: border-box;
+    }
+    
+    /* Optimize underlines for landscape */
+    u {
+        box-sizing: border-box;
+    }
+    
+    /* Optimize strikes for landscape */
+    s {
+        box-sizing: border-box;
+    }
+    
+    /* Optimize deles for landscape */
+    del {
+        box-sizing: border-box;
+    }
+    
+    /* Optimize inses for landscape */
+    ins {
+        box-sizing: border-box;
+    }
+    
+    /* Optimize subs for landscape */
+    sub {
+        box-sizing: border-box;
+    }
+    
+    /* Optimize sups for landscape */
+    sup {
+        box-sizing: border-box;
+    }
+    
+    /* Optimize codes for landscape */
+    code {
+        box-sizing: border-box;
+    }
+    
+    /* Optimize pres for landscape */
+    pre {
+        box-sizing: border-box;
+    }
+    
+    /* Optimize kbds for landscape */
+    kbd {
+        box-sizing: border-box;
+    }
+    
+    /* Optimize samps for landscape */
+    samp {
+        box-sizing: border-box;
+    }
+    
+    /* Optimize vars for landscape */
+    var {
+        box-sizing: border-box;
+    }
+    
+    /* Optimize abbrs for landscape */
+    abbr {
+        box-sizing: border-box;
+    }
+    
+    /* Optimize acronyms for landscape */
+    acronym {
+        box-sizing: border-box;
+    }
+    
+    /* Optimize addresses for landscape */
+    address {
+        box-sizing: border-box;
+    }
+    
+    /* Optimize blockquotes for landscape */
+    blockquote {
+        box-sizing: border-box;
+    }
+    
+    /* Optimize qs for landscape */
+    q {
+        box-sizing: border-box;
+    }
+    
+    /* Optimize cites for landscape */
+    cite {
+        box-sizing: border-box;
+    }
+    
+    /* Optimize dfns for landscape */
+    dfn {
+        box-sizing: border-box;
+    }
+    
+    /* Optimize ems for landscape */
+    em {
+        box-sizing: border-box;
+    }
+    
+    /* Optimize italics for landscape */
+    i {
+        box-sizing: border-box;
+    }
+    
+    /* Optimize bolds for landscape */
+    b {
+        box-sizing: border-box;
+    }
+    
+    /* Optimize underlines for landscape */
+    u {
+        box-sizing: border-box;
+    }
+    
+    /* Optimize strikes for landscape */
+    s {
+        box-sizing: border-box;
+    }
+    
+    /* Optimize deles for landscape */
+    del {
+        box-sizing: border-box;
+    }
+    
+    /* Optimize inses for landscape */
+    ins {
+        box-sizing: border-box;
+    }
+    
+    /* Optimize subs for landscape */
+    sub {
+        box-sizing: border-box;
+    }
+    
+    /* Optimize sups for landscape */
+    sup {
+        box-sizing: border-box;
+    }
+    
+    /* Optimize codes for landscape */
+    code {
+        box-sizing: border-box;
+    }
+    
+    /* Optimize pres for landscape */
+    pre {
+        box-sizing: border-box;
+    }
+    
+    /* Optimize kbds for landscape */
+    kbd {
+        box-sizing: border-box;
+    }
+    
+    /* Optimize samps for landscape */
+    samp {
+        box-sizing: border-box;
+    }
+    
+    /* Optimize vars for landscape */
+    var {
+        box-sizing: border-box;
+    }
+    
+    /* Optimize abbrs for landscape */
+    abbr {
+        box-sizing: border-box;
+    }
+    
+    /* Optimize acronyms for landscape */
+    acronym {
+        box-sizing: border-box;
+    }
+    
+    /* Optimize addresses for landscape */
+    address {
+        box-sizing: border-box;
+    }
+    
+    /* Optimize blockquotes for landscape */
+    blockquote {
+        box-sizing: border-box;
+    }
+    
+    /* Optimize qs for landscape */
+    q {
+        box-sizing: border-box;
+    }
+    
+    /* Optimize cites for landscape */
+    cite {
+        box-sizing: border-box;
+    }
+    
+    /* Optimize dfns for landscape */
+    dfn {
+        box-sizing: border-box;
+    }
+}
+
+.slide-in-right {
+    animation: slideInRight 0.6s ease-out;
+}
+
+@keyframes slideInRight {
+    from { opacity: 0; transform: translateX(50px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
+/* Loading Animation */
+.loading {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top-color: white;
+    animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Success/Error Messages */
+.alert {
+    border: none;
+    border-radius: 10px;
+    padding: 1rem 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.alert-success {
+    background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+    color: white;
+}
+
+.alert-danger {
+    background: linear-gradient(135deg, #ef4444 0%, #f87171 100%);
+    color: white;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f5f9;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--gradient-primary);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--gradient-secondary);
+}
+
+/* Stat Cards */
+.stat-card {
+    background: white;
+    padding: 2rem;
+    border-radius: 20px;
+    box-shadow: 0 8px 32px rgba(30, 58, 138, 0.08);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 1px solid rgba(30, 58, 138, 0.05);
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    height: 100%;
+    backdrop-filter: blur(10px);
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-strong);
+}
+
+.stat-icon {
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    box-shadow: 0 8px 24px rgba(59, 130, 246, 0.3);
+}
+
+.stat-icon i {
+    font-size: 1.5rem;
+    color: white;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+}
+
+.stat-content h3 {
+    font-size: 2.2rem;
+    font-weight: 800;
+    color: #1e40af;
+    margin-bottom: 0.5rem;
+    line-height: 1.2;
+}
+
+.stat-content p {
+    color: #64748b;
+    margin: 0;
+    font-weight: 500;
+    font-size: 0.9rem;
+}
+
+/* Report Icons */
+.report-icon {
+    width: 60px;
+    height: 60px;
+    background: var(--gradient-primary);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+}
+
+.report-icon i {
+    font-size: 1.5rem;
+    color: white;
+}
+
+/* Table Enhancements */
+.table {
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.table thead th {
+    background: var(--gradient-primary);
+    color: white;
+    border: none;
+    font-weight: 600;
+    padding: 0.75rem;
+    font-size: 0.9rem;
+}
+
+.table tbody td {
+    padding: 0.75rem;
+    vertical-align: middle;
+    border-color: rgba(30, 58, 138, 0.1);
+    font-size: 0.9rem;
+}
+
+.table tbody tr:hover {
+    background-color: rgba(30, 58, 138, 0.05);
+}
+
+/* Badge Enhancements */
+.badge {
+    font-size: 0.7rem;
+    padding: 0.4rem 0.6rem;
+    border-radius: 15px;
+}
+
+.bg-navy {
+    background: var(--gradient-primary) !important;
+}
+
+/* Card Enhancements */
+.card {
+    border: none;
+    border-radius: 20px;
+    box-shadow: 0 8px 32px rgba(30, 58, 138, 0.08);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(30, 58, 138, 0.05);
+}
+
+.card:hover {
+    box-shadow: var(--shadow-medium);
+}
+
+.card-header {
+    border-radius: 20px 20px 0 0 !important;
+    border-bottom: none;
+    padding: 1.5rem 2rem;
+    background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%) !important;
+}
+
+.card-body {
+    padding: 2rem;
+}
+
+/* Video Container */
+.video-container {
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    border-radius: 20px;
+    padding: 3rem;
+    text-align: center;
+    border: 2px dashed #cbd5e1;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+}
+
+.video-container:hover {
+    border-color: var(--navy-primary);
+    background: rgba(30, 58, 138, 0.05);
+}
+
+.video-placeholder {
+    color: #64748b;
+}
+
+/* Telemedicine Info */
+.telemedicine-info {
+    background: #f8fafc;
+    padding: 1rem;
+    border-radius: 10px;
+    border: 1px solid #e2e8f0;
+}
+
+/* Alert Enhancements */
+.alert {
+    border: none;
+    border-radius: 8px;
+    margin-bottom: 0.8rem;
+    box-shadow: var(--shadow-soft);
+    padding: 0.8rem 1rem;
+    font-size: 0.9rem;
+}
+
+.alert-warning {
+    background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
+    color: white;
+}
+
+.alert-info {
+    background: linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%);
+    color: white;
+}
+
+.alert-success {
+    background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+    color: white;
+}
+
+/* Chart Container */
+canvas {
+    max-height: 250px;
+}
+
+/* Logout and Homepage Buttons */
+.btn-outline-danger {
+    border-color: #dc3545;
+    color: #dc3545;
+    transition: all 0.3s ease;
+}
+
+.btn-outline-danger:hover {
+    background-color: #dc3545;
+    border-color: #dc3545;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(220, 53, 69, 0.3);
+}
+
+.btn-outline-secondary {
+    border-color: #6c757d;
+    color: #6c757d;
+    transition: all 0.3s ease;
+}
+
+.btn-outline-secondary:hover {
+    background-color: #6c757d;
+    border-color: #6c757d;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(108, 117, 125, 0.3);
+}
+
+/* Navigation Enhancements */
+.nav-link {
+    transition: all 0.3s ease;
+}
+
+.nav-link:hover {
+    color: #60a5fa !important;
+    transform: translateY(-2px);
+}
+
+/* Masyarakat Login Button */
+.btn-outline-light {
+    transition: all 0.3s ease;
+}
+
+.btn-outline-light:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.3);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(255, 255, 255, 0.2);
+}
+
+/* User Menu Dropdown */
+.dropdown-menu {
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+    backdrop-filter: blur(10px);
+    background: rgba(255, 255, 255, 0.95);
+    padding: 0.5rem 0;
+    margin-top: 0.5rem;
+    z-index: 1050;
+    min-width: 200px;
+}
+
+.dropdown-item {
+    padding: 0.75rem 1.5rem;
+    transition: all 0.3s ease;
+    border-radius: 8px;
+    margin: 0 0.5rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+}
+
+.dropdown-item:hover {
+    background-color: rgba(59, 130, 246, 0.1);
+    color: #1e40af;
+    transform: translateX(4px);
+}
+
+.dropdown-item.text-danger:hover {
+    background-color: rgba(220, 53, 69, 0.1);
+    color: #dc3545;
+}
+
+.dropdown-item i {
+    margin-right: 0.5rem;
+    width: 16px;
+    text-align: center;
+}
+
+.dropdown-divider {
+    margin: 0.5rem 0;
+    border-color: rgba(0, 0, 0, 0.1);
+}
+
+.dropdown-toggle::after {
+    margin-left: 0.5rem;
+}
+
+.dropdown-toggle:focus {
+    box-shadow: 0 0 0 0.2rem rgba(59, 130, 246, 0.25);
+}
+
+.dropdown-toggle:focus-visible {
+    outline: none;
+}
+
+.dropdown-toggle:active {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.dropdown-toggle:active:focus {
+    box-shadow: 0 0 0 0.2rem rgba(59, 130, 246, 0.25);
+}
+
+/* Unified Login Form */
+#staffFields, #masyarakatFields {
+    transition: all 0.3s ease;
+}
+
+#staffFields.show, #masyarakatFields.show {
+    display: block !important;
+    animation: fadeIn 0.3s ease;
+}
+
+#registerLink {
+    transition: all 0.3s ease;
+}
+
+#registerLink.show {
+    display: block !important;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Responsive Enhancements */
+@media (max-width: 768px) {
+    .stat-card {
+        flex-direction: column;
+        text-align: center;
+        padding: 1.5rem;
+    }
+    
+    .stat-icon {
+        width: 50px;
+        height: 50px;
+    }
+    
+    .stat-icon i {
+        font-size: 1.2rem;
+    }
+    
+    .stat-content h3 {
+        font-size: 1.8rem;
+    }
+    
+    .card-body {
+        padding: 1.5rem;
+    }
+    
+    .table-responsive {
+        font-size: 0.85rem;
+    }
+    
+    .service-card {
+        padding: 2rem 1.5rem;
+    }
+    
+    .service-icon {
+        width: 60px;
+        height: 60px;
+    }
+    
+    .service-icon i {
+        font-size: 1.5rem;
+    }
+    
+    .card-header {
+        padding: 1rem 1.5rem;
+    }
+    
+    .modal-body {
+        padding: 1.5rem;
+    }
+    
+    .modal-header {
+        padding: 1rem 1.5rem;
+    }
+    
+    /* Mobile navigation adjustments */
+    .navbar {
+        padding: 0.75rem 0;
+    }
+    
+    .navbar-brand {
+        font-size: 1.3rem;
+    }
+    
+    .navbar-nav .nav-link {
+        padding: 0.5rem 1rem;
+    }
+    
+    .navbar-nav .btn {
+        margin-top: 0.5rem;
+        width: 100%;
+        padding: 10px 20px;
+        font-size: 0.85rem;
+    }
+    
+    .hero-icon {
+        font-size: 8rem;
+    }
+    
+    .about-icon {
+        font-size: 8rem;
+    }
+    
+    .display-4 {
+        font-size: 2.5rem;
+    }
+    
+    .display-5 {
+        font-size: 2rem;
+    }
+    
+    /* Masyarakat Dashboard Tablet */
+    .masyarakat-icon {
+        width: 45px;
+        height: 45px;
+    }
+    
+    .masyarakat-icon i {
+        font-size: 1.1rem;
+    }
+    
+    .masyarakat-card {
+        padding: 1.2rem;
+    }
+    
+    .masyarakat-card h4 {
+        font-size: 1.1rem;
+    }
+    
+    .masyarakat-card p {
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 576px) {
+    body {
+        font-size: 13px;
+    }
+    
+    .hero-section {
+        min-height: 60vh;
+        padding: 1.5rem 0;
+    }
+    
+    .stat-card {
+        padding: 1.2rem;
+    }
+    
+    .stat-content h3 {
+        font-size: 1.5rem;
+    }
+    
+    .card-body {
+        padding: 1.2rem;
+    }
+    
+    .btn {
+        padding: 10px 16px;
+        font-size: 0.85rem;
+    }
+    
+    .hero-icon {
+        font-size: 6rem;
+    }
+    
+    .about-icon {
+        font-size: 6rem;
+    }
+    
+    .display-4 {
+        font-size: 2rem;
+    }
+    
+    .display-5 {
+        font-size: 1.8rem;
+    }
+    
+    .service-card, .contact-card {
+        padding: 1.5rem 1.2rem;
+    }
+    
+    .service-icon {
+        width: 50px;
+        height: 50px;
+    }
+    
+    .service-icon i {
+        font-size: 1.2rem;
+    }
+    
+    .modal-body {
+        padding: 1.2rem;
+    }
+    
+    .modal-header {
+        padding: 0.8rem 1.2rem;
+    }
+    
+    .navbar {
+        padding: 0.5rem 0;
+    }
+    
+    .navbar-brand {
+        font-size: 1.2rem;
+    }
+    
+    /* Masyarakat Dashboard Mobile */
+    .masyarakat-icon {
+        width: 40px;
+        height: 40px;
+    }
+    
+    .masyarakat-icon i {
+        font-size: 1rem;
+    }
+    
+    .masyarakat-card {
+        padding: 1rem;
+    }
+    
+    .masyarakat-card h4 {
+        font-size: 1rem;
+    }
+    
+    .masyarakat-card p {
+        font-size: 0.85rem;
+    }
+    
+    /* Enhanced Mobile Styles */
+    .hero-section {
+        background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 50%, #60a5fa 100%);
+    }
+    
+    .service-card {
+        box-shadow: 0 4px 16px rgba(30, 58, 138, 0.1);
+    }
+    
+    .stat-card {
+        box-shadow: 0 4px 16px rgba(30, 58, 138, 0.1);
+    }
+    
+    .card {
+        box-shadow: 0 4px 16px rgba(30, 58, 138, 0.1);
+    }
+    
+    .modal-content {
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    }
+    
+    /* Masyarakat Dashboard Mobile Small */
+    .masyarakat-icon {
+        width: 35px;
+        height: 35px;
+    }
+    
+    .masyarakat-icon i {
+        font-size: 0.9rem;
+    }
+    
+    .masyarakat-card {
+        padding: 0.8rem;
+    }
+    
+    .masyarakat-card h4 {
+        font-size: 0.9rem;
+    }
+    
+    .masyarakat-card p {
+        font-size: 0.8rem;
+    }
+    
+    /* Masyarakat Dashboard Mobile Extra Small */
+    .masyarakat-icon {
+        width: 30px;
+        height: 30px;
+    }
+    
+    .masyarakat-icon i {
+        font-size: 0.8rem;
+    }
+    
+    .masyarakat-card {
+        padding: 0.6rem;
+    }
+    
+    .masyarakat-card h4 {
+        font-size: 0.85rem;
+    }
+    
+    .masyarakat-card p {
+        font-size: 0.75rem;
+    }
+    
+    /* Masyarakat Dashboard Mobile Extra Small */
+    .masyarakat-icon {
+        width: 25px;
+        height: 25px;
+    }
+    
+    .masyarakat-icon i {
+        font-size: 0.7rem;
+    }
+    
+    .masyarakat-card {
+        padding: 0.5rem;
+    }
+    
+    .masyarakat-card h4 {
+        font-size: 0.8rem;
+    }
+    
+    .masyarakat-card p {
+        font-size: 0.7rem;
+    }
+    
+    /* Masyarakat Dashboard Mobile Extra Small */
+    .masyarakat-icon {
+        width: 20px;
+        height: 20px;
+    }
+    
+    .masyarakat-icon i {
+        font-size: 0.6rem;
+    }
+    
+    .masyarakat-card {
+        padding: 0.4rem;
+    }
+    
+    .masyarakat-card h4 {
+        font-size: 0.75rem;
+    }
+    
+    .masyarakat-card p {
+        font-size: 0.65rem;
+    }
+    
+    /* Masyarakat Dashboard Mobile Extra Small */
+    .masyarakat-icon {
+        width: 18px;
+        height: 18px;
+    }
+    
+    .masyarakat-icon i {
+        font-size: 0.55rem;
+    }
+    
+    .masyarakat-card {
+        padding: 0.3rem;
+    }
+    
+    .masyarakat-card h4 {
+        font-size: 0.7rem;
+    }
+    
+    .masyarakat-card p {
+        font-size: 0.6rem;
+    }
+    
+    /* Unified Login Mobile */
+    #staffFields, #masyarakatFields {
+        padding: 0.5rem 0;
+    }
+    
+    #registerLink {
+        margin-top: 0.5rem;
+    }
+    
+    #registerLink p {
+        font-size: 0.8rem;
+    }
+    
+    /* Unified Login Mobile Small */
+    #staffFields, #masyarakatFields {
+        padding: 0.3rem 0;
+    }
+    
+    #registerLink {
+        margin-top: 0.3rem;
+    }
+    
+    #registerLink p {
+        font-size: 0.75rem;
+    }
+    
+    /* Unified Login Mobile Extra Small */
+    #staffFields, #masyarakatFields {
+        padding: 0.2rem 0;
+    }
+    
+    #registerLink {
+        margin-top: 0.2rem;
+    }
+    
+    #registerLink p {
+        font-size: 0.7rem;
+    }
+    
+    /* Unified Login Mobile Extra Small */
+    #staffFields, #masyarakatFields {
+        padding: 0.1rem 0;
+    }
+    
+    #registerLink {
+        margin-top: 0.1rem;
+    }
+    
+    #registerLink p {
+        font-size: 0.65rem;
+    }
+    
+    /* Unified Login Mobile Extra Small */
+    #staffFields, #masyarakatFields {
+        padding: 0.05rem 0;
+    }
+    
+    #registerLink {
+        margin-top: 0.05rem;
+    }
+    
+    #registerLink p {
+        font-size: 0.6rem;
+    }
+    
+    /* Unified Login Mobile Extra Small */
+    #staffFields, #masyarakatFields {
+        padding: 0.02rem 0;
+    }
+    
+    #registerLink {
+        margin-top: 0.02rem;
+    }
+    
+    #registerLink p {
+        font-size: 0.55rem;
+    }
+    
+    /* Ultra Mobile Styles */
+    .hero-section {
+        min-height: 50vh;
+        padding: 1rem 0;
+    }
+    
+    .hero-icon {
+        font-size: 4rem;
+    }
+    
+    .about-icon {
+        font-size: 4rem;
+    }
+    
+    .display-4 {
+        font-size: 1.8rem;
+    }
+    
+    .display-5 {
+        font-size: 1.5rem;
+    }
+    
+    .service-card {
+        padding: 1.2rem 1rem;
+    }
+    
+    .stat-card {
+        padding: 1rem;
+    }
+    
+    .card-body {
+        padding: 1rem;
+    }
+    
+    .modal-body {
+        padding: 1rem;
+    }
+    
+    .modal-header {
+        padding: 0.75rem 1rem;
+    }
+    
+    .navbar {
+        padding: 0.4rem 0;
+    }
+    
+    .navbar-brand {
+        font-size: 1.1rem;
+    }
+    
+    /* Enhanced Ultra Mobile Styles */
+    .hero-section {
+        background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 50%, #60a5fa 100%);
+    }
+    
+    .service-card {
+        box-shadow: 0 2px 8px rgba(30, 58, 138, 0.1);
+    }
+    
+    .stat-card {
+        box-shadow: 0 2px 8px rgba(30, 58, 138, 0.1);
+    }
+    
+    .card {
+        box-shadow: 0 2px 8px rgba(30, 58, 138, 0.1);
+    }
+    
+    .modal-content {
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    }
+    
+    .btn {
+        padding: 8px 14px;
+        font-size: 0.8rem;
+    }
+    
+    .form-control, .form-select {
+        padding: 10px 14px;
+        font-size: 0.9rem;
+    }
+    
+    /* Ultra Mobile Extra Small Styles */
+    .hero-section {
+        min-height: 40vh;
+        padding: 0.8rem 0;
+    }
+    
+    .hero-icon {
+        font-size: 3rem;
+    }
+    
+    .about-icon {
+        font-size: 3rem;
+    }
+    
+    .display-4 {
+        font-size: 1.6rem;
+    }
+    
+    .display-5 {
+        font-size: 1.4rem;
+    }
+    
+    .service-card {
+        padding: 1rem 0.8rem;
+    }
+    
+    .stat-card {
+        padding: 0.8rem;
+    }
+    
+    .card-body {
+        padding: 0.8rem;
+    }
+    
+    .modal-body {
+        padding: 0.8rem;
+    }
+    
+    .modal-header {
+        padding: 0.6rem 0.8rem;
+    }
+    
+    .navbar {
+        padding: 0.3rem 0;
+    }
+    
+    .navbar-brand {
+        font-size: 1rem;
+    }
+    
+    .btn {
+        padding: 6px 12px;
+        font-size: 0.75rem;
+    }
+    
+    .form-control, .form-select {
+        padding: 8px 12px;
+        font-size: 0.85rem;
+    }
+    
+    /* Ultra Mobile Extra Extra Small Styles */
+    .hero-section {
+        min-height: 35vh;
+        padding: 0.6rem 0;
+    }
+    
+    .hero-icon {
+        font-size: 2.5rem;
+    }
+    
+    .about-icon {
+        font-size: 2.5rem;
+    }
+    
+    .display-4 {
+        font-size: 1.4rem;
+    }
+    
+    .display-5 {
+        font-size: 1.2rem;
+    }
+    
+    .service-card {
+        padding: 0.8rem 0.6rem;
+    }
+    
+    .stat-card {
+        padding: 0.6rem;
+    }
+    
+    .card-body {
+        padding: 0.6rem;
+    }
+    
+    .modal-body {
+        padding: 0.6rem;
+    }
+    
+    .modal-header {
+        padding: 0.5rem 0.6rem;
+    }
+    
+    .navbar {
+        padding: 0.2rem 0;
+    }
+    
+    .navbar-brand {
+        font-size: 0.9rem;
+    }
+    
+    .btn {
+        padding: 4px 10px;
+        font-size: 0.7rem;
+    }
+    
+    .form-control, .form-select {
+        padding: 6px 10px;
+        font-size: 0.8rem;
+    }
+    
+    /* Ultra Mobile Extra Extra Extra Small Styles */
+    .hero-section {
+        min-height: 30vh;
+        padding: 0.4rem 0;
+    }
+    
+    .hero-icon {
+        font-size: 2rem;
+    }
+    
+    .about-icon {
+        font-size: 2rem;
+    }
+    
+    .display-4 {
+        font-size: 1.2rem;
+    }
+    
+    .display-5 {
+        font-size: 1rem;
+    }
+    
+    .service-card {
+        padding: 0.6rem 0.4rem;
+    }
+    
+    .stat-card {
+        padding: 0.4rem;
+    }
+    
+    .card-body {
+        padding: 0.4rem;
+    }
+    
+    .modal-body {
+        padding: 0.4rem;
+    }
+    
+    .modal-header {
+        padding: 0.4rem 0.4rem;
+    }
+    
+    .navbar {
+        padding: 0.1rem 0;
+    }
+    
+    .navbar-brand {
+        font-size: 0.8rem;
+    }
+    
+    .btn {
+        padding: 3px 8px;
+        font-size: 0.65rem;
+    }
+    
+    .form-control, .form-select {
+        padding: 4px 8px;
+        font-size: 0.75rem;
+    }
+    
+    /* User Menu Mobile */
+    .dropdown-menu {
+        margin-top: 0.3rem;
+        padding: 0.3rem 0;
+    }
+    
+    .dropdown-item {
+        padding: 0.5rem 1rem;
+        font-size: 0.85rem;
+    }
+    
+    .dropdown-item:hover {
+        transform: translateX(2px);
+    }
+    
+    /* User Menu Mobile Small */
+    .dropdown-menu {
+        margin-top: 0.2rem;
+        padding: 0.2rem 0;
+    }
+    
+    .dropdown-item {
+        padding: 0.4rem 0.8rem;
+        font-size: 0.8rem;
+    }
+    
+    .dropdown-item:hover {
+        transform: translateX(1px);
+    }
+    
+    /* User Menu Mobile Extra Small */
+    .dropdown-menu {
+        margin-top: 0.1rem;
+        padding: 0.1rem 0;
+    }
+    
+    .dropdown-item {
+        padding: 0.3rem 0.6rem;
+        font-size: 0.75rem;
+    }
+    
+    .dropdown-item:hover {
+        transform: translateX(0.5px);
+    }
+    
+    /* User Menu Mobile Extra Extra Small */
+    .dropdown-menu {
+        margin-top: 0.05rem;
+        padding: 0.05rem 0;
+    }
+    
+    .dropdown-item {
+        padding: 0.2rem 0.4rem;
+        font-size: 0.7rem;
+    }
+    
+    .dropdown-item:hover {
+        transform: translateX(0.2px);
+    }
+    
+    /* User Menu Mobile Extra Extra Extra Small */
+    .dropdown-menu {
+        margin-top: 0.02rem;
+        padding: 0.02rem 0;
+    }
+    
+    .dropdown-item {
+        padding: 0.1rem 0.3rem;
+        font-size: 0.65rem;
+    }
+    
+    .dropdown-item:hover {
+        transform: translateX(0.1px);
+    }
+    
+    /* User Menu Mobile Extra Extra Extra Extra Small */
+    .dropdown-menu {
+        margin-top: 0.01rem;
+        padding: 0.01rem 0;
+    }
+    
+    .dropdown-item {
+        padding: 0.05rem 0.2rem;
+        font-size: 0.6rem;
+    }
+    
+    .dropdown-item:hover {
+        transform: translateX(0.05px);
+    }
+}
