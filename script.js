@@ -580,6 +580,161 @@ function showRegistrationPrompt() {
     }, 1500);
 }
 
+// Show Veterinary Practice Recommendation
+function showVetPracticeRecommendation() {
+    const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+    
+    if (!currentUser || !currentUser.nik) {
+        showAlert('Silahkan login terlebih dahulu untuk mengakses rekomendasi praktek dokter hewan.', 'warning');
+        setTimeout(() => {
+            showLoginModal();
+        }, 1500);
+        return;
+    }
+    
+    // Show veterinary practice recommendations
+    const recommendations = [
+        {
+            name: "Klinik Hewan Sejahtera",
+            address: "Jl. Veteran No. 123, Jakarta Pusat",
+            phone: "(021) 1234-5678",
+            rating: 4.8,
+            specialties: ["Umum", "Bedah", "Grooming"],
+            distance: "2.5 km"
+        },
+        {
+            name: "Pusat Kesehatan Hewan Modern",
+            address: "Jl. Gatot Subroto No. 456, Jakarta Selatan",
+            phone: "(021) 2345-6789",
+            rating: 4.9,
+            specialties: ["Spesialis", "Emergency", "Radiologi"],
+            distance: "3.2 km"
+        },
+        {
+            name: "Klinik Hewan Keluarga",
+            address: "Jl. Sudirman No. 789, Jakarta Pusat",
+            phone: "(021) 3456-7890",
+            rating: 4.7,
+            specialties: ["Umum", "Vaksinasi", "Konsultasi"],
+            distance: "1.8 km"
+        }
+    ];
+    
+    let recommendationHTML = `
+        <div class="vet-recommendation-modal">
+            <h4><i class="fas fa-map-marker-alt me-2"></i>Rekomendasi Praktek Dokter Hewan</h4>
+            <p class="text-muted mb-4">Berikut adalah rekomendasi praktek dokter hewan terdekat berdasarkan lokasi Anda:</p>
+    `;
+    
+    recommendations.forEach((clinic, index) => {
+        recommendationHTML += `
+            <div class="clinic-card mb-3 p-3 border rounded">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                    <h6 class="mb-0 text-primary">${clinic.name}</h6>
+                    <span class="badge bg-success">${clinic.rating} ⭐</span>
+                </div>
+                <p class="mb-1"><i class="fas fa-map-marker-alt me-1"></i>${clinic.address}</p>
+                <p class="mb-1"><i class="fas fa-phone me-1"></i>${clinic.phone}</p>
+                <p class="mb-1"><i class="fas fa-route me-1"></i>Jarak: ${clinic.distance}</p>
+                <div class="specialties">
+                    <small class="text-muted">Spesialisasi: </small>
+                    ${clinic.specialties.map(spec => `<span class="badge bg-light text-dark me-1">${spec}</span>`).join('')}
+                </div>
+            </div>
+        `;
+    });
+    
+    recommendationHTML += `
+        <div class="text-center mt-3">
+            <button class="btn btn-primary" onclick="closeRecommendationModal()">
+                <i class="fas fa-check me-1"></i>Tutup
+            </button>
+        </div>
+    </div>`;
+    
+    showAlert(recommendationHTML, 'info', 10000);
+}
+
+// Show Veterinary Control Number Recommendation
+function showVetControlNumberRecommendation() {
+    const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+    
+    if (!currentUser || !currentUser.nik) {
+        showAlert('Silahkan login terlebih dahulu untuk mengakses rekomendasi nomor kontrol veteriner.', 'warning');
+        setTimeout(() => {
+            showLoginModal();
+        }, 1500);
+        return;
+    }
+    
+    // Show veterinary control number recommendations
+    const controlNumbers = [
+        {
+            type: "Kontrol Rutin",
+            number: "KV-001-2024",
+            description: "Untuk pemeriksaan kesehatan rutin hewan peliharaan",
+            validity: "30 hari",
+            requirements: ["Kartu identitas", "Surat keterangan hewan"]
+        },
+        {
+            type: "Kontrol Darurat",
+            number: "KV-EMG-2024",
+            description: "Untuk situasi darurat kesehatan hewan",
+            validity: "7 hari",
+            requirements: ["Kartu identitas", "Laporan kondisi hewan"]
+        },
+        {
+            type: "Kontrol Vaksinasi",
+            number: "KV-VAC-2024",
+            description: "Untuk program vaksinasi dan imunisasi hewan",
+            validity: "14 hari",
+            requirements: ["Kartu identitas", "Riwayat vaksinasi"]
+        }
+    ];
+    
+    let controlNumberHTML = `
+        <div class="vet-control-modal">
+            <h4><i class="fas fa-id-card me-2"></i>Rekomendasi Nomor Kontrol Veteriner</h4>
+            <p class="text-muted mb-4">Berikut adalah jenis nomor kontrol veteriner yang tersedia:</p>
+    `;
+    
+    controlNumbers.forEach((control, index) => {
+        controlNumberHTML += `
+            <div class="control-card mb-3 p-3 border rounded">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                    <h6 class="mb-0 text-primary">${control.type}</h6>
+                    <span class="badge bg-info">${control.number}</span>
+                </div>
+                <p class="mb-2">${control.description}</p>
+                <p class="mb-1"><i class="fas fa-clock me-1"></i>Masa berlaku: ${control.validity}</p>
+                <div class="requirements">
+                    <small class="text-muted">Persyaratan: </small>
+                    ${control.requirements.map(req => `<span class="badge bg-light text-dark me-1">${req}</span>`).join('')}
+                </div>
+            </div>
+        `;
+    });
+    
+    controlNumberHTML += `
+        <div class="text-center mt-3">
+            <button class="btn btn-primary" onclick="closeRecommendationModal()">
+                <i class="fas fa-check me-1"></i>Tutup
+            </button>
+        </div>
+    </div>`;
+    
+    showAlert(controlNumberHTML, 'info', 10000);
+}
+
+// Close Recommendation Modal
+function closeRecommendationModal() {
+    // Close any open alerts/modals
+    const alertContainer = document.querySelector('.alert-container');
+    if (alertContainer) {
+        alertContainer.remove();
+    }
+}
+
 // Initialize Statistics Chart
 async function initializeStatisticsChart() {
     const ctx = document.getElementById('statisticsChart');
@@ -802,4 +957,7 @@ window.generateId = generateId;
 window.updateUserMenu = updateUserMenu;
 window.updateUserMenuAfterLogin = updateUserMenuAfterLogin;
 window.showRegistrationPrompt = showRegistrationPrompt;
+window.showVetPracticeRecommendation = showVetPracticeRecommendation;
+window.showVetControlNumberRecommendation = showVetControlNumberRecommendation;
+window.closeRecommendationModal = closeRecommendationModal;
 window.refreshStatisticsChart = refreshStatisticsChart;
