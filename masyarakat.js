@@ -99,6 +99,9 @@ function updateDashboard() {
     updateProfile();
     updateAnimalsList();
     updateAnimalSelects();
+    updateSelectedServices();
+    updateAvailableServices();
+    updateHistoryServices();
 }
 
 // Update User Info
@@ -745,7 +748,7 @@ function updateUserDisplay() {
 function loadProfileInfo() {
     const profileInfo = document.getElementById('profileInfo');
     if (!profileInfo || !currentUser) return;
-    
+
     profileInfo.innerHTML = `
         <div class="row g-3">
             <div class="col-md-6">
@@ -784,7 +787,7 @@ function loadProfileInfo() {
                     <p class="form-control-plaintext">
                         <span class="badge bg-primary">${currentUser.role || 'masyarakat'}</span>
                     </p>
-                </div>
+            </div>
             </div>
             <div class="col-md-6">
                 <div class="mb-3">
@@ -796,4 +799,184 @@ function loadProfileInfo() {
             </div>
         </div>
     `;
+}
+
+// Update Selected Services
+function updateSelectedServices() {
+    const selectedServicesContainer = document.getElementById('selectedServices');
+    if (!selectedServicesContainer) return;
+
+    // Get selected services (services with status 'selected' or 'active')
+    const selectedServices = userServices.filter(service => 
+        service.status === 'selected' || service.status === 'active'
+    );
+
+    if (selectedServices.length === 0) {
+        selectedServicesContainer.innerHTML = `
+            <div class="col-12 text-center">
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle me-2"></i>
+                    Belum ada layanan yang dipilih
+                </div>
+            </div>
+        `;
+        return;
+    }
+
+    selectedServicesContainer.innerHTML = selectedServices.map(service => `
+        <div class="col-lg-4 col-md-6">
+            <div class="card service-card">
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="service-icon me-3">
+                            <i class="fas ${getServiceIcon(service.type)}"></i>
+                        </div>
+                        <div>
+                            <h6 class="mb-1">${service.type}</h6>
+                            <small class="text-muted">${service.animalName}</small>
+                        </div>
+                    </div>
+                    <p class="text-muted small mb-3">${service.description || 'Tidak ada deskripsi'}</p>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="badge bg-success">${service.status}</span>
+                        <button class="btn btn-sm btn-outline-primary" onclick="viewService('${service.id}')">
+                            <i class="fas fa-eye me-1"></i>Detail
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `).join('');
+}
+
+// Update Available Services
+function updateAvailableServices() {
+    const availableServicesContainer = document.getElementById('availableServices');
+    if (!availableServicesContainer) return;
+
+    // Define available services
+    const availableServices = [
+        {
+            id: 'treatment',
+            name: 'Pengobatan Hewan',
+            description: 'Layanan pengobatan hewan dengan dokter hewan berpengalaman',
+            icon: 'fas fa-stethoscope',
+            color: 'primary'
+        },
+        {
+            id: 'vaccination',
+            name: 'Vaksinasi Rabies',
+            description: 'Program vaksinasi rabies untuk mencegah penularan penyakit',
+            icon: 'fas fa-syringe',
+            color: 'success'
+        },
+        {
+            id: 'telemedicine',
+            name: 'Telemedicine',
+            description: 'Konsultasi kesehatan hewan secara online',
+            icon: 'fas fa-video',
+            color: 'info'
+        }
+    ];
+
+    availableServicesContainer.innerHTML = availableServices.map(service => `
+        <div class="col-lg-4 col-md-6">
+            <div class="card service-card">
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="service-icon me-3">
+                            <i class="${service.icon}"></i>
+                        </div>
+                        <div>
+                            <h6 class="mb-1">${service.name}</h6>
+                            <small class="text-muted">Layanan Tersedia</small>
+                        </div>
+                    </div>
+                    <p class="text-muted small mb-3">${service.description}</p>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="badge bg-${service.color}">Tersedia</span>
+                        <button class="btn btn-sm btn-${service.color}" onclick="selectService('${service.id}')">
+                            <i class="fas fa-plus me-1"></i>Pilih
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `).join('');
+}
+
+// Update History Services
+function updateHistoryServices() {
+    const historyTable = document.getElementById('historyServicesTable');
+    if (!historyTable) return;
+
+    // Get completed services
+    const historyServices = userServices.filter(service => 
+        service.status === 'completed' || service.status === 'cancelled'
+    );
+
+    if (historyServices.length === 0) {
+        historyTable.innerHTML = `
+            <tr>
+                <td colspan="5" class="text-center text-muted">
+                    <i class="fas fa-history me-2"></i>
+                    Belum ada riwayat layanan
+                </td>
+            </tr>
+        `;
+        return;
+    }
+
+    historyTable.innerHTML = historyServices.map(service => `
+        <tr>
+            <td>${formatDate(service.date)}</td>
+            <td>${service.animalName}</td>
+            <td>${service.type}</td>
+            <td>
+                <span class="badge bg-${service.status === 'completed' ? 'success' : 'danger'}">
+                    ${service.status === 'completed' ? 'Selesai' : 'Dibatalkan'}
+                </span>
+            </td>
+            <td>
+                <button class="btn btn-sm btn-outline-primary" onclick="viewService('${service.id}')">
+                    <i class="fas fa-eye me-1"></i>Detail
+                </button>
+            </td>
+        </tr>
+    `).join('');
+}
+
+// Select Service
+function selectService(serviceType) {
+    // Show appropriate modal based on service type
+    switch(serviceType) {
+        case 'treatment':
+            showNewServiceModal();
+            break;
+        case 'vaccination':
+            showVaccinationModal();
+            break;
+        case 'telemedicine':
+            showTelemedicineModal();
+            break;
+        default:
+            showAlert('Layanan tidak tersedia', 'error');
+    }
+}
+
+// Get Service Icon
+function getServiceIcon(serviceType) {
+    switch(serviceType) {
+        case 'Pengobatan':
+        case 'treatment':
+            return 'fas fa-stethoscope';
+        case 'Vaksinasi':
+        case 'vaccination':
+            return 'fas fa-syringe';
+        case 'Telemedicine':
+        case 'telemedicine':
+            return 'fas fa-video';
+        default:
+            return 'fas fa-paw';
+    }
 }
