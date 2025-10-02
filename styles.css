@@ -243,50 +243,6 @@ body {
     color: var(--navy-primary) !important;
 }
 
-/* Contact Cards */
-.contact-card {
-    background: white;
-    padding: 1.5rem 1rem;
-    border-radius: 15px;
-    text-align: center;
-    box-shadow: var(--shadow-soft);
-    transition: all 0.3s ease;
-    border: 1px solid rgba(30, 58, 138, 0.1);
-    height: 100%;
-}
-
-.contact-card:hover {
-    transform: translateY(-8px);
-    box-shadow: var(--shadow-strong);
-}
-
-.contact-icon {
-    width: 45px;
-    height: 45px;
-    background: var(--gradient-primary);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto 1rem;
-    transition: all 0.3s ease;
-}
-
-.contact-icon i {
-    font-size: 1.2rem;
-    color: white;
-}
-
-.contact-card:hover .contact-icon {
-    transform: scale(1.1);
-}
-
-.contact-card h5 {
-    color: var(--navy-primary);
-    font-weight: 700;
-    margin-bottom: 0.3rem;
-    font-size: 1rem;
-}
 
 /* Footer */
 footer {
@@ -710,7 +666,7 @@ footer::before {
         font-size: 2rem;
     }
     
-    .service-card, .contact-card {
+    .service-card {
         margin-bottom: 2rem;
     }
     
@@ -858,7 +814,7 @@ footer::before {
         font-size: 2rem;
     }
     
-    .service-card, .contact-card {
+    .service-card {
         padding: 2rem 1.5rem;
     }
     
@@ -2742,7 +2698,7 @@ canvas {
         font-size: 1.8rem;
     }
     
-    .service-card, .contact-card {
+    .service-card {
         padding: 1.5rem 1.2rem;
     }
     
