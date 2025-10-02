@@ -51,205 +51,158 @@
     </nav>
 
 
-    <!-- Command Center Dashboard -->
-    <section id="dashboard" class="py-4 bg-dark">
+    <!-- Unified Info Dashboard -->
+    <section id="dashboard" class="py-5 bg-light">
         <div class="container">
-            <div class="row text-center mb-4">
-                <div class="col-12">
-                    <h2 class="display-6 fw-bold text-white mb-2">
-                        <i class="fas fa-tachometer-alt me-2"></i>Command Center
-                    </h2>
-                    <p class="text-light">Real-time monitoring sistem pelayanan kesehatan hewan</p>
-                </div>
-            </div>
-            <div class="row g-3">
-                <div class="col-12">
-                    <div class="command-card">
-                        <div class="command-icon">
-                            <i class="fas fa-paw"></i>
+            <div class="row justify-content-center">
+                <div class="col-lg-10">
+                    <div class="unified-card">
+                        <div class="card-header">
+                            <h2 class="card-title">
+                                <i class="fas fa-tachometer-alt me-2"></i>Pelayanan Kesehatan Hewan
+                            </h2>
+                            <p class="card-subtitle">Sistem terintegrasi untuk pelayanan kesehatan hewan terbaik</p>
                         </div>
-                        <div class="command-content">
-                            <h4 class="command-number">2.5K</h4>
-                            <p class="command-label">Hewan Terselamatkan</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-12">
-                    <div class="command-card">
-                        <div class="command-icon">
-                            <i class="fas fa-user-md"></i>
-                        </div>
-                        <div class="command-content">
-                            <h4 class="command-number">15</h4>
-                            <p class="command-label">Dokter Hewan Profesional</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-12">
-                    <div class="command-card">
-                        <div class="command-icon">
-                            <i class="fas fa-clock"></i>
-                        </div>
-                        <div class="command-content">
-                            <h4 class="command-number">24/7</h4>
-                            <p class="command-label">Layanan Darurat Online</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-12">
-                    <div class="command-card">
-                        <div class="command-icon">
-                            <i class="fas fa-star"></i>
-                        </div>
-                        <div class="command-content">
-                            <h4 class="command-number">98%</h4>
-                            <p class="command-label">Tingkat Kepuasan Pelanggan</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-12">
-                    <div class="command-card">
-                        <div class="command-icon">
-                            <i class="fas fa-heartbeat"></i>
-                        </div>
-                        <div class="command-content">
-                            <h4 class="command-number">99%</h4>
-                            <p class="command-label">Tingkat Keberhasilan Pengobatan</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-12">
-                    <div class="command-card">
-                        <div class="command-icon">
-                            <i class="fas fa-shield-alt"></i>
-                        </div>
-                        <div class="command-content">
-                            <h4 class="command-number">100%</h4>
-                            <p class="command-label">Keamanan dan Keamanan Data</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Services Command Center -->
-    <section id="services" class="py-4 bg-light">
-        <div class="container">
-            <div class="row text-center mb-4">
-                <div class="col-12">
-                    <h2 class="display-6 fw-bold text-navy mb-2">
-                        <i class="fas fa-cogs me-2"></i>Service Modules
-                    </h2>
-                    <p class="text-muted">Pilih modul layanan yang Anda butuhkan</p>
-                </div>
-            </div>
-            <div class="row g-3">
-                <div class="col-12">
-                    <div class="service-module" 
-                         data-bs-toggle="tooltip" 
-                         data-bs-placement="top" 
-                         title="Silahkan daftar terlebih dahulu"
-                         onclick="showRegistrationPrompt()">
-                        <div class="module-icon">
-                            <i class="fas fa-stethoscope"></i>
-                        </div>
-                        <div class="module-content">
-                            <h5 class="module-title">Pengobatan Hewan</h5>
-                            <p class="module-desc">Layanan pengobatan hewan dengan dokter hewan berpengalaman</p>
-                        </div>
-                        <div class="module-status">
-                            <span class="status-dot active"></span>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-12">
-                    <div class="service-module" 
-                         data-bs-toggle="tooltip" 
-                         data-bs-placement="top" 
-                         title="Silahkan daftar terlebih dahulu"
-                         onclick="showRegistrationPrompt()">
-                        <div class="module-icon">
-                            <i class="fas fa-syringe"></i>
-                        </div>
-                        <div class="module-content">
-                            <h5 class="module-title">Vaksinasi Rabies</h5>
-                            <p class="module-desc">Program vaksinasi rabies untuk mencegah penularan penyakit berbahaya</p>
-                        </div>
-                        <div class="module-status">
-                            <span class="status-dot active"></span>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-12">
-                    <div class="service-module" 
-                         data-bs-toggle="tooltip" 
-                         data-bs-placement="top" 
-                         title="Silahkan daftar terlebih dahulu"
-                         onclick="showRegistrationPrompt()">
-                        <div class="module-icon">
-                            <i class="fas fa-video"></i>
-                        </div>
-                        <div class="module-content">
-                            <h5 class="module-title">Telemedicine</h5>
-                            <p class="module-desc">Konsultasi kesehatan hewan secara online dengan dokter hewan profesional</p>
-                        </div>
-                        <div class="module-status">
-                            <span class="status-dot active"></span>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-12">
-                    <div class="service-module" 
-                         data-bs-toggle="tooltip" 
-                         data-bs-placement="top" 
-                         title="Silahkan daftar terlebih dahulu"
-                         onclick="showRegistrationPrompt()">
-                        <div class="module-icon">
-                            <i class="fas fa-ambulance"></i>
-                        </div>
-                        <div class="module-content">
-                            <h5 class="module-title">Layanan Darurat</h5>
-                            <p class="module-desc">Layanan darurat 24/7 untuk penanganan hewan yang membutuhkan pertolongan segera</p>
-                        </div>
-                        <div class="module-status">
-                            <span class="status-dot active"></span>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-12">
-                    <div class="service-module" 
-                         data-bs-toggle="tooltip" 
-                         data-bs-placement="top" 
-                         title="Silahkan daftar terlebih dahulu"
-                         onclick="showRegistrationPrompt()">
-                        <div class="module-icon">
-                            <i class="fas fa-microscope"></i>
-                        </div>
-                        <div class="module-content">
-                            <h5 class="module-title">Laboratorium</h5>
-                            <p class="module-desc">Layanan pemeriksaan laboratorium untuk diagnosis penyakit hewan</p>
-                        </div>
-                        <div class="module-status">
-                            <span class="status-dot active"></span>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-12">
-                    <div class="service-module" 
-                         data-bs-toggle="tooltip" 
-                         data-bs-placement="top" 
-                         title="Silahkan daftar terlebih dahulu"
-                         onclick="showRegistrationPrompt()">
-                        <div class="module-icon">
-                            <i class="fas fa-pills"></i>
-                        </div>
-                        <div class="module-content">
-                            <h5 class="module-title">Apotek Hewan</h5>
-                            <p class="module-desc">Layanan apotek untuk obat-obatan dan suplemen kesehatan hewan</p>
-                        </div>
-                        <div class="module-status">
-                            <span class="status-dot active"></span>
+                        <div class="card-body">
+                            <!-- Statistics Row -->
+                            <div class="stats-row">
+                                <div class="stat-item">
+                                    <div class="stat-icon">
+                                        <i class="fas fa-paw"></i>
+                                    </div>
+                                    <div class="stat-content">
+                                        <h4 class="stat-number">2.5K</h4>
+                                        <p class="stat-label">Hewan Terselamatkan</p>
+                                    </div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-icon">
+                                        <i class="fas fa-user-md"></i>
+                                    </div>
+                                    <div class="stat-content">
+                                        <h4 class="stat-number">15</h4>
+                                        <p class="stat-label">Dokter Hewan</p>
+                                    </div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-icon">
+                                        <i class="fas fa-clock"></i>
+                                    </div>
+                                    <div class="stat-content">
+                                        <h4 class="stat-number">24/7</h4>
+                                        <p class="stat-label">Layanan Darurat</p>
+                                    </div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-icon">
+                                        <i class="fas fa-star"></i>
+                                    </div>
+                                    <div class="stat-content">
+                                        <h4 class="stat-number">98%</h4>
+                                        <p class="stat-label">Kepuasan</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Services Row -->
+                            <div class="services-row">
+                                <div class="service-item" 
+                                     data-bs-toggle="tooltip" 
+                                     data-bs-placement="top" 
+                                     title="Silahkan daftar terlebih dahulu"
+                                     onclick="showRegistrationPrompt()">
+                                    <div class="service-icon">
+                                        <i class="fas fa-stethoscope"></i>
+                                    </div>
+                                    <div class="service-content">
+                                        <h5 class="service-title">Pengobatan Hewan</h5>
+                                        <p class="service-desc">Dokter hewan berpengalaman</p>
+                                    </div>
+                                    <div class="service-status">
+                                        <span class="status-dot active"></span>
+                                    </div>
+                                </div>
+                                <div class="service-item" 
+                                     data-bs-toggle="tooltip" 
+                                     data-bs-placement="top" 
+                                     title="Silahkan daftar terlebih dahulu"
+                                     onclick="showRegistrationPrompt()">
+                                    <div class="service-icon">
+                                        <i class="fas fa-syringe"></i>
+                                    </div>
+                                    <div class="service-content">
+                                        <h5 class="service-title">Vaksinasi Rabies</h5>
+                                        <p class="service-desc">Pencegahan penyakit berbahaya</p>
+                                    </div>
+                                    <div class="service-status">
+                                        <span class="status-dot active"></span>
+                                    </div>
+                                </div>
+                                <div class="service-item" 
+                                     data-bs-toggle="tooltip" 
+                                     data-bs-placement="top" 
+                                     title="Silahkan daftar terlebih dahulu"
+                                     onclick="showRegistrationPrompt()">
+                                    <div class="service-icon">
+                                        <i class="fas fa-video"></i>
+                                    </div>
+                                    <div class="service-content">
+                                        <h5 class="service-title">Telemedicine</h5>
+                                        <p class="service-desc">Konsultasi online</p>
+                                    </div>
+                                    <div class="service-status">
+                                        <span class="status-dot active"></span>
+                                    </div>
+                                </div>
+                                <div class="service-item" 
+                                     data-bs-toggle="tooltip" 
+                                     data-bs-placement="top" 
+                                     title="Silahkan daftar terlebih dahulu"
+                                     onclick="showRegistrationPrompt()">
+                                    <div class="service-icon">
+                                        <i class="fas fa-ambulance"></i>
+                                    </div>
+                                    <div class="service-content">
+                                        <h5 class="service-title">Layanan Darurat</h5>
+                                        <p class="service-desc">24/7 emergency</p>
+                                    </div>
+                                    <div class="service-status">
+                                        <span class="status-dot active"></span>
+                                    </div>
+                                </div>
+                                <div class="service-item" 
+                                     data-bs-toggle="tooltip" 
+                                     data-bs-placement="top" 
+                                     title="Silahkan daftar terlebih dahulu"
+                                     onclick="showRegistrationPrompt()">
+                                    <div class="service-icon">
+                                        <i class="fas fa-microscope"></i>
+                                    </div>
+                                    <div class="service-content">
+                                        <h5 class="service-title">Laboratorium</h5>
+                                        <p class="service-desc">Diagnosis penyakit</p>
+                                    </div>
+                                    <div class="service-status">
+                                        <span class="status-dot active"></span>
+                                    </div>
+                                </div>
+                                <div class="service-item" 
+                                     data-bs-toggle="tooltip" 
+                                     data-bs-placement="top" 
+                                     title="Silahkan daftar terlebih dahulu"
+                                     onclick="showRegistrationPrompt()">
+                                    <div class="service-icon">
+                                        <i class="fas fa-pills"></i>
+                                    </div>
+                                    <div class="service-content">
+                                        <h5 class="service-title">Apotek Hewan</h5>
+                                        <p class="service-desc">Obat & suplemen</p>
+                                    </div>
+                                    <div class="service-status">
+                                        <span class="status-dot active"></span>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

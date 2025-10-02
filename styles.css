@@ -419,9 +419,339 @@ h2 {
     padding-right: 3rem !important;
 }
 
-/* Command Center Style */
-.bg-dark {
-    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%) !important;
+/* Unified Card Style */
+.unified-card {
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 20px 60px rgba(30, 58, 138, 0.15);
+    border: 1px solid rgba(30, 58, 138, 0.1);
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.unified-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 25px 80px rgba(30, 58, 138, 0.2);
+}
+
+.card-header {
+    background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+    color: white;
+    padding: 2rem;
+    text-align: center;
+}
+
+.card-title {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    line-height: 1.2;
+}
+
+.card-subtitle {
+    font-size: 1.1rem;
+    opacity: 0.9;
+    margin-bottom: 0;
+    line-height: 1.4;
+}
+
+.card-body {
+    padding: 2rem;
+}
+
+/* Statistics Row */
+.stats-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.stat-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    border-radius: 12px;
+    border: 1px solid rgba(30, 58, 138, 0.1);
+    transition: all 0.3s ease;
+}
+
+.stat-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(30, 58, 138, 0.1);
+}
+
+.stat-icon {
+    width: 50px;
+    height: 50px;
+    background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.stat-icon i {
+    font-size: 1.5rem;
+    color: white;
+}
+
+.stat-content {
+    flex-grow: 1;
+}
+
+.stat-number {
+    color: #1e40af;
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-bottom: 0.25rem;
+    line-height: 1;
+}
+
+.stat-label {
+    color: #64748b;
+    font-size: 0.9rem;
+    font-weight: 500;
+    margin-bottom: 0;
+    line-height: 1.3;
+}
+
+/* Services Row */
+.services-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1rem;
+}
+
+.service-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    position: relative;
+}
+
+.service-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(30, 58, 138, 0.15);
+    border-color: #3b82f6;
+}
+
+.service-icon {
+    width: 45px;
+    height: 45px;
+    background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.service-icon i {
+    font-size: 1.3rem;
+    color: white;
+}
+
+.service-content {
+    flex-grow: 1;
+}
+
+.service-title {
+    color: #1e40af;
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+    line-height: 1.2;
+}
+
+.service-desc {
+    color: #64748b;
+    font-size: 0.85rem;
+    margin-bottom: 0;
+    line-height: 1.3;
+}
+
+.service-status {
+    position: absolute;
+    top: 0.75rem;
+    right: 0.75rem;
+}
+
+.status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.status-dot.active {
+    background: #10b981;
+    box-shadow: 0 0 6px rgba(16, 185, 129, 0.5);
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+/* Responsive Unified Card */
+@media (max-width: 768px) {
+    .unified-card {
+        margin: 0 1rem;
+    }
+    
+    .card-header {
+        padding: 1.5rem;
+    }
+    
+    .card-title {
+        font-size: 1.5rem;
+    }
+    
+    .card-subtitle {
+        font-size: 1rem;
+    }
+    
+    .card-body {
+        padding: 1.5rem;
+    }
+    
+    .stats-row {
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .stat-item {
+        padding: 0.75rem;
+        gap: 0.75rem;
+    }
+    
+    .stat-icon {
+        width: 40px;
+        height: 40px;
+    }
+    
+    .stat-icon i {
+        font-size: 1.2rem;
+    }
+    
+    .stat-number {
+        font-size: 1.5rem;
+    }
+    
+    .stat-label {
+        font-size: 0.8rem;
+    }
+    
+    .services-row {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+    }
+    
+    .service-item {
+        padding: 0.75rem;
+        gap: 0.75rem;
+    }
+    
+    .service-icon {
+        width: 40px;
+        height: 40px;
+    }
+    
+    .service-icon i {
+        font-size: 1.1rem;
+    }
+    
+    .service-title {
+        font-size: 0.9rem;
+    }
+    
+    .service-desc {
+        font-size: 0.8rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .unified-card {
+        margin: 0 0.5rem;
+    }
+    
+    .card-header {
+        padding: 1rem;
+    }
+    
+    .card-title {
+        font-size: 1.3rem;
+    }
+    
+    .card-subtitle {
+        font-size: 0.9rem;
+    }
+    
+    .card-body {
+        padding: 1rem;
+    }
+    
+    .stats-row {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+        margin-bottom: 1rem;
+    }
+    
+    .stat-item {
+        padding: 0.5rem;
+        gap: 0.5rem;
+    }
+    
+    .stat-icon {
+        width: 35px;
+        height: 35px;
+    }
+    
+    .stat-icon i {
+        font-size: 1rem;
+    }
+    
+    .stat-number {
+        font-size: 1.3rem;
+    }
+    
+    .stat-label {
+        font-size: 0.75rem;
+    }
+    
+    .service-item {
+        padding: 0.5rem;
+        gap: 0.5rem;
+    }
+    
+    .service-icon {
+        width: 35px;
+        height: 35px;
+    }
+    
+    .service-icon i {
+        font-size: 1rem;
+    }
+    
+    .service-title {
+        font-size: 0.85rem;
+    }
+    
+    .service-desc {
+        font-size: 0.75rem;
+    }
 }
 
 /* Command Cards */
