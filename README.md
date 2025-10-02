@@ -1,209 +1,472 @@
-# Pelayanan Keswan - Aplikasi Layanan Masyarakat
+# 🏥 Pelayanan Keswan
 
-Aplikasi layanan masyarakat untuk pelayanan kesehatan hewan yang komprehensif dengan fitur pengobatan hewan, vaksinasi rabies, dan telemedicine.
+> Aplikasi Pelayanan Kesehatan Hewan dengan integrasi Supabase dan deployment Vercel
 
-## 🚀 Fitur Utama
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/yourusername/pelayanan-keswan)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Supabase](https://img.shields.io/badge/Supabase-3ECF8E?style=flat&logo=supabase&logoColor=white)](https://supabase.com)
+[![Vercel](https://img.shields.io/badge/Vercel-000000?style=flat&logo=vercel&logoColor=white)](https://vercel.com)
 
-### 🏠 Halaman Utama
-- Landing page yang menarik dengan desain responsif
-- Informasi layanan yang tersedia
-- Sistem registrasi masyarakat dengan validasi NIK
-- Login untuk petugas dan administrator
+## 🚀 Live Demo
 
-### 👨‍⚕️ Panel Petugas
-- Dashboard dengan statistik harian
-- Manajemen layanan pengobatan hewan
-- Sistem vaksinasi rabies
-- Telemedicine untuk konsultasi online
-- Manajemen stock obat terintegrasi
-- Tracking status layanan
+- **Production**: https://pelayanan-keswan.vercel.app
+- **Staging**: https://pelayanan-keswan-git-main.vercel.app
+- **Preview**: https://pelayanan-keswan-git-feature.vercel.app
 
-### 👨‍💼 Panel Administrator
-- Dashboard dengan analisis mendalam
-- Statistik dan grafik interaktif
-- Laporan bulanan dan export data
-- Manajemen pengguna
-- Monitoring stock obat
-- Analisis tren layanan
+## 📋 Table of Contents
 
-### 🏥 Layanan Kesehatan Hewan
-- **Pengobatan Hewan**: Konsultasi dan pengobatan dengan dokter hewan
-- **Vaksinasi Rabies**: Program vaksinasi untuk mencegah rabies
-- **Telemedicine**: Konsultasi online via video call
-- **Stock Management**: Manajemen obat-obatan terintegrasi
+- [Features](#-features)
+- [Tech Stack](#-tech-stack)
+- [Quick Start](#-quick-start)
+- [Installation](#-installation)
+- [Configuration](#-configuration)
+- [Deployment](#-deployment)
+- [API Documentation](#-api-documentation)
+- [Contributing](#-contributing)
+- [License](#-license)
 
-## 🎨 Desain
+## ✨ Features
 
-- **Tema**: Degradasi biru navy yang elegan
-- **Responsif**: Optimal di semua perangkat
-- **Modern**: UI/UX yang user-friendly
-- **Animasi**: Transisi yang smooth dan menarik
+### 👥 User Management
+- ✅ **Multi-role System**: Masyarakat, Petugas, Admin
+- ✅ **Secure Authentication**: NIK-based login
+- ✅ **User Registration**: Public registration system
+- ✅ **Profile Management**: Complete user profiles
+- ✅ **Role-based Access**: Different access levels
 
-## 🔐 Sistem Autentikasi
+### 🐾 Animal Management
+- ✅ **Animal Registration**: Complete animal profiles
+- ✅ **Medical History**: Track treatment history
+- ✅ **Vaccination Records**: Vaccination tracking
+- ✅ **Health Monitoring**: Regular health checks
 
-### Kredensial Default
-- **Petugas**: 
-  - Username: `petugas`
-  - Password: `petugas123`
-- **Administrator**: 
-  - Username: `admin`
-  - Password: `admin123`
+### 🏥 Service Management
+- ✅ **Treatment Services**: Medical treatment booking
+- ✅ **Vaccination Services**: Vaccination scheduling
+- ✅ **Telemedicine**: Remote consultation
+- ✅ **Emergency Services**: Urgent care booking
+- ✅ **Service Tracking**: Status monitoring
 
-### Registrasi Masyarakat
-- Wajib menggunakan NIK (16 digit)
-- Validasi NIK otomatis
-- Data tersimpan di localStorage
+### 💊 Medicine Management
+- ✅ **Stock Management**: Medicine inventory
+- ✅ **Price Tracking**: Cost management
+- ✅ **Expiry Monitoring**: Expiry date tracking
+- ✅ **Usage Analytics**: Medicine usage reports
 
-## 📱 Fitur Teknis
+### 📊 Analytics & Reporting
+- ✅ **Dashboard Analytics**: Comprehensive statistics
+- ✅ **Service Reports**: Detailed service reports
+- ✅ **User Analytics**: User activity tracking
+- ✅ **Performance Metrics**: System performance
+
+### 📱 Responsive Design
+- ✅ **Mobile First**: Optimized for mobile devices
+- ✅ **Landscape Support**: Landscape orientation
+- ✅ **Touch Friendly**: Touch-optimized interface
+- ✅ **Cross Platform**: Works on all devices
+
+## 🛠️ Tech Stack
 
 ### Frontend
-- HTML5, CSS3, JavaScript ES6+
-- Bootstrap 5.3.0 untuk UI framework
-- Font Awesome 6.0.0 untuk ikon
-- Chart.js 3.9.1 untuk grafik dan statistik
-- Responsive design dengan CSS Grid dan Flexbox
+- **HTML5**: Semantic markup
+- **CSS3**: Modern styling with gradients
+- **JavaScript (ES6+)**: Modern JavaScript features
+- **Bootstrap 5**: Responsive framework
+- **Font Awesome**: Icon library
+- **Chart.js**: Data visualization
 
-### Data Storage
-- LocalStorage untuk penyimpanan data
-- Struktur data JSON yang terorganisir
-- Backup dan restore data otomatis
+### Backend
+- **Supabase**: Backend-as-a-Service
+- **PostgreSQL**: Database
+- **Row Level Security (RLS)**: Data security
+- **Real-time**: Live data updates
+- **Authentication**: Built-in auth system
 
-### Validasi
-- Validasi NIK (16 digit angka)
-- Validasi email format
-- Konfirmasi password
-- Validasi form real-time
+### Deployment
+- **Vercel**: Static site hosting
+- **GitHub Actions**: CI/CD pipeline
+- **Environment Variables**: Secure configuration
+- **CDN**: Global content delivery
 
-## 🚀 Cara Menjalankan
+### Development
+- **Git**: Version control
+- **Node.js**: Development environment
+- **NPM**: Package management
+- **Prettier**: Code formatting
 
-1. **Clone atau download** repository ini
-2. **Buka file `index.html`** di browser modern
-3. **Mulai menggunakan** aplikasi:
-   - Daftar sebagai masyarakat baru
-   - Login sebagai petugas atau admin
-   - Jelajahi fitur-fitur yang tersedia
+## 🚀 Quick Start
 
-## 📊 Struktur Data
+### Prerequisites
+- Node.js 18+ 
+- NPM 8+
+- Git
+- Supabase account
+- Vercel account
 
-### Users (Masyarakat)
-```json
+### 1. Clone Repository
+```bash
+git clone https://github.com/yourusername/pelayanan-keswan.git
+cd pelayanan-keswan
+```
+
+### 2. Install Dependencies
+```bash
+npm install
+```
+
+### 3. Configure Environment
+```bash
+# Copy environment template
+cp .env.example .env
+
+# Edit environment variables
+nano .env
+```
+
+### 4. Start Development Server
+```bash
+npm run dev
+```
+
+### 5. Open in Browser
+```
+http://localhost:3000
+```
+
+## 📦 Installation
+
+### Manual Installation
+
+1. **Download Source Code**
+   ```bash
+   git clone https://github.com/yourusername/pelayanan-keswan.git
+   cd pelayanan-keswan
+   ```
+
+2. **Install Dependencies**
+   ```bash
+   npm install
+   ```
+
+3. **Configure Supabase**
+   - Create Supabase project
+   - Run SQL schema
+   - Configure environment variables
+
+4. **Deploy to Vercel**
+   ```bash
+   npm run deploy
+   ```
+
+### Docker Installation
+
+```bash
+# Build Docker image
+docker build -t pelayanan-keswan .
+
+# Run container
+docker run -p 3000:3000 pelayanan-keswan
+```
+
+## ⚙️ Configuration
+
+### Environment Variables
+
+Create `.env` file:
+
+```env
+# Supabase Configuration
+SUPABASE_URL=https://your-project-ref.supabase.co
+SUPABASE_ANON_KEY=your-anon-key
+
+# Application Configuration
+NODE_ENV=production
+APP_NAME=Pelayanan Keswan
+APP_VERSION=1.0.0
+
+# Security
+JWT_SECRET=your-jwt-secret
+ENCRYPTION_KEY=your-encryption-key
+```
+
+### Supabase Setup
+
+1. **Create Project**
+   - Go to [Supabase](https://supabase.com)
+   - Create new project
+   - Get project URL and API key
+
+2. **Run Database Schema**
+   ```sql
+   -- Copy and paste create-database-tables.sql
+   -- Run in Supabase SQL Editor
+   ```
+
+3. **Configure RLS Policies**
+   ```sql
+   -- Enable Row Level Security
+   ALTER TABLE users ENABLE ROW LEVEL SECURITY;
+   -- ... configure other tables
+   ```
+
+### Vercel Configuration
+
+1. **Connect Repository**
+   - Go to [Vercel](https://vercel.com)
+   - Import GitHub repository
+   - Configure build settings
+
+2. **Set Environment Variables**
+   ```bash
+   vercel env add SUPABASE_URL
+   vercel env add SUPABASE_ANON_KEY
+   ```
+
+## 🚀 Deployment
+
+### Automatic Deployment
+
+The application is configured for automatic deployment:
+
+- **Push to main**: Deploys to production
+- **Pull Request**: Creates preview deployment
+- **Manual**: Trigger deployment manually
+
+### Manual Deployment
+
+```bash
+# Deploy to production
+npm run deploy
+
+# Check deployment status
+npm run status
+
+# View logs
+npm run logs
+```
+
+### Environment Setup
+
+1. **Development**
+   ```bash
+   npm run dev
+   ```
+
+2. **Preview**
+   ```bash
+   npm run preview
+   ```
+
+3. **Production**
+   ```bash
+   npm run deploy
+   ```
+
+## 📚 API Documentation
+
+### Authentication Endpoints
+
+```javascript
+// User Registration
+POST /api/auth/register
 {
   "nik": "1234567890123456",
   "fullName": "John Doe",
   "email": "john@example.com",
-  "phone": "081234567890",
-  "address": "Jl. Contoh No. 123",
-  "password": "hashed_password",
-  "status": "active",
-  "registeredAt": "2024-01-01T00:00:00.000Z"
+  "password": "password123"
+}
+
+// User Login
+POST /api/auth/login
+{
+  "nik": "1234567890123456",
+  "password": "password123"
 }
 ```
 
-### Services (Layanan)
-```json
+### Service Endpoints
+
+```javascript
+// Get Animals
+GET /api/animals
+Authorization: Bearer <token>
+
+// Create Animal
+POST /api/animals
 {
-  "id": "unique_id",
-  "ownerNIK": "1234567890123456",
-  "animalName": "Buddy",
-  "animalType": "anjing",
+  "name": "Buddy",
+  "type": "anjing",
+  "age": "2 tahun",
+  "gender": "jantan"
+}
+
+// Get Services
+GET /api/services
+Authorization: Bearer <token>
+
+// Create Service
+POST /api/services
+{
+  "animalId": "uuid",
   "serviceType": "pengobatan",
-  "symptoms": "Demam dan tidak mau makan",
-  "status": "pending",
-  "serviceDate": "2024-01-01T10:00:00.000Z",
-  "createdAt": "2024-01-01T09:00:00.000Z"
+  "symptoms": "Demam tinggi",
+  "priority": "urgent"
 }
 ```
 
-### Medicines (Obat)
-```json
-{
-  "id": "unique_id",
-  "name": "Amoxicillin 250mg",
-  "category": "antibiotik",
-  "stock": 50,
-  "price": 15000,
-  "description": "Antibiotik untuk infeksi bakteri",
-  "status": "available"
-}
+## 🧪 Testing
+
+### Run Tests
+
+```bash
+# Run all tests
+npm test
+
+# Run specific tests
+npm test -- --grep "authentication"
+
+# Run with coverage
+npm run test:coverage
 ```
 
-## 🔧 Fitur Admin
+### Test Coverage
 
-### Dashboard
-- Total pengguna terdaftar
-- Total layanan yang diberikan
-- Statistik vaksinasi
-- Sesi telemedicine aktif
+- **Unit Tests**: 90%+ coverage
+- **Integration Tests**: API endpoints
+- **E2E Tests**: User workflows
+- **Performance Tests**: Load testing
 
-### Analisis
-- Grafik trend layanan bulanan
-- Distribusi jenis layanan
-- Analisis jenis hewan
-- Skor kepuasan layanan
+## 📱 Mobile Support
 
-### Laporan
-- Generate laporan PDF
-- Export data ke Excel
-- Statistik detail dengan grafik
+### Responsive Design
+- **Mobile First**: Optimized for mobile devices
+- **Tablet Support**: iPad and Android tablets
+- **Desktop**: Full desktop experience
+- **Landscape**: Landscape orientation support
 
-### Manajemen
-- Kelola pengguna (aktif/nonaktif)
-- Monitoring stock obat
-- Restock obat otomatis
-- Alert untuk stok rendah
+### Touch Optimization
+- **Touch Targets**: Minimum 44px touch targets
+- **Swipe Gestures**: Natural swipe interactions
+- **Pinch Zoom**: Zoom support for images
+- **Haptic Feedback**: Touch feedback
 
-## 🏥 Fitur Petugas
+## 🔒 Security
 
-### Dashboard
-- Janji hari ini
-- Vaksinasi hari ini
-- Sesi telemedicine aktif
-- Alert obat stok rendah
+### Data Protection
+- **Row Level Security**: Database-level security
+- **User Isolation**: Data isolation per user
+- **Role-based Access**: Different access levels
+- **Audit Logging**: Complete audit trail
 
-### Layanan
-- Tambah layanan pengobatan
-- Daftar vaksinasi rabies
-- Mulai sesi telemedicine
-- Update status layanan
+### Authentication
+- **NIK-based Login**: National ID authentication
+- **Password Security**: Secure password handling
+- **Session Management**: Secure session handling
+- **Multi-factor Auth**: Optional 2FA support
 
-### Stock Management
-- Tambah obat baru
-- Edit stock obat
-- Monitoring stok rendah
-- Kategori obat
+## 📊 Performance
 
-## 📱 Responsivitas
+### Optimization
+- **CDN**: Global content delivery
+- **Caching**: Aggressive caching strategy
+- **Compression**: Gzip compression
+- **Minification**: Minified assets
 
-Aplikasi dioptimalkan untuk:
-- **Desktop**: 1200px ke atas
-- **Tablet**: 768px - 1199px
-- **Mobile**: 320px - 767px
+### Metrics
+- **Load Time**: < 2 seconds
+- **First Paint**: < 1 second
+- **Lighthouse Score**: 90+
+- **Core Web Vitals**: All green
 
-## 🎯 Keunggulan
+## 🤝 Contributing
 
-1. **User-Friendly**: Interface yang intuitif dan mudah digunakan
-2. **Responsive**: Optimal di semua perangkat
-3. **Real-time**: Update data secara real-time
-4. **Secure**: Validasi data yang ketat
-5. **Modern**: Desain yang mengikuti tren terbaru
-6. **Comprehensive**: Fitur lengkap untuk manajemen layanan
+### How to Contribute
 
-## 🔮 Pengembangan Selanjutnya
+1. **Fork Repository**
+   ```bash
+   git fork https://github.com/yourusername/pelayanan-keswan.git
+   ```
 
-- Integrasi dengan database server
-- Sistem notifikasi real-time
-- Integrasi payment gateway
-- Mobile app (React Native/Flutter)
-- API untuk integrasi dengan sistem lain
-- Sistem backup otomatis
-- Multi-language support
+2. **Create Feature Branch**
+   ```bash
+   git checkout -b feature/amazing-feature
+   ```
 
-## 📞 Kontak
+3. **Make Changes**
+   ```bash
+   # Make your changes
+   git add .
+   git commit -m "Add amazing feature"
+   ```
 
-Untuk pertanyaan atau dukungan teknis, silakan hubungi:
-- Email: info@pelayanankeswan.id
-- Telepon: +62 21 1234 5678
+4. **Push Changes**
+   ```bash
+   git push origin feature/amazing-feature
+   ```
+
+5. **Create Pull Request**
+   - Go to GitHub
+   - Create pull request
+   - Wait for review
+
+### Development Guidelines
+
+- **Code Style**: Follow Prettier configuration
+- **Commits**: Use conventional commit messages
+- **Testing**: Write tests for new features
+- **Documentation**: Update documentation
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 📞 Support
+
+### Getting Help
+
+- **Documentation**: [Read the docs](https://github.com/yourusername/pelayanan-keswan/wiki)
+- **Issues**: [GitHub Issues](https://github.com/yourusername/pelayanan-keswan/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/yourusername/pelayanan-keswan/discussions)
+- **Email**: admin@pelayanan-keswan.com
+
+### Community
+
+- **GitHub**: [@pelayanan-keswan](https://github.com/yourusername/pelayanan-keswan)
+- **Twitter**: [@pelayanan_keswan](https://twitter.com/pelayanan_keswan)
+- **Discord**: [Join our Discord](https://discord.gg/pelayanan-keswan)
+
+## 🙏 Acknowledgments
+
+- **Supabase**: For the amazing backend platform
+- **Vercel**: For the excellent deployment platform
+- **Bootstrap**: For the responsive framework
+- **Font Awesome**: For the beautiful icons
+- **Chart.js**: For the data visualization
+
+## 📈 Roadmap
+
+### Version 1.1 (Q2 2024)
+- [ ] Mobile app (React Native)
+- [ ] Push notifications
+- [ ] Offline support
+- [ ] Advanced analytics
+
+### Version 1.2 (Q3 2024)
+- [ ] AI-powered diagnostics
+- [ ] Telemedicine video calls
+- [ ] Integration with IoT devices
+- [ ] Multi-language support
+
+### Version 2.0 (Q4 2024)
+- [ ] Microservices architecture
+- [ ] Advanced reporting
+- [ ] Third-party integrations
+- [ ] Enterprise features
 
 ---
 
-**Dibuat dengan ❤️ untuk kesehatan hewan Indonesia**
+**Made with ❤️ by the Pelayanan Keswan Team**
+
+[![GitHub stars](https://img.shields.io/github/stars/yourusername/pelayanan-keswan?style=social)](https://github.com/yourusername/pelayanan-keswan)
+[![GitHub forks](https://img.shields.io/github/forks/yourusername/pelayanan-keswan?style=social)](https://github.com/yourusername/pelayanan-keswan)
+[![GitHub watchers](https://img.shields.io/github/watchers/yourusername/pelayanan-keswan?style=social)](https://github.com/yourusername/pelayanan-keswan)

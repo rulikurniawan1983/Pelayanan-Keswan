@@ -1,0 +1,136 @@
+name: Deploy to Vercel
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+env:
+  VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+  VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    name: Deploy to Vercel
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        
+    - name: Install dependencies
+      run: |
+        npm install -g vercel
+        npm install
+        
+    - name: Run tests
+      run: |
+        echo "Running basic checks..."
+        # Check if all required files exist
+        test -f index.html
+        test -f petugas.html
+        test -f admin.html
+        test -f masyarakat.html
+        test -f styles.css
+        test -f script.js
+        test -f supabase-config.js
+        echo "✅ All required files exist"
+        
+    - name: Deploy to Vercel (Preview)
+      if: github.event_name == 'pull_request'
+      uses: amondnet/vercel-action@v25
+      with:
+        vercel-token: ${{ secrets.VERCEL_TOKEN }}
+        vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+        vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+        working-directory: ./
+        vercel-args: '--prod'
+        
+    - name: Deploy to Vercel (Production)
+      if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+      uses: amondnet/vercel-action@v25
+      with:
+        vercel-token: ${{ secrets.VERCEL_TOKEN }}
+        vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+        vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+        working-directory: ./
+        vercel-args: '--prod'
+        
+    - name: Comment PR with deployment URL
+      if: github.event_name == 'pull_request'
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const { data: comments } = await github.rest.issues.listComments({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            issue_number: context.issue.number,
+          });
+          
+          const botComment = comments.find(comment => 
+            comment.user.type === 'Bot' && comment.body.includes('🚀 Preview Deployment')
+          );
+          
+          const deploymentUrl = process.env.VERCEL_URL || 'https://your-app.vercel.app';
+          
+          const body = `🚀 **Preview Deployment Ready!**
+          
+          **🔗 Preview URL:** ${deploymentUrl}
+          
+          **📋 Changes in this PR:**
+          - Updated application files
+          - Database integration
+          - Security improvements
+          
+          **🧪 Test the deployment:**
+          - [ ] Homepage loads correctly
+          - [ ] Staff panel accessible
+          - [ ] Admin panel accessible
+          - [ ] Public panel accessible
+          - [ ] Database connection works
+          - [ ] All features functional
+          
+          **📱 Mobile Testing:**
+          - [ ] Responsive design works
+          - [ ] Landscape orientation works
+          - [ ] Touch interactions work
+          
+          **🔒 Security Testing:**
+          - [ ] Login system works
+          - [ ] User isolation works
+          - [ ] Role-based access works
+          
+          ---
+          *This comment will be updated on each deployment.*`;
+          
+          if (botComment) {
+            await github.rest.issues.updateComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              comment_id: botComment.id,
+              body: body
+            });
+          } else {
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: body
+            });
+          }
+          
+    - name: Notify deployment success
+      if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+      run: |
+        echo "🎉 Production deployment successful!"
+        echo "🌐 Application is now live at: https://pelayanan-keswan.vercel.app"
+        echo "📊 Check deployment status: vercel ls"
+        echo "📝 View logs: vercel logs"

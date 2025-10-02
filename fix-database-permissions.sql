@@ -1,0 +1,447 @@
+-- Fix Database Permissions
+-- Run this SQL in your Supabase SQL Editor to fix permission issues
+
+-- Grant necessary permissions to authenticated users
+GRANT USAGE ON SCHEMA public TO authenticated;
+GRANT ALL ON ALL TABLES IN SCHEMA public TO authenticated;
+GRANT ALL ON ALL SEQUENCES IN SCHEMA public TO authenticated;
+GRANT EXECUTE ON ALL FUNCTIONS IN SCHEMA public TO authenticated;
+
+-- Grant permissions to anon users for public access
+GRANT USAGE ON SCHEMA public TO anon;
+GRANT SELECT ON ALL TABLES IN SCHEMA public TO anon;
+GRANT EXECUTE ON ALL FUNCTIONS IN SCHEMA public TO anon;
+
+-- Create or replace the exec_sql function if it doesn't exist
+CREATE OR REPLACE FUNCTION exec_sql(sql TEXT)
+RETURNS TEXT AS $$
+BEGIN
+    EXECUTE sql;
+    RETURN 'SQL executed successfully';
+EXCEPTION
+    WHEN OTHERS THEN
+        RETURN 'Error: ' || SQLERRM;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- Grant execute permission on exec_sql function
+GRANT EXECUTE ON FUNCTION exec_sql(TEXT) TO authenticated;
+GRANT EXECUTE ON FUNCTION exec_sql(TEXT) TO anon;
+
+-- Create a safer table creation function
+CREATE OR REPLACE FUNCTION create_table_safely(
+    table_name TEXT,
+    columns TEXT
+)
+RETURNS TEXT AS $$
+BEGIN
+    EXECUTE format('CREATE TABLE IF NOT EXISTS %I (%s)', table_name, columns);
+    RETURN format('Table %s created successfully', table_name);
+EXCEPTION
+    WHEN OTHERS THEN
+        RETURN format('Error creating table %s: %s', table_name, SQLERRM);
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- Grant execute permission on create_table_safely function
+GRANT EXECUTE ON FUNCTION create_table_safely(TEXT, TEXT) TO authenticated;
+GRANT EXECUTE ON FUNCTION create_table_safely(TEXT, TEXT) TO anon;
+
+-- Create tables using the safer function
+SELECT create_table_safely('users', '
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    nik VARCHAR(16) UNIQUE NOT NULL,
+    full_name VARCHAR(255) NOT NULL,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    phone VARCHAR(20),
+    address TEXT,
+    password VARCHAR(255) NOT NULL,
+    role VARCHAR(20) DEFAULT ''masyarakat'' CHECK (role IN (''masyarakat'', ''petugas'', ''admin'')),
+    status VARCHAR(20) DEFAULT ''active'' CHECK (status IN (''active'', ''inactive'', ''suspended'')),
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+');
+
+SELECT create_table_safely('animals', '
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    type VARCHAR(50) NOT NULL,
+    age VARCHAR(50),
+    gender VARCHAR(20) CHECK (gender IN (''jantan'', ''betina'')),
+    description TEXT,
+    owner_nik VARCHAR(16) NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+');
+
+SELECT create_table_safely('services', '
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    animal_id UUID,
+    animal_name VARCHAR(255) NOT NULL,
+    animal_type VARCHAR(50) NOT NULL,
+    service_type VARCHAR(50) NOT NULL CHECK (service_type IN (''pengobatan'', ''vaksinasi'', ''telemedicine'', ''konsultasi'', ''pemeriksaan'', ''operasi'')),
+    symptoms TEXT,
+    service_date TIMESTAMP WITH TIME ZONE NOT NULL,
+    priority VARCHAR(20) DEFAULT ''normal'' CHECK (priority IN (''normal'', ''urgent'', ''emergency'')),
+    status VARCHAR(20) DEFAULT ''pending'' CHECK (status IN (''pending'', ''in_progress'', ''completed'', ''cancelled'')),
+    owner_nik VARCHAR(16) NOT NULL,
+    owner_name VARCHAR(255) NOT NULL,
+    notes TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+');
+
+SELECT create_table_safely('medicines', '
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    type VARCHAR(100) NOT NULL,
+    stock INTEGER DEFAULT 0,
+    unit VARCHAR(20) DEFAULT ''pcs'',
+    price DECIMAL(10,2) DEFAULT 0,
+    description TEXT,
+    status VARCHAR(20) DEFAULT ''available'' CHECK (status IN (''available'', ''out_of_stock'', ''discontinued'')),
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+');
+
+SELECT create_table_safely('vaccinations', '
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    animal_id UUID,
+    vaccine_type VARCHAR(100) NOT NULL,
+    vaccination_date TIMESTAMP WITH TIME ZONE NOT NULL,
+    next_vaccination_date TIMESTAMP WITH TIME ZONE,
+    notes TEXT,
+    owner_nik VARCHAR(16) NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+');
+
+SELECT create_table_safely('telemedicine_sessions', '
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    animal_id UUID,
+    session_date TIMESTAMP WITH TIME ZONE NOT NULL,
+    symptoms TEXT,
+    diagnosis TEXT,
+    treatment TEXT,
+    status VARCHAR(20) DEFAULT ''active'' CHECK (status IN (''active'', ''completed'', ''cancelled'')),
+    owner_nik VARCHAR(16) NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+');
+
+SELECT create_table_safely('service_medicines', '
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    service_id UUID,
+    medicine_id UUID,
+    quantity INTEGER NOT NULL DEFAULT 1,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+');
+
+SELECT create_table_safely('notifications', '
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    user_nik VARCHAR(16) NOT NULL,
+    title VARCHAR(255) NOT NULL,
+    message TEXT NOT NULL,
+    type VARCHAR(50) DEFAULT ''info'' CHECK (type IN (''info'', ''success'', ''warning'', ''error'')),
+    is_read BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+');
+
+SELECT create_table_safely('audit_logs', '
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    user_nik VARCHAR(16),
+    action VARCHAR(100) NOT NULL,
+    table_name VARCHAR(100) NOT NULL,
+    record_id UUID,
+    old_values JSONB,
+    new_values JSONB,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+');
+
+-- Add foreign key constraints after tables are created
+DO $$
+BEGIN
+    -- Add foreign key for animals table
+    IF NOT EXISTS (
+        SELECT 1 FROM information_schema.table_constraints 
+        WHERE constraint_name = 'animals_owner_nik_fkey'
+    ) THEN
+        ALTER TABLE animals ADD CONSTRAINT animals_owner_nik_fkey 
+        FOREIGN KEY (owner_nik) REFERENCES users(nik) ON DELETE CASCADE;
+    END IF;
+    
+    -- Add foreign key for services table
+    IF NOT EXISTS (
+        SELECT 1 FROM information_schema.table_constraints 
+        WHERE constraint_name = 'services_animal_id_fkey'
+    ) THEN
+        ALTER TABLE services ADD CONSTRAINT services_animal_id_fkey 
+        FOREIGN KEY (animal_id) REFERENCES animals(id) ON DELETE CASCADE;
+    END IF;
+    
+    -- Add foreign key for services table
+    IF NOT EXISTS (
+        SELECT 1 FROM information_schema.table_constraints 
+        WHERE constraint_name = 'services_owner_nik_fkey'
+    ) THEN
+        ALTER TABLE services ADD CONSTRAINT services_owner_nik_fkey 
+        FOREIGN KEY (owner_nik) REFERENCES users(nik) ON DELETE CASCADE;
+    END IF;
+    
+    -- Add foreign key for vaccinations table
+    IF NOT EXISTS (
+        SELECT 1 FROM information_schema.table_constraints 
+        WHERE constraint_name = 'vaccinations_animal_id_fkey'
+    ) THEN
+        ALTER TABLE vaccinations ADD CONSTRAINT vaccinations_animal_id_fkey 
+        FOREIGN KEY (animal_id) REFERENCES animals(id) ON DELETE CASCADE;
+    END IF;
+    
+    -- Add foreign key for vaccinations table
+    IF NOT EXISTS (
+        SELECT 1 FROM information_schema.table_constraints 
+        WHERE constraint_name = 'vaccinations_owner_nik_fkey'
+    ) THEN
+        ALTER TABLE vaccinations ADD CONSTRAINT vaccinations_owner_nik_fkey 
+        FOREIGN KEY (owner_nik) REFERENCES users(nik) ON DELETE CASCADE;
+    END IF;
+    
+    -- Add foreign key for telemedicine_sessions table
+    IF NOT EXISTS (
+        SELECT 1 FROM information_schema.table_constraints 
+        WHERE constraint_name = 'telemedicine_sessions_animal_id_fkey'
+    ) THEN
+        ALTER TABLE telemedicine_sessions ADD CONSTRAINT telemedicine_sessions_animal_id_fkey 
+        FOREIGN KEY (animal_id) REFERENCES animals(id) ON DELETE CASCADE;
+    END IF;
+    
+    -- Add foreign key for telemedicine_sessions table
+    IF NOT EXISTS (
+        SELECT 1 FROM information_schema.table_constraints 
+        WHERE constraint_name = 'telemedicine_sessions_owner_nik_fkey'
+    ) THEN
+        ALTER TABLE telemedicine_sessions ADD CONSTRAINT telemedicine_sessions_owner_nik_fkey 
+        FOREIGN KEY (owner_nik) REFERENCES users(nik) ON DELETE CASCADE;
+    END IF;
+    
+    -- Add foreign key for service_medicines table
+    IF NOT EXISTS (
+        SELECT 1 FROM information_schema.table_constraints 
+        WHERE constraint_name = 'service_medicines_service_id_fkey'
+    ) THEN
+        ALTER TABLE service_medicines ADD CONSTRAINT service_medicines_service_id_fkey 
+        FOREIGN KEY (service_id) REFERENCES services(id) ON DELETE CASCADE;
+    END IF;
+    
+    -- Add foreign key for service_medicines table
+    IF NOT EXISTS (
+        SELECT 1 FROM information_schema.table_constraints 
+        WHERE constraint_name = 'service_medicines_medicine_id_fkey'
+    ) THEN
+        ALTER TABLE service_medicines ADD CONSTRAINT service_medicines_medicine_id_fkey 
+        FOREIGN KEY (medicine_id) REFERENCES medicines(id) ON DELETE CASCADE;
+    END IF;
+    
+    -- Add foreign key for notifications table
+    IF NOT EXISTS (
+        SELECT 1 FROM information_schema.table_constraints 
+        WHERE constraint_name = 'notifications_user_nik_fkey'
+    ) THEN
+        ALTER TABLE notifications ADD CONSTRAINT notifications_user_nik_fkey 
+        FOREIGN KEY (user_nik) REFERENCES users(nik) ON DELETE CASCADE;
+    END IF;
+    
+    -- Add foreign key for audit_logs table
+    IF NOT EXISTS (
+        SELECT 1 FROM information_schema.table_constraints 
+        WHERE constraint_name = 'audit_logs_user_nik_fkey'
+    ) THEN
+        ALTER TABLE audit_logs ADD CONSTRAINT audit_logs_user_nik_fkey 
+        FOREIGN KEY (user_nik) REFERENCES users(nik) ON DELETE SET NULL;
+    END IF;
+END $$;
+
+-- Create indexes for better performance
+CREATE INDEX IF NOT EXISTS idx_users_nik ON users(nik);
+CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
+CREATE INDEX IF NOT EXISTS idx_users_role ON users(role);
+CREATE INDEX IF NOT EXISTS idx_users_status ON users(status);
+CREATE INDEX IF NOT EXISTS idx_animals_owner_nik ON animals(owner_nik);
+CREATE INDEX IF NOT EXISTS idx_animals_type ON animals(type);
+CREATE INDEX IF NOT EXISTS idx_services_owner_nik ON services(owner_nik);
+CREATE INDEX IF NOT EXISTS idx_services_status ON services(status);
+CREATE INDEX IF NOT EXISTS idx_services_service_type ON services(service_type);
+CREATE INDEX IF NOT EXISTS idx_services_service_date ON services(service_date);
+CREATE INDEX IF NOT EXISTS idx_medicines_status ON medicines(status);
+CREATE INDEX IF NOT EXISTS idx_medicines_type ON medicines(type);
+CREATE INDEX IF NOT EXISTS idx_vaccinations_owner_nik ON vaccinations(owner_nik);
+CREATE INDEX IF NOT EXISTS idx_vaccinations_vaccination_date ON vaccinations(vaccination_date);
+CREATE INDEX IF NOT EXISTS idx_telemedicine_owner_nik ON telemedicine_sessions(owner_nik);
+CREATE INDEX IF NOT EXISTS idx_telemedicine_status ON telemedicine_sessions(status);
+CREATE INDEX IF NOT EXISTS idx_service_medicines_service_id ON service_medicines(service_id);
+CREATE INDEX IF NOT EXISTS idx_service_medicines_medicine_id ON service_medicines(medicine_id);
+CREATE INDEX IF NOT EXISTS idx_notifications_user_nik ON notifications(user_nik);
+CREATE INDEX IF NOT EXISTS idx_notifications_is_read ON notifications(is_read);
+CREATE INDEX IF NOT EXISTS idx_audit_logs_user_nik ON audit_logs(user_nik);
+CREATE INDEX IF NOT EXISTS idx_audit_logs_table_name ON audit_logs(table_name);
+CREATE INDEX IF NOT EXISTS idx_audit_logs_created_at ON audit_logs(created_at);
+
+-- Create updated_at trigger function
+CREATE OR REPLACE FUNCTION update_updated_at_column()
+RETURNS TRIGGER AS $$
+BEGIN
+    NEW.updated_at = NOW();
+    RETURN NEW;
+END;
+$$ language 'plpgsql';
+
+-- Create triggers for updated_at
+DROP TRIGGER IF EXISTS update_users_updated_at ON users;
+CREATE TRIGGER update_users_updated_at BEFORE UPDATE ON users FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+DROP TRIGGER IF EXISTS update_animals_updated_at ON animals;
+CREATE TRIGGER update_animals_updated_at BEFORE UPDATE ON animals FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+DROP TRIGGER IF EXISTS update_services_updated_at ON services;
+CREATE TRIGGER update_services_updated_at BEFORE UPDATE ON services FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+DROP TRIGGER IF EXISTS update_medicines_updated_at ON medicines;
+CREATE TRIGGER update_medicines_updated_at BEFORE UPDATE ON medicines FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+-- Insert default admin user
+INSERT INTO users (nik, full_name, email, phone, address, password, role, status) 
+VALUES ('1234567890123456', 'Administrator', 'admin@keswan.com', '08123456789', 'Jl. Admin No. 1', 'admin123', 'admin', 'active')
+ON CONFLICT (nik) DO NOTHING;
+
+-- Insert default petugas user
+INSERT INTO users (nik, full_name, email, phone, address, password, role, status) 
+VALUES ('1234567890123457', 'Petugas Kesehatan', 'petugas@keswan.com', '08123456788', 'Jl. Petugas No. 1', 'petugas123', 'petugas', 'active')
+ON CONFLICT (nik) DO NOTHING;
+
+-- Insert sample medicines
+INSERT INTO medicines (name, type, stock, unit, price, description) VALUES
+('Antibiotik Amoxicillin', 'Antibiotik', 100, 'tablet', 5000, 'Antibiotik untuk infeksi bakteri'),
+('Vitamin B Kompleks', 'Vitamin', 50, 'botol', 25000, 'Vitamin untuk meningkatkan nafsu makan'),
+('Obat Cacing', 'Anthelmintik', 75, 'tablet', 3000, 'Obat untuk mengatasi cacingan'),
+('Salep Antibiotik', 'Salep', 30, 'tube', 15000, 'Salep untuk luka infeksi'),
+('Vaksin Rabies', 'Vaksin', 20, 'vial', 50000, 'Vaksin untuk mencegah rabies'),
+('Penisilin', 'Antibiotik', 80, 'vial', 35000, 'Antibiotik untuk infeksi berat'),
+('Dexamethasone', 'Steroid', 60, 'vial', 25000, 'Anti-inflamasi dan anti-alergi'),
+('Ketamine', 'Anestesi', 25, 'vial', 75000, 'Anestesi untuk operasi'),
+('Lidocaine', 'Anestesi Lokal', 40, 'vial', 20000, 'Anestesi lokal'),
+('Metronidazole', 'Antibiotik', 90, 'tablet', 4000, 'Antibiotik untuk infeksi anaerob')
+ON CONFLICT (name) DO NOTHING;
+
+-- Enable Row Level Security (RLS)
+ALTER TABLE users ENABLE ROW LEVEL SECURITY;
+ALTER TABLE animals ENABLE ROW LEVEL SECURITY;
+ALTER TABLE services ENABLE ROW LEVEL SECURITY;
+ALTER TABLE medicines ENABLE ROW LEVEL SECURITY;
+ALTER TABLE vaccinations ENABLE ROW LEVEL SECURITY;
+ALTER TABLE telemedicine_sessions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE service_medicines ENABLE ROW LEVEL SECURITY;
+ALTER TABLE notifications ENABLE ROW LEVEL SECURITY;
+ALTER TABLE audit_logs ENABLE ROW LEVEL SECURITY;
+
+-- Create basic RLS policies
+-- Users can only see their own data
+CREATE POLICY IF NOT EXISTS "Users can view own data" ON users FOR SELECT USING (auth.uid()::text = id::text);
+CREATE POLICY IF NOT EXISTS "Users can update own data" ON users FOR UPDATE USING (auth.uid()::text = id::text);
+
+-- Animals policies
+CREATE POLICY IF NOT EXISTS "Users can view own animals" ON animals FOR SELECT USING (owner_nik IN (SELECT nik FROM users WHERE id::text = auth.uid()::text));
+CREATE POLICY IF NOT EXISTS "Users can insert own animals" ON animals FOR INSERT WITH CHECK (owner_nik IN (SELECT nik FROM users WHERE id::text = auth.uid()::text));
+CREATE POLICY IF NOT EXISTS "Users can update own animals" ON animals FOR UPDATE USING (owner_nik IN (SELECT nik FROM users WHERE id::text = auth.uid()::text));
+CREATE POLICY IF NOT EXISTS "Users can delete own animals" ON animals FOR DELETE USING (owner_nik IN (SELECT nik FROM users WHERE id::text = auth.uid()::text));
+
+-- Services policies
+CREATE POLICY IF NOT EXISTS "Users can view own services" ON services FOR SELECT USING (owner_nik IN (SELECT nik FROM users WHERE id::text = auth.uid()::text));
+CREATE POLICY IF NOT EXISTS "Users can insert own services" ON services FOR INSERT WITH CHECK (owner_nik IN (SELECT nik FROM users WHERE id::text = auth.uid()::text));
+CREATE POLICY IF NOT EXISTS "Users can update own services" ON services FOR UPDATE USING (owner_nik IN (SELECT nik FROM users WHERE id::text = auth.uid()::text));
+
+-- Vaccinations policies
+CREATE POLICY IF NOT EXISTS "Users can view own vaccinations" ON vaccinations FOR SELECT USING (owner_nik IN (SELECT nik FROM users WHERE id::text = auth.uid()::text));
+CREATE POLICY IF NOT EXISTS "Users can insert own vaccinations" ON vaccinations FOR INSERT WITH CHECK (owner_nik IN (SELECT nik FROM users WHERE id::text = auth.uid()::text));
+CREATE POLICY IF NOT EXISTS "Users can update own vaccinations" ON vaccinations FOR UPDATE USING (owner_nik IN (SELECT nik FROM users WHERE id::text = auth.uid()::text));
+
+-- Telemedicine policies
+CREATE POLICY IF NOT EXISTS "Users can view own telemedicine" ON telemedicine_sessions FOR SELECT USING (owner_nik IN (SELECT nik FROM users WHERE id::text = auth.uid()::text));
+CREATE POLICY IF NOT EXISTS "Users can insert own telemedicine" ON telemedicine_sessions FOR INSERT WITH CHECK (owner_nik IN (SELECT nik FROM users WHERE id::text = auth.uid()::text));
+CREATE POLICY IF NOT EXISTS "Users can update own telemedicine" ON telemedicine_sessions FOR UPDATE USING (owner_nik IN (SELECT nik FROM users WHERE id::text = auth.uid()::text));
+
+-- Notifications policies
+CREATE POLICY IF NOT EXISTS "Users can view own notifications" ON notifications FOR SELECT USING (user_nik IN (SELECT nik FROM users WHERE id::text = auth.uid()::text));
+CREATE POLICY IF NOT EXISTS "Users can update own notifications" ON notifications FOR UPDATE USING (user_nik IN (SELECT nik FROM users WHERE id::text = auth.uid()::text));
+
+-- Staff and admin can view all data
+CREATE POLICY IF NOT EXISTS "Staff can view all data" ON users FOR ALL USING (
+    EXISTS (SELECT 1 FROM users WHERE id::text = auth.uid()::text AND role IN ('petugas', 'admin'))
+);
+
+CREATE POLICY IF NOT EXISTS "Staff can view all animals" ON animals FOR ALL USING (
+    EXISTS (SELECT 1 FROM users WHERE id::text = auth.uid()::text AND role IN ('petugas', 'admin'))
+);
+
+CREATE POLICY IF NOT EXISTS "Staff can view all services" ON services FOR ALL USING (
+    EXISTS (SELECT 1 FROM users WHERE id::text = auth.uid()::text AND role IN ('petugas', 'admin'))
+);
+
+CREATE POLICY IF NOT EXISTS "Staff can view all medicines" ON medicines FOR ALL USING (
+    EXISTS (SELECT 1 FROM users WHERE id::text = auth.uid()::text AND role IN ('petugas', 'admin'))
+);
+
+CREATE POLICY IF NOT EXISTS "Staff can view all vaccinations" ON vaccinations FOR ALL USING (
+    EXISTS (SELECT 1 FROM users WHERE id::text = auth.uid()::text AND role IN ('petugas', 'admin'))
+);
+
+CREATE POLICY IF NOT EXISTS "Staff can view all telemedicine" ON telemedicine_sessions FOR ALL USING (
+    EXISTS (SELECT 1 FROM users WHERE id::text = auth.uid()::text AND role IN ('petugas', 'admin'))
+);
+
+CREATE POLICY IF NOT EXISTS "Staff can view all notifications" ON notifications FOR ALL USING (
+    EXISTS (SELECT 1 FROM users WHERE id::text = auth.uid()::text AND role IN ('petugas', 'admin'))
+);
+
+-- Admin can manage all data
+CREATE POLICY IF NOT EXISTS "Admin can manage all data" ON users FOR ALL USING (
+    EXISTS (SELECT 1 FROM users WHERE id::text = auth.uid()::text AND role = 'admin')
+);
+
+CREATE POLICY IF NOT EXISTS "Admin can manage all animals" ON animals FOR ALL USING (
+    EXISTS (SELECT 1 FROM users WHERE id::text = auth.uid()::text AND role = 'admin')
+);
+
+CREATE POLICY IF NOT EXISTS "Admin can manage all services" ON services FOR ALL USING (
+    EXISTS (SELECT 1 FROM users WHERE id::text = auth.uid()::text AND role = 'admin')
+);
+
+CREATE POLICY IF NOT EXISTS "Admin can manage all medicines" ON medicines FOR ALL USING (
+    EXISTS (SELECT 1 FROM users WHERE id::text = auth.uid()::text AND role = 'admin')
+);
+
+CREATE POLICY IF NOT EXISTS "Admin can manage all vaccinations" ON vaccinations FOR ALL USING (
+    EXISTS (SELECT 1 FROM users WHERE id::text = auth.uid()::text AND role = 'admin')
+);
+
+CREATE POLICY IF NOT EXISTS "Admin can manage all telemedicine" ON telemedicine_sessions FOR ALL USING (
+    EXISTS (SELECT 1 FROM users WHERE id::text = auth.uid()::text AND role = 'admin')
+);
+
+CREATE POLICY IF NOT EXISTS "Admin can manage all notifications" ON notifications FOR ALL USING (
+    EXISTS (SELECT 1 FROM users WHERE id::text = auth.uid()::text AND role = 'admin')
+);
+
+-- Service medicines policies
+CREATE POLICY IF NOT EXISTS "Users can view own service medicines" ON service_medicines FOR SELECT USING (
+    service_id IN (SELECT id FROM services WHERE owner_nik IN (SELECT nik FROM users WHERE id::text = auth.uid()::text))
+);
+
+CREATE POLICY IF NOT EXISTS "Staff can view all service medicines" ON service_medicines FOR ALL USING (
+    EXISTS (SELECT 1 FROM users WHERE id::text = auth.uid()::text AND role IN ('petugas', 'admin'))
+);
+
+-- Audit logs policies (only admin can view)
+CREATE POLICY IF NOT EXISTS "Admin can view audit logs" ON audit_logs FOR ALL USING (
+    EXISTS (SELECT 1 FROM users WHERE id::text = auth.uid()::text AND role = 'admin')
+);
+
+-- Final message
+SELECT 'Database permissions fixed and tables created successfully!' as message;

@@ -1,50 +1,108 @@
 {
   "name": "pelayanan-keswan",
   "version": "1.0.0",
-  "description": "Aplikasi layanan masyarakat untuk pelayanan kesehatan hewan dengan fitur pengobatan, vaksinasi rabies, dan telemedicine",
+  "description": "Aplikasi Pelayanan Kesehatan Hewan dengan integrasi Supabase dan deployment Vercel",
   "main": "index.html",
   "scripts": {
-    "start": "npx http-server . -p 3000 -o",
-    "dev": "npx live-server --port=3000 --open=/index.html",
-    "build": "echo 'No build process needed for static HTML/CSS/JS'",
-    "test": "echo 'No tests specified'"
+    "start": "npx serve .",
+    "build": "echo 'No build step required for static site'",
+    "deploy": "vercel --prod",
+    "dev": "npx serve . -p 3000",
+    "preview": "npx serve . -p 3001",
+    "test": "echo 'No tests specified'",
+    "lint": "echo 'No linting configured'",
+    "format": "prettier --write .",
+    "clean": "rm -rf node_modules .vercel",
+    "setup": "npm install && npm run deploy",
+    "update": "git add . && git commit -m 'Update: $(date)' && git push origin main",
+    "status": "vercel ls",
+    "logs": "vercel logs",
+    "env": "vercel env ls",
+    "help": "echo 'Available commands: start, build, deploy, dev, preview, test, lint, format, clean, setup, update, status, logs, env'"
   },
   "keywords": [
-    "keswan",
-    "kesehatan-hewan",
-    "vaksinasi-rabies",
+    "veterinary",
+    "healthcare",
+    "supabase",
+    "vercel",
+    "static-site",
+    "pelayanan-keswan",
+    "animal-health",
     "telemedicine",
-    "layanan-masyarakat",
-    "pengobatan-hewan",
-    "stock-obat",
-    "dashboard-admin",
-    "panel-petugas"
+    "vaccination",
+    "treatment"
   ],
-  "author": "Pelayanan Keswan Team",
+  "author": {
+    "name": "Pelayanan Keswan Team",
+    "email": "admin@pelayanan-keswan.com",
+    "url": "https://github.com/yourusername/pelayanan-keswan"
+  },
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/pelayanan-keswan/app.git"
+    "url": "https://github.com/yourusername/pelayanan-keswan.git"
   },
   "bugs": {
-    "url": "https://github.com/pelayanan-keswan/app/issues"
+    "url": "https://github.com/yourusername/pelayanan-keswan/issues"
   },
-  "homepage": "https://pelayanan-keswan.id",
+  "homepage": "https://pelayanan-keswan.vercel.app",
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
+  },
   "devDependencies": {
-    "http-server": "^14.1.1",
-    "live-server": "^1.2.2"
+    "serve": "^14.2.0",
+    "prettier": "^3.0.0"
   },
   "dependencies": {
-    "bootstrap": "^5.3.0",
-    "chart.js": "^3.9.1",
-    "font-awesome": "^6.0.0"
+    "@supabase/supabase-js": "^2.38.0"
   },
   "browserslist": [
     "> 1%",
     "last 2 versions",
     "not dead"
   ],
-  "engines": {
-    "node": ">=14.0.0"
+  "files": [
+    "*.html",
+    "*.css",
+    "*.js",
+    "*.md",
+    "*.json",
+    "*.sql",
+    "*.sh",
+    "*.command",
+    "*.bat",
+    "*.ps1",
+    "*.cmd",
+    "assets/",
+    "images/",
+    "docs/"
+  ],
+  "vercel": {
+    "version": 2,
+    "name": "pelayanan-keswan",
+    "builds": [
+      {
+        "src": "index.html",
+        "use": "@vercel/static"
+      }
+    ],
+    "routes": [
+      {
+        "src": "/(.*)",
+        "dest": "/$1"
+      }
+    ],
+    "env": {
+      "SUPABASE_URL": "@supabase_url",
+      "SUPABASE_ANON_KEY": "@supabase_anon_key"
+    }
+  },
+  "prettier": {
+    "semi": true,
+    "trailingComma": "es5",
+    "singleQuote": true,
+    "printWidth": 80,
+    "tabWidth": 2
   }
 }

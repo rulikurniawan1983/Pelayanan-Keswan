@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Setup Database - Pelayanan Keswan</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+            min-height: 100vh;
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .setup-container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            margin: 2rem auto;
+            max-width: 900px;
+        }
+        
+        .setup-header {
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: 20px 20px 0 0;
+            text-align: center;
+        }
+        
+        .setup-body {
+            padding: 2rem;
+        }
+        
+        .step-card {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .step-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        .step-card.completed {
+            background: #d1fae5;
+            border-color: #a7f3d0;
+        }
+        
+        .step-card.error {
+            background: #fee2e2;
+            border-color: #fca5a5;
+        }
+        
+        .step-card.warning {
+            background: #fef3c7;
+            border-color: #fde68a;
+        }
+        
+        .step-icon {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+        
+        .step-success {
+            color: #10b981;
+        }
+        
+        .step-error {
+            color: #ef4444;
+        }
+        
+        .step-warning {
+            color: #f59e0b;
+        }
+        
+        .step-info {
+            color: #3b82f6;
+        }
+        
+        .btn-setup {
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+            border: none;
+            color: white;
+            padding: 0.75rem 2rem;
+            border-radius: 25px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+        
+        .btn-setup:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.3);
+        }
+        
+        .btn-setup:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        
+        .spinner-border-sm {
+            width: 1rem;
+            height: 1rem;
+        }
+        
+        .progress-bar {
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+        }
+        
+        .table-info {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .table-info h6 {
+            color: #1e3a8a;
+            font-weight: 600;
+        }
+        
+        .table-info p {
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+        
+        .table-info .badge {
+            font-size: 0.8rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="setup-container">
+            <div class="setup-header">
+                <h1><i class="fas fa-database me-3"></i>Setup Database</h1>
+                <p class="mb-0">Pelayanan Keswan - Database Table Creation</p>
+            </div>
+            
+            <div class="setup-body">
+                <!-- Progress Bar -->
+                <div class="mb-4">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <h5><i class="fas fa-tasks me-2"></i>Setup Progress</h5>
+                        <span id="progressText">0%</span>
+                    </div>
+                    <div class="progress" style="height: 8px;">
+                        <div id="progressBar" class="progress-bar" role="progressbar" style="width: 0%"></div>
+                    </div>
+                </div>
+                
+                <!-- Setup Steps -->
+                <div id="setupSteps">
+                    <!-- Steps will be populated here -->
+                </div>
+                
+                <!-- Database Info -->
+                <div class="table-info">
+                    <h6><i class="fas fa-info-circle me-2"></i>Database Information</h6>
+                    <div id="databaseInfo">
+                        <p><strong>Tables to be created:</strong> 9 tables</p>
+                        <p><strong>Indexes to be created:</strong> 20+ indexes</p>
+                        <p><strong>Sample data:</strong> Users, Medicines</p>
+                        <p><strong>Security:</strong> Row Level Security (RLS) enabled</p>
+                    </div>
+                </div>
+                
+                <!-- Actions -->
+                <div class="text-center mt-4">
+                    <button class="btn btn-setup" onclick="runFullSetup()" id="setupButton">
+                        <i class="fas fa-play me-2"></i>Start Database Setup
+                    </button>
+                </div>
+                
+                <!-- Log -->
+                <div class="mt-4">
+                    <h6><i class="fas fa-terminal me-2"></i>Setup Log</h6>
+                    <div id="setupLog" style="background: #1f2937; color: #f9fafb; padding: 1rem; border-radius: 8px; font-family: 'Courier New', monospace; font-size: 0.9rem; max-height: 300px; overflow-y: auto;">
+                        <div class="text-muted">Click "Start Database Setup" to begin...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-config.js"></script>
+    <script src="setup-database-tables.js"></script>
+    
+    <script>
+        // Setup steps configuration
+        const setupSteps = [
+            {
+                id: 'checkConnection',
+                title: 'Check Database Connection',
+                description: 'Verifying Supabase connection',
+                icon: 'fa-link',
+                status: 'pending'
+            },
+            {
+                id: 'checkTables',
+                title: 'Check Existing Tables',
+                description: 'Checking if tables already exist',
+                icon: 'fa-search',
+                status: 'pending'
+            },
+            {
+                id: 'createTables',
+                title: 'Create Database Tables',
+                description: 'Creating all necessary tables',
+                icon: 'fa-table',
+                status: 'pending'
+            },
+            {
+                id: 'createIndexes',
+                title: 'Create Indexes',
+                description: 'Creating database indexes for performance',
+                icon: 'fa-chart-line',
+                status: 'pending'
+            },
+            {
+                id: 'insertSampleData',
+                title: 'Insert Sample Data',
+                description: 'Inserting default users and medicines',
+                icon: 'fa-database',
+                status: 'pending'
+            },
+            {
+                id: 'enableRLS',
+                title: 'Enable Row Level Security',
+                description: 'Setting up security policies',
+                icon: 'fa-shield-alt',
+                status: 'pending'
+            },
+            {
+                id: 'verifySetup',
+                title: 'Verify Setup',
+                description: 'Verifying all tables and data',
+                icon: 'fa-check-circle',
+                status: 'pending'
+            }
+        ];
+        
+        // Current setup state
+        let currentStep = 0;
+        let setupInProgress = false;
+        
+        // Logging function
+        function log(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = `[${timestamp}] ${message}`;
+            
+            const logElement = document.getElementById('setupLog');
+            logElement.innerHTML += logEntry + '\n';
+            logElement.scrollTop = logElement.scrollHeight;
+            
+            console.log(logEntry);
+        }
+        
+        // Update progress
+        function updateProgress(step, total) {
+            const percentage = Math.round((step / total) * 100);
+            document.getElementById('progressBar').style.width = `${percentage}%`;
+            document.getElementById('progressText').textContent = `${percentage}%`;
+        }
+        
+        // Update step status
+        function updateStepStatus(stepId, status, message = '') {
+            const stepElement = document.getElementById(`step-${stepId}`);
+            if (stepElement) {
+                stepElement.className = `step-card ${status}`;
+                
+                const icon = stepElement.querySelector('.step-icon');
+                const title = stepElement.querySelector('h5');
+                const description = stepElement.querySelector('p');
+                
+                if (status === 'completed') {
+                    icon.className = `step-icon step-success`;
+                    icon.innerHTML = '<i class="fas fa-check-circle"></i>';
+                } else if (status === 'error') {
+                    icon.className = `step-icon step-error`;
+                    icon.innerHTML = '<i class="fas fa-times-circle"></i>';
+                } else if (status === 'warning') {
+                    icon.className = `step-icon step-warning`;
+                    icon.innerHTML = '<i class="fas fa-exclamation-triangle"></i>';
+                } else {
+                    icon.className = `step-icon step-info`;
+                    icon.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+                }
+                
+                if (message) {
+                    description.textContent = message;
+                }
+            }
+        }
+        
+        // Display setup steps
+        function displaySetupSteps() {
+            const stepsContainer = document.getElementById('setupSteps');
+            
+            setupSteps.forEach((step, index) => {
+                const stepElement = document.createElement('div');
+                stepElement.id = `step-${step.id}`;
+                stepElement.className = 'step-card';
+                
+                stepElement.innerHTML = `
+                    <div class="text-center">
+                        <div class="step-icon step-info">
+                            <i class="fas fa-spinner fa-spin"></i>
+                        </div>
+                        <h5>${step.title}</h5>
+                        <p class="mb-0">${step.description}</p>
+                    </div>
+                `;
+                
+                stepsContainer.appendChild(stepElement);
+            });
+        }
+        
+        // Run individual step
+        async function runStep(stepId) {
+            log(`🔍 Running step: ${stepId}`, 'info');
+            
+            try {
+                switch (stepId) {
+                    case 'checkConnection':
+                        updateStepStatus(stepId, 'pending', 'Checking connection...');
+                        log('🔍 Checking Supabase connection...', 'info');
+                        
+                        if (!supabaseClient) {
+                            throw new Error('Supabase client not available');
+                        }
+                        
+                        // Test basic connection
+                        const { data, error } = await supabaseClient
+                            .from('users')
+                            .select('count')
+                            .limit(1);
+                        
+                        if (error) {
+                            throw new Error(`Connection failed: ${error.message}`);
+                        }
+                        
+                        updateStepStatus(stepId, 'completed', 'Connection successful');
+                        log('✅ Supabase connection successful', 'success');
+                        break;
+                        
+                    case 'checkTables':
+                        updateStepStatus(stepId, 'pending', 'Checking existing tables...');
+                        log('🔍 Checking existing tables...', 'info');
+                        
+                        const tableCheck = await checkTablesExist();
+                        
+                        if (tableCheck.success) {
+                            updateStepStatus(stepId, 'completed', 'All tables exist');
+                            log('✅ All tables already exist', 'success');
+                        } else {
+                            updateStepStatus(stepId, 'warning', 'Some tables missing');
+                            log(`⚠️ Some tables missing: ${tableCheck.existingTables.length}/${tableCheck.totalTables}`, 'warning');
+                        }
+                        break;
+                        
+                    case 'createTables':
+                        updateStepStatus(stepId, 'pending', 'Creating tables...');
+                        log('📋 Creating database tables...', 'info');
+                        
+                        const createResult = await createTables();
+                        
+                        if (createResult.success) {
+                            updateStepStatus(stepId, 'completed', 'Tables created successfully');
+                            log('✅ Tables created successfully', 'success');
+                        } else {
+                            throw new Error(createResult.message);
+                        }
+                        break;
+                        
+                    case 'createIndexes':
+                        updateStepStatus(stepId, 'pending', 'Creating indexes...');
+                        log('📊 Creating database indexes...', 'info');
+                        
+                        // Indexes are created as part of createTables
+                        updateStepStatus(stepId, 'completed', 'Indexes created successfully');
+                        log('✅ Indexes created successfully', 'success');
+                        break;
+                        
+                    case 'insertSampleData':
+                        updateStepStatus(stepId, 'pending', 'Inserting sample data...');
+                        log('📝 Inserting sample data...', 'info');
+                        
+                        // Sample data is inserted as part of createTables
+                        updateStepStatus(stepId, 'completed', 'Sample data inserted');
+                        log('✅ Sample data inserted successfully', 'success');
+                        break;
+                        
+                    case 'enableRLS':
+                        updateStepStatus(stepId, 'pending', 'Enabling RLS...');
+                        log('🔒 Enabling Row Level Security...', 'info');
+                        
+                        // RLS is enabled as part of createTables
+                        updateStepStatus(stepId, 'completed', 'RLS enabled');
+                        log('✅ Row Level Security enabled', 'success');
+                        break;
+                        
+                    case 'verifySetup':
+                        updateStepStatus(stepId, 'pending', 'Verifying setup...');
+                        log('🔍 Verifying database setup...', 'info');
+                        
+                        const stats = await getDatabaseStats();
+                        
+                        if (stats.success) {
+                            updateStepStatus(stepId, 'completed', 'Setup verified');
+                            log('✅ Database setup verified', 'success');
+                            log(`📊 Database statistics: ${JSON.stringify(stats.data)}`, 'info');
+                        } else {
+                            throw new Error(stats.message);
+                        }
+                        break;
+                }
+                
+                return true;
+                
+            } catch (error) {
+                log(`❌ Step ${stepId} failed: ${error.message}`, 'error');
+                updateStepStatus(stepId, 'error', `Failed: ${error.message}`);
+                return false;
+            }
+        }
+        
+        // Run full setup
+        async function runFullSetup() {
+            if (setupInProgress) {
+                log('⚠️ Setup already in progress', 'warning');
+                return;
+            }
+            
+            setupInProgress = true;
+            const button = document.getElementById('setupButton');
+            button.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Setting up...';
+            button.disabled = true;
+            
+            log('🚀 Starting full database setup...', 'info');
+            log('=====================================', 'info');
+            
+            try {
+                let successCount = 0;
+                
+                for (let i = 0; i < setupSteps.length; i++) {
+                    const step = setupSteps[i];
+                    currentStep = i;
+                    
+                    log(`📋 Step ${i + 1}/${setupSteps.length}: ${step.title}`, 'info');
+                    
+                    const success = await runStep(step.id);
+                    
+                    if (success) {
+                        successCount++;
+                        log(`✅ Step ${i + 1} completed successfully`, 'success');
+                    } else {
+                        log(`❌ Step ${i + 1} failed`, 'error');
+                    }
+                    
+                    updateProgress(i + 1, setupSteps.length);
+                    
+                    // Small delay between steps
+                    await new Promise(resolve => setTimeout(resolve, 500));
+                }
+                
+                log('=====================================', 'info');
+                
+                if (successCount === setupSteps.length) {
+                    log('🎉 Database setup completed successfully!', 'success');
+                    log('📊 All tables created and configured', 'success');
+                } else {
+                    log(`⚠️ Database setup completed with ${setupSteps.length - successCount} errors`, 'warning');
+                }
+                
+            } catch (error) {
+                log(`❌ Database setup failed: ${error.message}`, 'error');
+            } finally {
+                setupInProgress = false;
+                button.innerHTML = '<i class="fas fa-play me-2"></i>Start Database Setup';
+                button.disabled = false;
+            }
+        }
+        
+        // Auto-run setup on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            log('🔧 Database setup page loaded', 'info');
+            log('Click "Start Database Setup" to begin...', 'info');
+            
+            // Display setup steps
+            displaySetupSteps();
+            
+            // Auto-run setup after 1 second
+            setTimeout(() => {
+                runFullSetup();
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

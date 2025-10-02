@@ -1,0 +1,151 @@
+{
+  "version": 2,
+  "name": "pelayanan-keswan",
+  "alias": ["pelayanan-keswan.vercel.app"],
+  "builds": [
+    {
+      "src": "index.html",
+      "use": "@vercel/static"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/",
+      "dest": "/index.html"
+    },
+    {
+      "src": "/petugas",
+      "dest": "/petugas.html"
+    },
+    {
+      "src": "/admin",
+      "dest": "/admin.html"
+    },
+    {
+      "src": "/masyarakat",
+      "dest": "/masyarakat.html"
+    },
+    {
+      "src": "/test-database-connection",
+      "dest": "/test-database-connection.html"
+    },
+    {
+      "src": "/quick-database-check",
+      "dest": "/quick-database-check.html"
+    },
+    {
+      "src": "/setup-database",
+      "dest": "/setup-database.html"
+    },
+    {
+      "src": "/fix-database-permissions",
+      "dest": "/fix-database-permissions.html"
+    },
+    {
+      "src": "/(.*\\.(js|css|png|jpg|jpeg|gif|svg|ico|woff|woff2|ttf|eot))",
+      "dest": "/$1"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/$1"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "DENY"
+        },
+        {
+          "key": "X-XSS-Protection",
+          "value": "1; mode=block"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        },
+        {
+          "key": "Permissions-Policy",
+          "value": "camera=(), microphone=(), geolocation=()"
+        }
+      ]
+    },
+    {
+      "source": "/(.*\\.(js|css))",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    },
+    {
+      "source": "/(.*\\.(png|jpg|jpeg|gif|svg|ico|woff|woff2|ttf|eot))",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    }
+  ],
+  "redirects": [
+    {
+      "source": "/home",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/dashboard",
+      "destination": "/admin.html",
+      "permanent": false
+    },
+    {
+      "source": "/staff",
+      "destination": "/petugas.html",
+      "permanent": false
+    },
+    {
+      "source": "/public",
+      "destination": "/masyarakat.html",
+      "permanent": false
+    }
+  ],
+  "functions": {
+    "app/api/**/*.js": {
+      "runtime": "nodejs18.x"
+    }
+  },
+  "env": {
+    "SUPABASE_URL": "@supabase_url",
+    "SUPABASE_ANON_KEY": "@supabase_anon_key",
+    "NODE_ENV": "production"
+  },
+  "build": {
+    "env": {
+      "SUPABASE_URL": "@supabase_url",
+      "SUPABASE_ANON_KEY": "@supabase_anon_key"
+    }
+  },
+  "regions": ["sin1", "hnd1", "nrt1"],
+  "framework": null,
+  "outputDirectory": ".",
+  "installCommand": "npm install",
+  "buildCommand": "echo 'No build step required'",
+  "devCommand": "npx serve . -p 3000",
+  "public": true,
+  "github": {
+    "silent": true
+  },
+  "git": {
+    "deploymentEnabled": {
+      "main": true
+    }
+  }
+}

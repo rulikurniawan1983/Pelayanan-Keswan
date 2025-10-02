@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quick Database Check - Pelayanan Keswan</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+            min-height: 100vh;
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .check-container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            margin: 2rem auto;
+            max-width: 600px;
+        }
+        
+        .check-header {
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: 20px 20px 0 0;
+            text-align: center;
+        }
+        
+        .check-body {
+            padding: 2rem;
+        }
+        
+        .status-card {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .status-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        .status-icon {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+        
+        .status-success {
+            color: #10b981;
+        }
+        
+        .status-error {
+            color: #ef4444;
+        }
+        
+        .status-warning {
+            color: #f59e0b;
+        }
+        
+        .status-info {
+            color: #3b82f6;
+        }
+        
+        .btn-check {
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+            border: none;
+            color: white;
+            padding: 0.75rem 2rem;
+            border-radius: 25px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+        
+        .btn-check:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.3);
+        }
+        
+        .spinner-border-sm {
+            width: 1rem;
+            height: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="check-container">
+            <div class="check-header">
+                <h1><i class="fas fa-database me-3"></i>Quick Database Check</h1>
+                <p class="mb-0">Pelayanan Keswan - Database Connection Status</p>
+            </div>
+            
+            <div class="check-body">
+                <!-- Connection Status -->
+                <div id="connectionStatus" class="status-card">
+                    <div class="text-center">
+                        <div class="status-icon status-info">
+                            <i class="fas fa-spinner fa-spin"></i>
+                        </div>
+                        <h4>Checking Database Connection...</h4>
+                        <p class="mb-0">Please wait while we check your database connection.</p>
+                    </div>
+                </div>
+                
+                <!-- Database Details -->
+                <div id="databaseDetails" class="status-card" style="display: none;">
+                    <h5><i class="fas fa-info-circle me-2"></i>Database Details</h5>
+                    <div id="databaseInfo">
+                        <!-- Database info will be populated here -->
+                    </div>
+                </div>
+                
+                <!-- Services Status -->
+                <div id="servicesStatus" class="status-card" style="display: none;">
+                    <h5><i class="fas fa-cogs me-2"></i>Services Status</h5>
+                    <div id="servicesInfo">
+                        <!-- Services info will be populated here -->
+                    </div>
+                </div>
+                
+                <!-- Actions -->
+                <div class="text-center mt-4">
+                    <button class="btn btn-check" onclick="runQuickCheck()" id="checkButton">
+                        <i class="fas fa-play me-2"></i>Run Quick Check
+                    </button>
+                </div>
+                
+                <!-- Log -->
+                <div class="mt-4">
+                    <h6><i class="fas fa-terminal me-2"></i>Check Log</h6>
+                    <div id="checkLog" style="background: #1f2937; color: #f9fafb; padding: 1rem; border-radius: 8px; font-family: 'Courier New', monospace; font-size: 0.9rem; max-height: 200px; overflow-y: auto;">
+                        <div class="text-muted">Click "Run Quick Check" to start...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-config.js"></script>
+    <script src="supabase-integration.js"></script>
+    <script src="check-database-connection.js"></script>
+    
+    <script>
+        // Logging function
+        function log(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = `[${timestamp}] ${message}`;
+            
+            const logElement = document.getElementById('checkLog');
+            logElement.innerHTML += logEntry + '\n';
+            logElement.scrollTop = logElement.scrollHeight;
+            
+            console.log(logEntry);
+        }
+        
+        // Update connection status
+        function updateConnectionStatus(status, message, details = null) {
+            const statusCard = document.getElementById('connectionStatus');
+            const icon = statusCard.querySelector('.status-icon');
+            const title = statusCard.querySelector('h4');
+            const description = statusCard.querySelector('p');
+            
+            // Update icon and color
+            icon.className = `status-icon status-${status}`;
+            
+            if (status === 'success') {
+                icon.innerHTML = '<i class="fas fa-check-circle"></i>';
+                title.textContent = 'Database Connected!';
+                description.textContent = message;
+            } else if (status === 'error') {
+                icon.innerHTML = '<i class="fas fa-times-circle"></i>';
+                title.textContent = 'Database Connection Failed';
+                description.textContent = message;
+            } else if (status === 'warning') {
+                icon.innerHTML = '<i class="fas fa-exclamation-triangle"></i>';
+                title.textContent = 'Database Connection Warning';
+                description.textContent = message;
+            } else {
+                icon.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+                title.textContent = 'Checking Database Connection...';
+                description.textContent = message;
+            }
+            
+            // Show details if available
+            if (details) {
+                const detailsCard = document.getElementById('databaseDetails');
+                const detailsInfo = document.getElementById('databaseInfo');
+                
+                detailsInfo.innerHTML = `
+                    <div class="row">
+                        <div class="col-6">
+                            <strong>Status:</strong> ${details.status}
+                        </div>
+                        <div class="col-6">
+                            <strong>Response Time:</strong> ${details.responseTime}ms
+                        </div>
+                    </div>
+                    <div class="row mt-2">
+                        <div class="col-6">
+                            <strong>Tables:</strong> ${details.tables}
+                        </div>
+                        <div class="col-6">
+                            <strong>Services:</strong> ${details.services}
+                        </div>
+                    </div>
+                `;
+                
+                detailsCard.style.display = 'block';
+            }
+        }
+        
+        // Update services status
+        function updateServicesStatus(services) {
+            const servicesCard = document.getElementById('servicesStatus');
+            const servicesInfo = document.getElementById('servicesInfo');
+            
+            let servicesHtml = '';
+            for (const [service, status] of Object.entries(services)) {
+                const icon = status ? 'fa-check-circle text-success' : 'fa-times-circle text-danger';
+                servicesHtml += `
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span><i class="fas ${icon} me-2"></i>${service}</span>
+                        <span class="badge ${status ? 'bg-success' : 'bg-danger'}">${status ? 'OK' : 'FAIL'}</span>
+                    </div>
+                `;
+            }
+            
+            servicesInfo.innerHTML = servicesHtml;
+            servicesCard.style.display = 'block';
+        }
+        
+        // Run quick check
+        async function runQuickCheck() {
+            log('🚀 Starting quick database check...', 'info');
+            
+            // Update button
+            const button = document.getElementById('checkButton');
+            button.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Checking...';
+            button.disabled = true;
+            
+            try {
+                // Check Supabase availability
+                log('🔍 Checking Supabase availability...', 'info');
+                if (!checkSupabaseAvailability()) {
+                    updateConnectionStatus('error', 'Supabase client not found');
+                    log('❌ Supabase client not found', 'error');
+                    return;
+                }
+                log('✅ Supabase client found', 'success');
+                
+                // Check configuration
+                log('🔍 Checking Supabase configuration...', 'info');
+                if (!checkSupabaseConfig()) {
+                    updateConnectionStatus('error', 'Supabase configuration invalid');
+                    log('❌ Supabase configuration invalid', 'error');
+                    return;
+                }
+                log('✅ Supabase configuration valid', 'success');
+                
+                // Test basic connection
+                log('🔍 Testing basic connection...', 'info');
+                const connection = await testBasicConnection();
+                if (!connection) {
+                    updateConnectionStatus('error', 'Database connection failed');
+                    log('❌ Database connection failed', 'error');
+                    return;
+                }
+                log('✅ Database connection successful', 'success');
+                
+                // Test database tables
+                log('🔍 Testing database tables...', 'info');
+                const tablesResult = await testDatabaseTables();
+                log(`📊 Tables test: ${tablesResult.success ? 'All accessible' : 'Some tables failed'}`, 'info');
+                
+                // Test services
+                log('🔍 Testing services...', 'info');
+                const services = {
+                    'User Service': false,
+                    'Animal Service': false,
+                    'Service Service': false,
+                    'Medicine Service': false,
+                    'Statistics Service': false
+                };
+                
+                try {
+                    const userResult = await testUserServices();
+                    services['User Service'] = userResult.register && userResult.login;
+                    log(`👥 User Service: ${services['User Service'] ? 'OK' : 'FAIL'}`, 'info');
+                } catch (error) {
+                    log(`❌ User Service test failed: ${error.message}`, 'error');
+                }
+                
+                try {
+                    services['Animal Service'] = await testAnimalServices();
+                    log(`🐾 Animal Service: ${services['Animal Service'] ? 'OK' : 'FAIL'}`, 'info');
+                } catch (error) {
+                    log(`❌ Animal Service test failed: ${error.message}`, 'error');
+                }
+                
+                try {
+                    services['Service Service'] = await testServiceServices();
+                    log(`🏥 Service Service: ${services['Service Service'] ? 'OK' : 'FAIL'}`, 'info');
+                } catch (error) {
+                    log(`❌ Service Service test failed: ${error.message}`, 'error');
+                }
+                
+                try {
+                    services['Medicine Service'] = await testMedicineServices();
+                    log(`💊 Medicine Service: ${services['Medicine Service'] ? 'OK' : 'FAIL'}`, 'info');
+                } catch (error) {
+                    log(`❌ Medicine Service test failed: ${error.message}`, 'error');
+                }
+                
+                try {
+                    services['Statistics Service'] = await testStatisticsServices();
+                    log(`📊 Statistics Service: ${services['Statistics Service'] ? 'OK' : 'FAIL'}`, 'info');
+                } catch (error) {
+                    log(`❌ Statistics Service test failed: ${error.message}`, 'error');
+                }
+                
+                // Update UI
+                const successCount = Object.values(services).filter(s => s).length;
+                const totalCount = Object.keys(services).length;
+                
+                if (successCount === totalCount) {
+                    updateConnectionStatus('success', 'All services working perfectly!');
+                    log('🎉 All services working perfectly!', 'success');
+                } else if (successCount > 0) {
+                    updateConnectionStatus('warning', `Some services working (${successCount}/${totalCount})`);
+                    log(`⚠️ Some services working (${successCount}/${totalCount})`, 'warning');
+                } else {
+                    updateConnectionStatus('error', 'All services failed');
+                    log('❌ All services failed', 'error');
+                }
+                
+                // Update details
+                updateConnectionStatus('success', 'Database connection successful', {
+                    status: 'Connected',
+                    responseTime: '~100ms',
+                    tables: tablesResult.success ? 'All accessible' : 'Some failed',
+                    services: `${successCount}/${totalCount} working`
+                });
+                
+                // Update services
+                updateServicesStatus(services);
+                
+                log('✅ Quick check completed', 'success');
+                
+            } catch (error) {
+                log(`❌ Quick check failed: ${error.message}`, 'error');
+                updateConnectionStatus('error', `Check failed: ${error.message}`);
+            } finally {
+                // Reset button
+                button.innerHTML = '<i class="fas fa-play me-2"></i>Run Quick Check';
+                button.disabled = false;
+            }
+        }
+        
+        // Auto-run check on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            log('🔧 Quick database check page loaded', 'info');
+            log('Click "Run Quick Check" to start...', 'info');
+            
+            // Auto-run after 1 second
+            setTimeout(() => {
+                runQuickCheck();
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

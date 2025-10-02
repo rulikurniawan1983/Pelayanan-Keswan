@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fix Database Permissions - Pelayanan Keswan</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+            min-height: 100vh;
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .fix-container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            margin: 2rem auto;
+            max-width: 900px;
+        }
+        
+        .fix-header {
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: 20px 20px 0 0;
+            text-align: center;
+        }
+        
+        .fix-body {
+            padding: 2rem;
+        }
+        
+        .step-card {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .step-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        .step-card.completed {
+            background: #d1fae5;
+            border-color: #a7f3d0;
+        }
+        
+        .step-card.error {
+            background: #fee2e2;
+            border-color: #fca5a5;
+        }
+        
+        .step-card.warning {
+            background: #fef3c7;
+            border-color: #fde68a;
+        }
+        
+        .step-icon {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+        
+        .step-success {
+            color: #10b981;
+        }
+        
+        .step-error {
+            color: #ef4444;
+        }
+        
+        .step-warning {
+            color: #f59e0b;
+        }
+        
+        .step-info {
+            color: #3b82f6;
+        }
+        
+        .btn-fix {
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+            border: none;
+            color: white;
+            padding: 0.75rem 2rem;
+            border-radius: 25px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+        
+        .btn-fix:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.3);
+        }
+        
+        .btn-fix:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        
+        .spinner-border-sm {
+            width: 1rem;
+            height: 1rem;
+        }
+        
+        .progress-bar {
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+        }
+        
+        .error-info {
+            background: #fee2e2;
+            border: 1px solid #fca5a5;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .error-info h6 {
+            color: #991b1b;
+            font-weight: 600;
+        }
+        
+        .error-info p {
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            color: #991b1b;
+        }
+        
+        .solution-info {
+            background: #d1fae5;
+            border: 1px solid #a7f3d0;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .solution-info h6 {
+            color: #065f46;
+            font-weight: 600;
+        }
+        
+        .solution-info p {
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            color: #065f46;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="fix-container">
+            <div class="fix-header">
+                <h1><i class="fas fa-shield-alt me-3"></i>Fix Database Permissions</h1>
+                <p class="mb-0">Pelayanan Keswan - Database Permission Fix</p>
+            </div>
+            
+            <div class="fix-body">
+                <!-- Error Information -->
+                <div class="error-info">
+                    <h6><i class="fas fa-exclamation-triangle me-2"></i>Error Information</h6>
+                    <p><strong>Error:</strong> 42501: must be owner of table users</p>
+                    <p><strong>Cause:</strong> User doesn't have sufficient permissions to modify database tables</p>
+                    <p><strong>Impact:</strong> Cannot create or modify database tables</p>
+                </div>
+                
+                <!-- Solution Information -->
+                <div class="solution-info">
+                    <h6><i class="fas fa-tools me-2"></i>Solution</h6>
+                    <p><strong>Fix:</strong> Grant proper permissions to authenticated users</p>
+                    <p><strong>Method:</strong> Use SECURITY DEFINER functions to bypass permission issues</p>
+                    <p><strong>Result:</strong> All tables will be created with proper permissions</p>
+                </div>
+                
+                <!-- Progress Bar -->
+                <div class="mb-4">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <h5><i class="fas fa-tasks me-2"></i>Fix Progress</h5>
+                        <span id="progressText">0%</span>
+                    </div>
+                    <div class="progress" style="height: 8px;">
+                        <div id="progressBar" class="progress-bar" role="progressbar" style="width: 0%"></div>
+                    </div>
+                </div>
+                
+                <!-- Fix Steps -->
+                <div id="fixSteps">
+                    <!-- Steps will be populated here -->
+                </div>
+                
+                <!-- Actions -->
+                <div class="text-center mt-4">
+                    <button class="btn btn-fix" onclick="runFullPermissionFix()" id="fixButton">
+                        <i class="fas fa-tools me-2"></i>Fix Database Permissions
+                    </button>
+                </div>
+                
+                <!-- Log -->
+                <div class="mt-4">
+                    <h6><i class="fas fa-terminal me-2"></i>Fix Log</h6>
+                    <div id="fixLog" style="background: #1f2937; color: #f9fafb; padding: 1rem; border-radius: 8px; font-family: 'Courier New', monospace; font-size: 0.9rem; max-height: 300px; overflow-y: auto;">
+                        <div class="text-muted">Click "Fix Database Permissions" to begin...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-config.js"></script>
+    <script src="fix-database-permissions.js"></script>
+    
+    <script>
+        // Fix steps configuration
+        const fixSteps = [
+            {
+                id: 'fixPermissions',
+                title: 'Fix Database Permissions',
+                description: 'Granting proper permissions to authenticated users',
+                icon: 'fa-shield-alt',
+                status: 'pending'
+            },
+            {
+                id: 'createTables',
+                title: 'Create Tables Safely',
+                description: 'Creating tables using SECURITY DEFINER functions',
+                icon: 'fa-table',
+                status: 'pending'
+            },
+            {
+                id: 'addForeignKeys',
+                title: 'Add Foreign Keys',
+                description: 'Adding foreign key constraints between tables',
+                icon: 'fa-link',
+                status: 'pending'
+            },
+            {
+                id: 'insertSampleData',
+                title: 'Insert Sample Data',
+                description: 'Inserting default users and medicines',
+                icon: 'fa-database',
+                status: 'pending'
+            },
+            {
+                id: 'enableRLS',
+                title: 'Enable Row Level Security',
+                description: 'Setting up security policies',
+                icon: 'fa-lock',
+                status: 'pending'
+            }
+        ];
+        
+        // Current fix state
+        let currentStep = 0;
+        let fixInProgress = false;
+        
+        // Logging function
+        function log(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = `[${timestamp}] ${message}`;
+            
+            const logElement = document.getElementById('fixLog');
+            logElement.innerHTML += logEntry + '\n';
+            logElement.scrollTop = logElement.scrollHeight;
+            
+            console.log(logEntry);
+        }
+        
+        // Update progress
+        function updateProgress(step, total) {
+            const percentage = Math.round((step / total) * 100);
+            document.getElementById('progressBar').style.width = `${percentage}%`;
+            document.getElementById('progressText').textContent = `${percentage}%`;
+        }
+        
+        // Update step status
+        function updateStepStatus(stepId, status, message = '') {
+            const stepElement = document.getElementById(`step-${stepId}`);
+            if (stepElement) {
+                stepElement.className = `step-card ${status}`;
+                
+                const icon = stepElement.querySelector('.step-icon');
+                const title = stepElement.querySelector('h5');
+                const description = stepElement.querySelector('p');
+                
+                if (status === 'completed') {
+                    icon.className = `step-icon step-success`;
+                    icon.innerHTML = '<i class="fas fa-check-circle"></i>';
+                } else if (status === 'error') {
+                    icon.className = `step-icon step-error`;
+                    icon.innerHTML = '<i class="fas fa-times-circle"></i>';
+                } else if (status === 'warning') {
+                    icon.className = `step-icon step-warning`;
+                    icon.innerHTML = '<i class="fas fa-exclamation-triangle"></i>';
+                } else {
+                    icon.className = `step-icon step-info`;
+                    icon.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+                }
+                
+                if (message) {
+                    description.textContent = message;
+                }
+            }
+        }
+        
+        // Display fix steps
+        function displayFixSteps() {
+            const stepsContainer = document.getElementById('fixSteps');
+            
+            fixSteps.forEach((step, index) => {
+                const stepElement = document.createElement('div');
+                stepElement.id = `step-${step.id}`;
+                stepElement.className = 'step-card';
+                
+                stepElement.innerHTML = `
+                    <div class="text-center">
+                        <div class="step-icon step-info">
+                            <i class="fas fa-spinner fa-spin"></i>
+                        </div>
+                        <h5>${step.title}</h5>
+                        <p class="mb-0">${step.description}</p>
+                    </div>
+                `;
+                
+                stepsContainer.appendChild(stepElement);
+            });
+        }
+        
+        // Run individual step
+        async function runStep(stepId) {
+            log(`🔍 Running step: ${stepId}`, 'info');
+            
+            try {
+                switch (stepId) {
+                    case 'fixPermissions':
+                        updateStepStatus(stepId, 'pending', 'Fixing permissions...');
+                        log('🔧 Fixing database permissions...', 'info');
+                        
+                        const permissionResult = await fixPermissions();
+                        if (permissionResult.success) {
+                            updateStepStatus(stepId, 'completed', 'Permissions fixed successfully');
+                            log('✅ Permissions fixed successfully', 'success');
+                        } else {
+                            throw new Error(permissionResult.message);
+                        }
+                        break;
+                        
+                    case 'createTables':
+                        updateStepStatus(stepId, 'pending', 'Creating tables safely...');
+                        log('📋 Creating tables safely...', 'info');
+                        
+                        const tableResult = await createTablesSafely();
+                        if (tableResult.success) {
+                            updateStepStatus(stepId, 'completed', 'Tables created successfully');
+                            log('✅ Tables created successfully', 'success');
+                        } else {
+                            throw new Error(tableResult.message);
+                        }
+                        break;
+                        
+                    case 'addForeignKeys':
+                        updateStepStatus(stepId, 'pending', 'Adding foreign keys...');
+                        log('🔗 Adding foreign keys...', 'info');
+                        
+                        const foreignKeyResult = await addForeignKeys();
+                        if (foreignKeyResult.success) {
+                            updateStepStatus(stepId, 'completed', 'Foreign keys added successfully');
+                            log('✅ Foreign keys added successfully', 'success');
+                        } else {
+                            throw new Error(foreignKeyResult.message);
+                        }
+                        break;
+                        
+                    case 'insertSampleData':
+                        updateStepStatus(stepId, 'pending', 'Inserting sample data...');
+                        log('📝 Inserting sample data...', 'info');
+                        
+                        const sampleDataResult = await insertSampleData();
+                        if (sampleDataResult.success) {
+                            updateStepStatus(stepId, 'completed', 'Sample data inserted successfully');
+                            log('✅ Sample data inserted successfully', 'success');
+                        } else {
+                            throw new Error(sampleDataResult.message);
+                        }
+                        break;
+                        
+                    case 'enableRLS':
+                        updateStepStatus(stepId, 'pending', 'Enabling RLS...');
+                        log('🔒 Enabling Row Level Security...', 'info');
+                        
+                        const rlsResult = await enableRLS();
+                        if (rlsResult.success) {
+                            updateStepStatus(stepId, 'completed', 'RLS enabled successfully');
+                            log('✅ RLS enabled successfully', 'success');
+                        } else {
+                            throw new Error(rlsResult.message);
+                        }
+                        break;
+                }
+                
+                return true;
+                
+            } catch (error) {
+                log(`❌ Step ${stepId} failed: ${error.message}`, 'error');
+                updateStepStatus(stepId, 'error', `Failed: ${error.message}`);
+                return false;
+            }
+        }
+        
+        // Run full permission fix
+        async function runFullPermissionFix() {
+            if (fixInProgress) {
+                log('⚠️ Permission fix already in progress', 'warning');
+                return;
+            }
+            
+            fixInProgress = true;
+            const button = document.getElementById('fixButton');
+            button.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Fixing...';
+            button.disabled = true;
+            
+            log('🚀 Starting permission fix...', 'info');
+            log('=====================================', 'info');
+            
+            try {
+                let successCount = 0;
+                
+                for (let i = 0; i < fixSteps.length; i++) {
+                    const step = fixSteps[i];
+                    currentStep = i;
+                    
+                    log(`📋 Step ${i + 1}/${fixSteps.length}: ${step.title}`, 'info');
+                    
+                    const success = await runStep(step.id);
+                    
+                    if (success) {
+                        successCount++;
+                        log(`✅ Step ${i + 1} completed successfully`, 'success');
+                    } else {
+                        log(`❌ Step ${i + 1} failed`, 'error');
+                    }
+                    
+                    updateProgress(i + 1, fixSteps.length);
+                    
+                    // Small delay between steps
+                    await new Promise(resolve => setTimeout(resolve, 500));
+                }
+                
+                log('=====================================', 'info');
+                
+                if (successCount === fixSteps.length) {
+                    log('🎉 Permission fix completed successfully!', 'success');
+                    log('📊 All tables created and configured', 'success');
+                } else {
+                    log(`⚠️ Permission fix completed with ${fixSteps.length - successCount} errors`, 'warning');
+                }
+                
+            } catch (error) {
+                log(`❌ Permission fix failed: ${error.message}`, 'error');
+            } finally {
+                fixInProgress = false;
+                button.innerHTML = '<i class="fas fa-tools me-2"></i>Fix Database Permissions';
+                button.disabled = false;
+            }
+        }
+        
+        // Auto-run fix on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            log('🔧 Permission fix page loaded', 'info');
+            log('Click "Fix Database Permissions" to begin...', 'info');
+            
+            // Display fix steps
+            displayFixSteps();
+            
+            // Auto-run fix after 1 second
+            setTimeout(() => {
+                runFullPermissionFix();
+            }, 1000);
+        });
+    </script>
+</body>
+</html>
