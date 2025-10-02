@@ -51,6 +51,9 @@ function initializeApp() {
     
     // Initialize statistics chart
     initializeStatisticsChart();
+    
+    // Auto-refresh chart every 30 seconds
+    setInterval(refreshStatisticsChart, 30000);
 }
 
 // Setup Event Listeners
@@ -578,17 +581,24 @@ function showRegistrationPrompt() {
 }
 
 // Initialize Statistics Chart
-function initializeStatisticsChart() {
+async function initializeStatisticsChart() {
     const ctx = document.getElementById('statisticsChart');
     if (!ctx) return;
 
+    // Get real data from database
+    const statisticsData = await getRealStatisticsData();
+    
     const chart = new Chart(ctx, {
         type: 'bar',
         data: {
-            labels: ['Hewan Terselamatkan', 'Dokter Hewan', 'Kepuasan'],
+            labels: ['Total Hewan', 'Pengobatan Hewan', 'Vaksinasi Rabies'],
             datasets: [{
                 label: 'Statistik Pelayanan',
-                data: [2500, 15, 98],
+                data: [
+                    statisticsData.totalAnimals,
+                    statisticsData.treatmentCount,
+                    statisticsData.vaccinationCount
+                ],
                 backgroundColor: [
                     'rgba(59, 130, 246, 0.8)',
                     'rgba(16, 185, 129, 0.8)',
@@ -626,12 +636,12 @@ function initializeStatisticsChart() {
                         label: function(context) {
                             const value = context.parsed.y;
                             const label = context.label;
-                            if (label === 'Hewan Terselamatkan') {
-                                return `${value.toLocaleString()} hewan`;
-                            } else if (label === 'Dokter Hewan') {
-                                return `${value} dokter profesional`;
-                            } else if (label === 'Kepuasan') {
-                                return `${value}% tingkat kepuasan`;
+                            if (label === 'Total Hewan') {
+                                return `${value.toLocaleString()} hewan terdaftar`;
+                            } else if (label === 'Pengobatan Hewan') {
+                                return `${value.toLocaleString()} pengobatan dilakukan`;
+                            } else if (label === 'Vaksinasi Rabies') {
+                                return `${value.toLocaleString()} vaksinasi rabies`;
                             }
                             return value;
                         }
@@ -688,7 +698,90 @@ function initializeStatisticsChart() {
             ctx.style.cursor = 'default';
         }
     });
+
+    // Store chart instance globally
+    window.statisticsChart = chart;
 }
+
+// Get Real Statistics Data from Database
+async function getRealStatisticsData() {
+    try {
+        // Check if Supabase is available
+        if (typeof supabase === 'undefined') {
+            console.log('Supabase not available, using fallback data');
+            return getFallbackStatisticsData();
+        }
+
+        // Get data from Supabase
+        const [animalsResult, treatmentsResult, vaccinationsResult] = await Promise.all([
+            supabase.from('animals').select('id', { count: 'exact' }),
+            supabase.from('services').select('id', { count: 'exact' }).eq('service_type', 'treatment'),
+            supabase.from('services').select('id', { count: 'exact' }).eq('service_type', 'vaccination')
+        ]);
+
+        // Handle errors
+        if (animalsResult.error) {
+            console.error('Error fetching animals:', animalsResult.error);
+            return getFallbackStatisticsData();
+        }
+        if (treatmentsResult.error) {
+            console.error('Error fetching treatments:', treatmentsResult.error);
+            return getFallbackStatisticsData();
+        }
+        if (vaccinationsResult.error) {
+            console.error('Error fetching vaccinations:', vaccinationsResult.error);
+            return getFallbackStatisticsData();
+        }
+
+        return {
+            totalAnimals: animalsResult.count || 0,
+            treatmentCount: treatmentsResult.count || 0,
+            vaccinationCount: vaccinationsResult.count || 0
+        };
+
+    } catch (error) {
+        console.error('Error getting statistics data:', error);
+        return getFallbackStatisticsData();
+    }
+}
+
+// Fallback Statistics Data
+function getFallbackStatisticsData() {
+    // Get data from localStorage as fallback
+    const animals = JSON.parse(localStorage.getItem('animals') || '[]');
+    const services = JSON.parse(localStorage.getItem('services') || '[]');
+    
+    const treatmentCount = services.filter(service => service.serviceType === 'treatment').length;
+    const vaccinationCount = services.filter(service => service.serviceType === 'vaccination').length;
+    
+    return {
+        totalAnimals: animals.length,
+        treatmentCount: treatmentCount,
+        vaccinationCount: vaccinationCount
+    };
+}
+
+// Refresh Statistics Chart
+async function refreshStatisticsChart() {
+    try {
+        const statisticsData = await getRealStatisticsData();
+        
+        // Update chart if it exists
+        if (window.statisticsChart) {
+            window.statisticsChart.data.datasets[0].data = [
+                statisticsData.totalAnimals,
+                statisticsData.treatmentCount,
+                statisticsData.vaccinationCount
+            ];
+            window.statisticsChart.update();
+        }
+    } catch (error) {
+        console.error('Error refreshing statistics chart:', error);
+    }
+}
+
+// Store chart instance globally for updates
+window.statisticsChart = null;
 
 // Export functions for use in other pages
 window.showRegisterModal = showRegisterModal;
@@ -703,3 +796,4 @@ window.generateId = generateId;
 window.updateUserMenu = updateUserMenu;
 window.updateUserMenuAfterLogin = updateUserMenuAfterLogin;
 window.showRegistrationPrompt = showRegistrationPrompt;
+window.refreshStatisticsChart = refreshStatisticsChart;
