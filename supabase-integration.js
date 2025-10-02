@@ -253,3 +253,36 @@ window.EnhancedServiceService = EnhancedServiceService;
 window.EnhancedMedicineService = EnhancedMedicineService;
 window.EnhancedStatsService = EnhancedStatsService;
 window.checkSupabaseConnection = checkSupabaseConnection;
+
+// Storage helper
+async function uploadToBucket(bucket, path, file) {
+    if (!checkSupabaseConnection()) throw new Error('Supabase not available');
+    const { data, error } = await supabaseClient.storage.from(bucket).upload(path, file, { upsert: true, cacheControl: '3600' });
+    if (error) throw error;
+    const { data: publicUrl } = supabaseClient.storage.from(bucket).getPublicUrl(path);
+    return publicUrl.publicUrl;
+}
+
+// Vet Practice Recommendation Service
+const VetPracticeRecommendationService = {
+    async submit(payload) {
+        if (!checkSupabaseConnection()) {
+            // fallback: store locally
+            const items = JSON.parse(localStorage.getItem('vetPracticeRecommendations') || '[]');
+            items.push({ ...payload, id: Date.now().toString() });
+            localStorage.setItem('vetPracticeRecommendations', JSON.stringify(items));
+            return { success: true, data: payload };
+        }
+
+        // Insert row to DB
+        const { data, error } = await supabaseClient
+            .from(TABLES.VET_PRACTICE_RECOMMENDATIONS)
+            .insert([payload])
+            .select();
+        if (error) throw error;
+        return { success: true, data: data[0] };
+    }
+};
+
+window.uploadToBucket = uploadToBucket;
+window.VetPracticeRecommendationService = VetPracticeRecommendationService;

@@ -6,8 +6,8 @@ Fitur rekomendasi praktek dokter hewan dan rekomendasi nomor kontrol veteriner t
 ## ✅ Changes Made
 
 ### 1. **New Service Items Added**
-- ✅ **Rekomendasi Praktek**: Service item untuk rekomendasi praktek dokter hewan terdekat
-- ✅ **Nomor Kontrol**: Service item untuk rekomendasi nomor kontrol veteriner
+- ✅ **Rekomendasi Praktek Dokter Hewan**: Service item untuk rekomendasi praktek dokter hewan terdekat
+- ✅ **Rekomendasi Nomor Kontrol Veteriner**: Service item untuk rekomendasi nomor kontrol veteriner
 - ✅ **Icons**: Map marker dan ID card icons untuk visual identification
 - ✅ **Tooltips**: Descriptive tooltips untuk better user experience
 
@@ -29,7 +29,7 @@ Fitur rekomendasi praktek dokter hewan dan rekomendasi nomor kontrol veteriner t
         <i class="fas fa-map-marker-alt"></i>
     </div>
     <div class="service-content">
-        <h5 class="service-title">Rekomendasi Praktek</h5>
+        <h5 class="service-title">Rekomendasi Praktek Dokter Hewan</h5>
         <p class="service-desc">Dokter hewan terdekat</p>
     </div>
     <div class="service-status">
@@ -47,7 +47,7 @@ Fitur rekomendasi praktek dokter hewan dan rekomendasi nomor kontrol veteriner t
         <i class="fas fa-id-card"></i>
     </div>
     <div class="service-content">
-        <h5 class="service-title">Nomor Kontrol</h5>
+        <h5 class="service-title">Rekomendasi Nomor Kontrol Veteriner</h5>
         <p class="service-desc">Kontrol veteriner</p>
     </div>
     <div class="service-status">

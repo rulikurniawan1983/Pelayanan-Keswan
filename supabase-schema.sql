@@ -101,6 +101,36 @@ CREATE INDEX IF NOT EXISTS idx_medicines_status ON medicines(status);
 CREATE INDEX IF NOT EXISTS idx_vaccinations_owner_nik ON vaccinations(owner_nik);
 CREATE INDEX IF NOT EXISTS idx_telemedicine_owner_nik ON telemedicine_sessions(owner_nik);
 
+-- Create vet_practice_recommendations table
+CREATE TABLE IF NOT EXISTS vet_practice_recommendations (
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    drh_name VARCHAR(255) NOT NULL,
+    drh_nik VARCHAR(16) NOT NULL,
+    strv_number VARCHAR(100) NOT NULL,
+    strv_issued_at DATE NOT NULL,
+    strv_valid_until DATE NOT NULL,
+    domicile_address TEXT NOT NULL,
+    practice_address TEXT NOT NULL,
+    practice_type VARCHAR(50) NOT NULL CHECK (practice_type IN ('mandiri','klinik','rumah_sakit','mobil')),
+    qualification VARCHAR(255),
+    facilities TEXT,
+    req_health_cert BOOLEAN DEFAULT FALSE,
+    req_skck BOOLEAN DEFAULT FALSE,
+    req_diploma BOOLEAN DEFAULT FALSE,
+    req_statement BOOLEAN DEFAULT FALSE,
+    doc_health_cert TEXT,
+    doc_skck TEXT,
+    doc_diploma TEXT,
+    doc_statement TEXT,
+    owner_nik VARCHAR(16) REFERENCES users(nik) ON DELETE SET NULL,
+    owner_name VARCHAR(255),
+    status VARCHAR(20) DEFAULT 'submitted' CHECK (status IN ('submitted','under_review','approved','rejected')),
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_vet_practice_owner_nik ON vet_practice_recommendations(owner_nik);
+
 -- Create updated_at trigger function
 CREATE OR REPLACE FUNCTION update_updated_at_column()
 RETURNS TRIGGER AS $$
@@ -142,6 +172,7 @@ ALTER TABLE services ENABLE ROW LEVEL SECURITY;
 ALTER TABLE medicines ENABLE ROW LEVEL SECURITY;
 ALTER TABLE vaccinations ENABLE ROW LEVEL SECURITY;
 ALTER TABLE telemedicine_sessions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE vet_practice_recommendations ENABLE ROW LEVEL SECURITY;
 
 -- Create RLS policies
 -- Users can only see their own data
@@ -174,6 +205,10 @@ CREATE POLICY "Staff can view all medicines" ON medicines FOR ALL USING (
     EXISTS (SELECT 1 FROM users WHERE id::text = auth.uid()::text AND role IN ('petugas', 'admin'))
 );
 
+CREATE POLICY "Staff can view all vet practice recommendations" ON vet_practice_recommendations FOR ALL USING (
+    EXISTS (SELECT 1 FROM users WHERE id::text = auth.uid()::text AND role IN ('petugas', 'admin'))
+);
+
 -- Admin can manage all data
 CREATE POLICY "Admin can manage all data" ON users FOR ALL USING (
     EXISTS (SELECT 1 FROM users WHERE id::text = auth.uid()::text AND role = 'admin')
@@ -190,3 +225,6 @@ CREATE POLICY "Admin can manage all services" ON services FOR ALL USING (
 CREATE POLICY "Admin can manage all medicines" ON medicines FOR ALL USING (
     EXISTS (SELECT 1 FROM users WHERE id::text = auth.uid()::text AND role = 'admin')
 );
+
+CREATE POLICY "Users can view own vet practice recommendations" ON vet_practice_recommendations FOR SELECT USING (owner_nik IN (SELECT nik FROM users WHERE id::text = auth.uid()::text));
+CREATE POLICY "Users can insert own vet practice recommendations" ON vet_practice_recommendations FOR INSERT WITH CHECK (owner_nik IN (SELECT nik FROM users WHERE id::text = auth.uid()::text));

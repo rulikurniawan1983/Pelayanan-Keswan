@@ -1,6 +1,5 @@
 // Petugas Panel JavaScript
 let services = [];
-let medicines = [];
 let telemedicineSessions = [];
 
 // Initialize Petugas Panel
@@ -9,7 +8,62 @@ document.addEventListener('DOMContentLoaded', function() {
     loadData();
     setupEventListeners();
     updateDashboard();
+    initializeSidebar();
 });
+
+// Initialize Sidebar
+function initializeSidebar() {
+    // Set active navigation based on current section
+    const currentSection = window.location.hash || '#dashboard';
+    setActiveNavByHash(currentSection);
+    
+    // Add smooth scrolling for navigation links
+    document.querySelectorAll('.sidebar-menu .nav-link').forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            const targetId = this.getAttribute('href');
+            const targetElement = document.querySelector(targetId);
+            
+            if (targetElement) {
+                targetElement.scrollIntoView({ behavior: 'smooth' });
+                setActiveNav(this);
+            }
+        });
+    });
+}
+
+// Toggle Sidebar (Mobile)
+function toggleSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.querySelector('.sidebar-overlay');
+    
+    if (sidebar.classList.contains('show')) {
+        sidebar.classList.remove('show');
+        if (overlay) overlay.classList.remove('show');
+    } else {
+        sidebar.classList.add('show');
+        if (overlay) overlay.classList.add('show');
+    }
+}
+
+// Set Active Navigation
+function setActiveNav(activeLink) {
+    // Remove active class from all nav links
+    document.querySelectorAll('.sidebar-menu .nav-link').forEach(link => {
+        link.classList.remove('active');
+    });
+    
+    // Add active class to clicked link
+    activeLink.classList.add('active');
+}
+
+// Set Active Navigation by Hash
+function setActiveNavByHash(hash) {
+    const navLink = document.querySelector(`.sidebar-menu .nav-link[href="${hash}"]`);
+    if (navLink) {
+        setActiveNav(navLink);
+    }
+}
 
 // Check Authentication
 function checkAuth() {
@@ -22,50 +76,9 @@ function checkAuth() {
 // Load Data from LocalStorage
 function loadData() {
     services = JSON.parse(localStorage.getItem('services') || '[]');
-    medicines = JSON.parse(localStorage.getItem('medicines') || '[]');
     telemedicineSessions = JSON.parse(localStorage.getItem('telemedicineSessions') || '[]');
-    
-    // Initialize with sample data if empty
-    if (medicines.length === 0) {
-        initializeSampleMedicines();
-    }
 }
 
-// Initialize Sample Medicines
-function initializeSampleMedicines() {
-    const sampleMedicines = [
-        {
-            id: generateId(),
-            name: 'Amoxicillin 250mg',
-            category: 'antibiotik',
-            stock: 50,
-            price: 15000,
-            description: 'Antibiotik untuk infeksi bakteri',
-            status: 'available'
-        },
-        {
-            id: generateId(),
-            name: 'Vitamin B Complex',
-            category: 'vitamin',
-            stock: 30,
-            price: 25000,
-            description: 'Vitamin untuk kesehatan hewan',
-            status: 'available'
-        },
-        {
-            id: generateId(),
-            name: 'Vaksin Rabies',
-            category: 'vaksin',
-            stock: 5,
-            price: 75000,
-            description: 'Vaksin untuk mencegah rabies',
-            status: 'low_stock'
-        }
-    ];
-    
-    medicines = sampleMedicines;
-    localStorage.setItem('medicines', JSON.stringify(medicines));
-}
 
 // Setup Event Listeners
 function setupEventListeners() {
@@ -81,11 +94,6 @@ function setupEventListeners() {
         vaccinationForm.addEventListener('submit', handleVaccination);
     }
 
-    // Add Medicine Form
-    const addMedicineForm = document.getElementById('addMedicineForm');
-    if (addMedicineForm) {
-        addMedicineForm.addEventListener('submit', handleAddMedicine);
-    }
 }
 
 // Update Dashboard
@@ -97,19 +105,11 @@ function updateDashboard() {
         new Date(service.serviceDate).toDateString() === today
     );
     
-    document.getElementById('todayAppointments').textContent = todayServices.length;
-    document.getElementById('vaccinationsToday').textContent = 
-        todayServices.filter(s => s.serviceType === 'vaksinasi').length;
-    document.getElementById('telemedicineToday').textContent = 
-        telemedicineSessions.filter(s => s.status === 'active').length;
-    document.getElementById('lowStockItems').textContent = 
-        medicines.filter(m => m.stock < 10).length;
-
     // Update today services table
     updateTodayServicesTable(todayServices);
     
-    // Update medicine table
-    updateMedicineTable();
+    // Update service history
+    updateServiceHistory();
     
     // Update telemedicine sessions
     updateTelemedicineSessions();
@@ -154,48 +154,6 @@ function updateTodayServicesTable(services) {
     `).join('');
 }
 
-// Update Medicine Table
-function updateMedicineTable() {
-    const tbody = document.getElementById('medicineTable');
-    if (!tbody) return;
-
-    if (medicines.length === 0) {
-        tbody.innerHTML = `
-            <tr>
-                <td colspan="6" class="text-center text-muted">
-                    <i class="fas fa-pills me-2"></i>Tidak ada data obat
-                </td>
-            </tr>
-        `;
-        return;
-    }
-
-    tbody.innerHTML = medicines.map(medicine => `
-        <tr>
-            <td>${medicine.name}</td>
-            <td>
-                <span class="badge bg-secondary">${medicine.category}</span>
-            </td>
-            <td>
-                <span class="badge bg-${medicine.stock < 10 ? 'danger' : medicine.stock < 20 ? 'warning' : 'success'}">
-                    ${medicine.stock}
-                </span>
-            </td>
-            <td>Rp ${medicine.price.toLocaleString()}</td>
-            <td>
-                <span class="badge bg-${getMedicineStatusColor(medicine.status)}">${medicine.status}</span>
-            </td>
-            <td>
-                <button class="btn btn-sm btn-outline-primary" onclick="editMedicine('${medicine.id}')">
-                    <i class="fas fa-edit"></i>
-                </button>
-                <button class="btn btn-sm btn-outline-danger" onclick="deleteMedicine('${medicine.id}')">
-                    <i class="fas fa-trash"></i>
-                </button>
-            </td>
-        </tr>
-    `).join('');
-}
 
 // Update Telemedicine Sessions
 function updateTelemedicineSessions() {
@@ -318,34 +276,6 @@ function handleVaccination(e) {
     updateDashboard();
 }
 
-// Handle Add Medicine
-function handleAddMedicine(e) {
-    e.preventDefault();
-    
-    const medicineData = {
-        id: generateId(),
-        name: document.getElementById('medicineName').value,
-        category: document.getElementById('medicineCategory').value,
-        stock: parseInt(document.getElementById('medicineStock').value),
-        price: parseInt(document.getElementById('medicinePrice').value),
-        description: document.getElementById('medicineDescription').value,
-        status: 'available',
-        createdAt: new Date().toISOString()
-    };
-
-    medicines.push(medicineData);
-    localStorage.setItem('medicines', JSON.stringify(medicines));
-    
-    showAlert('Obat berhasil ditambahkan!', 'success');
-    
-    // Close modal and reset form
-    const modal = bootstrap.Modal.getInstance(document.getElementById('addMedicineModal'));
-    modal.hide();
-    e.target.reset();
-    
-    // Update dashboard
-    updateDashboard();
-}
 
 // Show Modals
 function showNewServiceModal() {
@@ -363,14 +293,6 @@ function showTelemedicineModal() {
     modal.show();
 }
 
-function showStockModal() {
-    document.getElementById('stock').scrollIntoView({ behavior: 'smooth' });
-}
-
-function showAddMedicineModal() {
-    const modal = new bootstrap.Modal(document.getElementById('addMedicineModal'));
-    modal.show();
-}
 
 // Telemedicine Functions
 function startTelemedicine() {
@@ -426,34 +348,6 @@ function endTelemedicineSession(sessionId) {
 }
 
 // Medicine Management
-function editMedicine(medicineId) {
-    const medicine = medicines.find(m => m.id === medicineId);
-    if (medicine) {
-        // Pre-fill form with medicine data
-        document.getElementById('medicineName').value = medicine.name;
-        document.getElementById('medicineCategory').value = medicine.category;
-        document.getElementById('medicineStock').value = medicine.stock;
-        document.getElementById('medicinePrice').value = medicine.price;
-        document.getElementById('medicineDescription').value = medicine.description;
-        
-        // Show modal
-        const modal = new bootstrap.Modal(document.getElementById('addMedicineModal'));
-        modal.show();
-        
-        // Update form to edit mode
-        const form = document.getElementById('addMedicineForm');
-        form.dataset.editId = medicineId;
-    }
-}
-
-function deleteMedicine(medicineId) {
-    if (confirm('Apakah Anda yakin ingin menghapus obat ini?')) {
-        medicines = medicines.filter(m => m.id !== medicineId);
-        localStorage.setItem('medicines', JSON.stringify(medicines));
-        showAlert('Obat berhasil dihapus!', 'success');
-        updateDashboard();
-    }
-}
 
 // Service Management
 function viewService(serviceId) {
@@ -484,14 +378,6 @@ function getStatusColor(status) {
     return colors[status] || 'secondary';
 }
 
-function getMedicineStatusColor(status) {
-    const colors = {
-        'available': 'success',
-        'low_stock': 'warning',
-        'out_of_stock': 'danger'
-    };
-    return colors[status] || 'secondary';
-}
 
 // Logout Function
 function logout() {
@@ -563,16 +449,14 @@ function showAlert(message, type) {
 window.showNewServiceModal = showNewServiceModal;
 window.showVaccinationModal = showVaccinationModal;
 window.showTelemedicineModal = showTelemedicineModal;
-window.showStockModal = showStockModal;
-window.showAddMedicineModal = showAddMedicineModal;
 window.startTelemedicine = startTelemedicine;
 window.endTelemedicine = endTelemedicine;
 window.joinTelemedicineSession = joinTelemedicineSession;
 window.endTelemedicineSession = endTelemedicineSession;
-window.editMedicine = editMedicine;
-window.deleteMedicine = deleteMedicine;
 window.viewService = viewService;
 window.updateServiceStatus = updateServiceStatus;
+window.toggleSidebar = toggleSidebar;
+window.setActiveNav = setActiveNav;
 window.logout = logout;
 window.confirmLogout = confirmLogout;
 window.goToHomepage = goToHomepage;

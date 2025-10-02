@@ -9,58 +9,62 @@
     <link href="styles.css" rel="stylesheet">
 </head>
 <body>
-    <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-navy">
-        <div class="container">
-            <a class="navbar-brand" href="index.html">
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-brand">
                 <i class="fas fa-paw me-2"></i>
                 Panel Petugas
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
+            </div>
+            <button class="sidebar-toggle d-lg-none" onclick="toggleSidebar()">
+                <i class="fas fa-bars"></i>
             </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="#dashboard">Dashboard</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#services">Layanan</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#stock">Stock Obat</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#telemedicine">Telemedicine</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="index.html">
-                            <i class="fas fa-home me-1"></i>Homepage
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <div class="dropdown">
-                            <button class="btn btn-outline-light dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown">
-                                <i class="fas fa-user me-1"></i><span id="userDisplayName">Petugas</span>
-                            </button>
-                            <ul class="dropdown-menu dropdown-menu-end">
-                                <li><a class="dropdown-item" href="#">
-                                    <i class="fas fa-user me-2"></i>Profil
-                                </a></li>
-                                <li><a class="dropdown-item" href="#">
-                                    <i class="fas fa-cog me-2"></i>Pengaturan
-                                </a></li>
-                                <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item text-danger" href="#" onclick="confirmLogout()">
-                                    <i class="fas fa-sign-out-alt me-2"></i>Logout
-                                </a></li>
-                            </ul>
-                        </div>
-                    </li>
-                </ul>
+        </div>
+        
+        <div class="sidebar-menu">
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link active" href="#dashboard" onclick="setActiveNav(this)">
+                        <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#telemedicine" onclick="setActiveNav(this)">
+                        <i class="fas fa-video me-2"></i>Telemedicine
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#history" onclick="setActiveNav(this)">
+                        <i class="fas fa-history me-2"></i>Riwayat Pelayanan
+                    </a>
+                </li>
+            </ul>
+            
+            <div class="sidebar-footer">
+                <div class="user-info">
+                    <div class="user-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="user-details">
+                        <div class="user-name" id="userDisplayName">Petugas</div>
+                        <div class="user-role">Staff</div>
+                    </div>
+                </div>
+                
+                <div class="sidebar-actions">
+                    <button class="btn btn-outline-light btn-sm" onclick="goToHomepage()">
+                        <i class="fas fa-home me-1"></i>Homepage
+                    </button>
+                    <button class="btn btn-outline-danger btn-sm" onclick="confirmLogout()">
+                        <i class="fas fa-sign-out-alt me-1"></i>Logout
+                    </button>
+                </div>
             </div>
         </div>
-    </nav>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content" id="mainContent">
 
     <!-- Dashboard Section -->
     <section id="dashboard" class="py-5">
@@ -72,209 +76,77 @@
                 </div>
             </div>
 
-            <!-- Stats Cards -->
-            <div class="row g-4 mb-5">
-                <div class="col-lg-3 col-md-6">
-                    <div class="stat-card">
-                        <div class="stat-icon">
-                            <i class="fas fa-calendar-check"></i>
-                        </div>
-                        <div class="stat-content">
-                            <h3 id="todayAppointments">0</h3>
-                            <p>Janji Hari Ini</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-6">
-                    <div class="stat-card">
-                        <div class="stat-icon">
-                            <i class="fas fa-syringe"></i>
-                        </div>
-                        <div class="stat-content">
-                            <h3 id="vaccinationsToday">0</h3>
-                            <p>Vaksinasi Hari Ini</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-6">
-                    <div class="stat-card">
-                        <div class="stat-icon">
-                            <i class="fas fa-video"></i>
-                        </div>
-                        <div class="stat-content">
-                            <h3 id="telemedicineToday">0</h3>
-                            <p>Telemedicine Hari Ini</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-6">
-                    <div class="stat-card">
-                        <div class="stat-icon">
-                            <i class="fas fa-pills"></i>
-                        </div>
-                        <div class="stat-content">
-                            <h3 id="lowStockItems">0</h3>
-                            <p>Obat Stok Rendah</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
 
-            <!-- Quick Actions -->
+            <!-- Unified Service Management Card -->
             <div class="row g-4">
-                <div class="col-lg-8">
+                <div class="col-12">
                     <div class="card">
                         <div class="card-header bg-navy text-white">
                             <h5 class="mb-0">
-                                <i class="fas fa-tasks me-2"></i>Layanan Hari Ini
+                                <i class="fas fa-cogs me-2"></i>Kelola Layanan
                             </h5>
                         </div>
                         <div class="card-body">
-                            <div class="table-responsive">
-                                <table class="table table-hover">
-                                    <thead>
-                                        <tr>
-                                            <th>Waktu</th>
-                                            <th>Nama Hewan</th>
-                                            <th>Pemilik</th>
-                                            <th>Layanan</th>
-                                            <th>Status</th>
-                                            <th>Aksi</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="todayServicesTable">
-                                        <!-- Data will be loaded here -->
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-4">
-                    <div class="card">
-                        <div class="card-header bg-navy text-white">
-                            <h5 class="mb-0">
-                                <i class="fas fa-plus-circle me-2"></i>Layanan Cepat
-                            </h5>
-                        </div>
-                        <div class="card-body">
-                            <div class="d-grid gap-2">
-                                <button class="btn btn-navy" onclick="showNewServiceModal()">
-                                    <i class="fas fa-stethoscope me-2"></i>Pengobatan Hewan
-                                </button>
-                                <button class="btn btn-navy" onclick="showVaccinationModal()">
-                                    <i class="fas fa-syringe me-2"></i>Vaksinasi Rabies
-                                </button>
-                                <button class="btn btn-navy" onclick="showTelemedicineModal()">
-                                    <i class="fas fa-video me-2"></i>Telemedicine
-                                </button>
-                                <button class="btn btn-navy" onclick="showStockModal()">
-                                    <i class="fas fa-pills me-2"></i>Kelola Stock Obat
-                                </button>
-                                <hr>
-                                <button class="btn btn-outline-secondary" onclick="goToHomepage()">
-                                    <i class="fas fa-home me-2"></i>Kembali ke Homepage
-                                </button>
-                                <button class="btn btn-outline-danger" onclick="confirmLogout()">
-                                    <i class="fas fa-sign-out-alt me-2"></i>Logout
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Services Section -->
-    <section id="services" class="py-5 bg-light">
-        <div class="container">
-            <div class="row mb-4">
-                <div class="col-12">
-                    <h2 class="display-5 fw-bold text-navy mb-3">Layanan Kesehatan Hewan</h2>
-                    <p class="lead text-muted">Kelola semua layanan kesehatan hewan</p>
-                </div>
-            </div>
-
-            <div class="row g-4">
-                <div class="col-lg-4">
-                    <div class="service-card">
-                        <div class="service-icon">
-                            <i class="fas fa-stethoscope"></i>
-                        </div>
-                        <h4>Pengobatan Hewan</h4>
-                        <p>Layanan pengobatan hewan dengan dokter hewan berpengalaman</p>
-                        <button class="btn btn-navy w-100" onclick="showNewServiceModal()">
-                            <i class="fas fa-plus me-2"></i>Tambah Layanan
-                        </button>
-                    </div>
-                </div>
-                <div class="col-lg-4">
-                    <div class="service-card">
-                        <div class="service-icon">
-                            <i class="fas fa-syringe"></i>
-                        </div>
-                        <h4>Vaksinasi Rabies</h4>
-                        <p>Program vaksinasi rabies untuk mencegah penularan penyakit</p>
-                        <button class="btn btn-navy w-100" onclick="showVaccinationModal()">
-                            <i class="fas fa-plus me-2"></i>Tambah Vaksinasi
-                        </button>
-                    </div>
-                </div>
-                <div class="col-lg-4">
-                    <div class="service-card">
-                        <div class="service-icon">
-                            <i class="fas fa-video"></i>
-                        </div>
-                        <h4>Telemedicine</h4>
-                        <p>Konsultasi kesehatan hewan secara online</p>
-                        <button class="btn btn-navy w-100" onclick="showTelemedicineModal()">
-                            <i class="fas fa-plus me-2"></i>Mulai Konsultasi
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Stock Section -->
-    <section id="stock" class="py-5">
-        <div class="container">
-            <div class="row mb-4">
-                <div class="col-12">
-                    <h2 class="display-5 fw-bold text-navy mb-3">Kelola Stock Obat</h2>
-                    <p class="lead text-muted">Pantau dan kelola stock obat-obatan</p>
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col-12">
-                    <div class="card">
-                        <div class="card-header bg-navy text-white d-flex justify-content-between align-items-center">
-                            <h5 class="mb-0">
-                                <i class="fas fa-pills me-2"></i>Daftar Obat
-                            </h5>
-                            <button class="btn btn-light btn-sm" onclick="showAddMedicineModal()">
-                                <i class="fas fa-plus me-1"></i>Tambah Obat
-                            </button>
-                        </div>
-                        <div class="card-body">
-                            <div class="table-responsive">
-                                <table class="table table-hover">
-                                    <thead>
-                                        <tr>
-                                            <th>Nama Obat</th>
-                                            <th>Kategori</th>
-                                            <th>Stock</th>
-                                            <th>Harga</th>
-                                            <th>Status</th>
-                                            <th>Aksi</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="medicineTable">
-                                        <!-- Data will be loaded here -->
-                                    </tbody>
-                                </table>
+                            <div class="row g-4">
+                                <!-- Service Actions Panel -->
+                                <div class="col-lg-4">
+                                    <div class="service-actions-panel">
+                                        <h6 class="text-navy mb-3">
+                                            <i class="fas fa-plus-circle me-2"></i>Tambah Layanan Baru
+                                        </h6>
+                                        <div class="d-grid gap-2 mb-4">
+                                            <button class="btn btn-navy" onclick="showNewServiceModal()">
+                                                <i class="fas fa-stethoscope me-2"></i>Pengobatan Hewan
+                                            </button>
+                                            <button class="btn btn-navy" onclick="showVaccinationModal()">
+                                                <i class="fas fa-syringe me-2"></i>Vaksinasi Rabies
+                                            </button>
+                                            <button class="btn btn-navy" onclick="showTelemedicineModal()">
+                                                <i class="fas fa-video me-2"></i>Telemedicine
+                                            </button>
+                                        </div>
+                                        
+                                        <hr class="my-4">
+                                        
+                                        <h6 class="text-navy mb-3">
+                                            <i class="fas fa-tools me-2"></i>Navigasi
+                                        </h6>
+                                        <div class="d-grid gap-2">
+                                            <button class="btn btn-outline-secondary" onclick="goToHomepage()">
+                                                <i class="fas fa-home me-2"></i>Kembali ke Homepage
+                                            </button>
+                                            <button class="btn btn-outline-danger" onclick="confirmLogout()">
+                                                <i class="fas fa-sign-out-alt me-2"></i>Logout
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Today Services Table -->
+                                <div class="col-lg-8">
+                                    <div class="services-table-panel">
+                                        <h6 class="text-navy mb-3">
+                                            <i class="fas fa-tasks me-2"></i>Layanan Hari Ini
+                                        </h6>
+                                        <div class="table-responsive">
+                                            <table class="table table-hover">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Waktu</th>
+                                                        <th>Nama Hewan</th>
+                                                        <th>Pemilik</th>
+                                                        <th>Layanan</th>
+                                                        <th>Status</th>
+                                                        <th>Aksi</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="todayServicesTable">
+                                                    <!-- Data will be loaded here -->
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -305,6 +177,68 @@
                             <div class="row g-4" id="telemedicineSessions">
                                 <!-- Telemedicine sessions will be loaded here -->
                             </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Service History Section -->
+    <section id="history" class="py-5">
+        <div class="container">
+            <div class="row mb-4">
+                <div class="col-12">
+                    <h2 class="display-5 fw-bold text-navy mb-3">Riwayat Pelayanan</h2>
+                    <p class="lead text-muted">Pantau dan kelola riwayat pelayanan kesehatan hewan</p>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header bg-navy text-white d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">
+                                <i class="fas fa-history me-2"></i>Daftar Riwayat Pelayanan
+                            </h5>
+                            <div class="d-flex gap-2">
+                                <select class="form-select form-select-sm" id="historyFilter" onchange="filterHistory()">
+                                    <option value="all">Semua Status</option>
+                                    <option value="completed">Selesai</option>
+                                    <option value="pending">Menunggu</option>
+                                    <option value="cancelled">Dibatalkan</option>
+                                </select>
+                                <button class="btn btn-light btn-sm" onclick="refreshHistory()">
+                                    <i class="fas fa-sync-alt me-1"></i>Refresh
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Tanggal</th>
+                                            <th>Nama Hewan</th>
+                                            <th>Pemilik</th>
+                                            <th>Jenis Layanan</th>
+                                            <th>Status</th>
+                                            <th>Dokter</th>
+                                            <th>Aksi</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="serviceHistoryTable">
+                                        <!-- History data will be loaded here -->
+                                    </tbody>
+                                </table>
+                            </div>
+                            
+                            <!-- Pagination -->
+                            <nav aria-label="History pagination" class="mt-4">
+                                <ul class="pagination justify-content-center" id="historyPagination">
+                                    <!-- Pagination will be generated here -->
+                                </ul>
+                            </nav>
                         </div>
                     </div>
                 </div>
@@ -566,6 +500,7 @@
             </div>
         </div>
     </div>
+    </div> <!-- End main-content -->
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
     <!-- Supabase JS -->

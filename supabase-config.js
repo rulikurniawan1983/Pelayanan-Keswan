@@ -13,7 +13,13 @@ const TABLES = {
     SERVICES: 'services',
     MEDICINES: 'medicines',
     VACCINATIONS: 'vaccinations',
-    TELEMEDICINE: 'telemedicine_sessions'
+    TELEMEDICINE: 'telemedicine_sessions',
+    VET_PRACTICE_RECOMMENDATIONS: 'vet_practice_recommendations'
+};
+
+// Storage buckets
+const BUCKETS = {
+    VET_PRACTICE_DOCS: 'vet-practice-docs'
 };
 
 // User Management Functions
@@ -356,3 +362,5 @@ window.ServiceService = ServiceService;
 window.MedicineService = MedicineService;
 window.StatsService = StatsService;
 window.supabaseClient = supabaseClient;
+window.TABLES = TABLES;
+window.BUCKETS = BUCKETS;
