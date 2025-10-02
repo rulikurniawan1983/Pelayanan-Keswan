@@ -25,15 +25,6 @@
                         <a class="nav-link" href="#dashboard">Dashboard</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#layanan">Layanan</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#riwayat">Riwayat</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#profil">Profil</a>
-                    </li>
-                    <li class="nav-item">
                         <a class="nav-link" href="index.html">
                             <i class="fas fa-home me-1"></i>Homepage
                         </a>
@@ -44,12 +35,6 @@
                                 <i class="fas fa-user me-1"></i><span id="userDisplayName">Masyarakat</span>
                             </button>
                             <ul class="dropdown-menu dropdown-menu-end">
-                                <li><a class="dropdown-item" href="#profil">
-                                    <i class="fas fa-user me-2"></i>Profil
-                                </a></li>
-                                <li><a class="dropdown-item" href="#riwayat">
-                                    <i class="fas fa-history me-2"></i>Riwayat
-                                </a></li>
                                 <li><hr class="dropdown-divider"></li>
                                 <li><a class="dropdown-item text-danger" href="#" onclick="confirmLogout()">
                                     <i class="fas fa-sign-out-alt me-2"></i>Logout
@@ -120,72 +105,9 @@
                 </div>
             </div>
 
-            <!-- Layanan yang Dipilih -->
-            <div class="row g-4 mb-4">
-                <div class="col-12">
-                    <div class="card">
-                        <div class="card-header bg-success text-white">
-                            <h5 class="mb-0">
-                                <i class="fas fa-check-circle me-2"></i>Layanan yang Dipilih
-                            </h5>
-                        </div>
-                        <div class="card-body">
-                            <div id="selectedServices" class="row g-3">
-                                <!-- Selected services will be displayed here -->
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Layanan Lain yang Tersedia -->
-            <div class="row g-4 mb-4">
-                <div class="col-12">
-                    <div class="card">
-                        <div class="card-header bg-primary text-white">
-                            <h5 class="mb-0">
-                                <i class="fas fa-plus-circle me-2"></i>Layanan Lain yang Tersedia
-                            </h5>
-                        </div>
-                        <div class="card-body">
-                            <div id="availableServices" class="row g-3">
-                                <!-- Available services will be displayed here -->
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- History Layanan dan Layanan Cepat -->
+            <!-- Layanan Cepat -->
             <div class="row g-4">
-                <div class="col-lg-8">
-                    <div class="card">
-                        <div class="card-header bg-info text-white">
-                            <h5 class="mb-0">
-                                <i class="fas fa-history me-2"></i>History Layanan
-                            </h5>
-                        </div>
-                        <div class="card-body">
-                            <div class="table-responsive">
-                                <table class="table table-hover">
-                                    <thead>
-                                        <tr>
-                                            <th>Tanggal</th>
-                                            <th>Hewan</th>
-                                            <th>Layanan</th>
-                                            <th>Status</th>
-                                            <th>Aksi</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="historyServicesTable">
-                                        <!-- History data will be loaded here -->
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-4">
+                <div class="col-12">
                     <div class="card">
                         <div class="card-header bg-navy text-white">
                             <h5 class="mb-0">
@@ -221,147 +143,8 @@
         </div>
     </section>
 
-    <!-- Layanan Section -->
-    <section id="layanan" class="py-5 bg-light">
-        <div class="container">
-            <div class="row mb-4">
-                <div class="col-12">
-                    <h2 class="display-5 fw-bold text-navy mb-3">Layanan Kesehatan Hewan</h2>
-                    <p class="lead text-muted">Pilih layanan yang Anda butuhkan</p>
-                </div>
-            </div>
 
-            <div class="row g-4">
-                <div class="col-lg-4">
-                    <div class="service-card">
-                        <div class="service-icon">
-                            <i class="fas fa-stethoscope"></i>
-                        </div>
-                        <h4>Pengobatan Hewan</h4>
-                        <p>Layanan pengobatan hewan dengan dokter hewan berpengalaman</p>
-                        <button class="btn btn-navy w-100" onclick="showNewServiceModal()">
-                            <i class="fas fa-plus me-2"></i>Ajukan Layanan
-                        </button>
-                    </div>
-                </div>
-                <div class="col-lg-4">
-                    <div class="service-card">
-                        <div class="service-icon">
-                            <i class="fas fa-syringe"></i>
-                        </div>
-                        <h4>Vaksinasi Rabies</h4>
-                        <p>Program vaksinasi rabies untuk mencegah penularan penyakit</p>
-                        <button class="btn btn-navy w-100" onclick="showVaccinationModal()">
-                            <i class="fas fa-plus me-2"></i>Daftar Vaksinasi
-                        </button>
-                    </div>
-                </div>
-                <div class="col-lg-4">
-                    <div class="service-card">
-                        <div class="service-icon">
-                            <i class="fas fa-video"></i>
-                        </div>
-                        <h4>Telemedicine</h4>
-                        <p>Konsultasi kesehatan hewan secara online</p>
-                        <button class="btn btn-navy w-100" onclick="showTelemedicineModal()">
-                            <i class="fas fa-plus me-2"></i>Mulai Konsultasi
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
 
-    <!-- Riwayat Section -->
-    <section id="riwayat" class="py-5">
-        <div class="container">
-            <div class="row mb-4">
-                <div class="col-12">
-                    <h2 class="display-5 fw-bold text-navy mb-3">Riwayat Layanan</h2>
-                    <p class="lead text-muted">Lihat riwayat layanan kesehatan hewan Anda</p>
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col-12">
-                    <div class="card">
-                        <div class="card-header bg-navy text-white">
-                            <h5 class="mb-0">
-                                <i class="fas fa-history me-2"></i>Riwayat Layanan
-                            </h5>
-                        </div>
-                        <div class="card-body">
-                            <div class="table-responsive">
-                                <table class="table table-hover">
-                                    <thead>
-                                        <tr>
-                                            <th>Tanggal</th>
-                                            <th>Hewan</th>
-                                            <th>Jenis Layanan</th>
-                                            <th>Status</th>
-                                            <th>Catatan</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="historyTable">
-                                        <!-- Data will be loaded here -->
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Profil Section -->
-    <section id="profil" class="py-5 bg-light">
-        <div class="container">
-            <div class="row mb-4">
-                <div class="col-12">
-                    <h2 class="display-5 fw-bold text-navy mb-3">Profil Saya</h2>
-                    <p class="lead text-muted">Kelola informasi profil dan hewan peliharaan</p>
-                </div>
-            </div>
-
-            <div class="row g-4">
-                <div class="col-lg-6">
-                    <div class="card">
-                        <div class="card-header bg-navy text-white">
-                            <h5 class="mb-0">
-                                <i class="fas fa-user me-2"></i>Informasi Profil
-                            </h5>
-                        </div>
-                        <div class="card-body">
-                            <div id="profileInfo">
-                                <!-- Profile info will be loaded here -->
-                            </div>
-                            <button class="btn btn-navy" onclick="showEditProfileModal()">
-                                <i class="fas fa-edit me-2"></i>Edit Profil
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-6">
-                    <div class="card">
-                        <div class="card-header bg-navy text-white">
-                            <h5 class="mb-0">
-                                <i class="fas fa-paw me-2"></i>Hewan Peliharaan
-                            </h5>
-                        </div>
-                        <div class="card-body">
-                            <div id="animalsList">
-                                <!-- Animals list will be loaded here -->
-                            </div>
-                            <button class="btn btn-navy" onclick="showAnimalModal()">
-                                <i class="fas fa-plus me-2"></i>Tambah Hewan
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
 
     <!-- New Service Modal -->
     <div class="modal fade" id="newServiceModal" tabindex="-1">
