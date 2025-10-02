@@ -78,12 +78,21 @@ body {
 /* Hero Section */
 .hero-section {
     background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 50%, #60a5fa 100%);
-    min-height: 80vh;
+    min-height: 50vh;
     display: flex;
     align-items: center;
     position: relative;
     overflow: hidden;
-    padding: 4rem 0;
+    padding: 2rem 0;
+}
+
+.hero-section h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+}
+
+.hero-section p {
+    font-size: 1.1rem;
 }
 
 .hero-section::before {
@@ -108,7 +117,7 @@ body {
 }
 
 .hero-icon {
-    font-size: 12rem;
+    font-size: 8rem;
     color: rgba(255, 255, 255, 0.15);
     animation: float 6s ease-in-out infinite;
     filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
@@ -752,11 +761,19 @@ footer::before {
 @media (max-width: 768px) {
     .hero-section {
         text-align: center;
-        padding: 2rem 0;
+        padding: 1.5rem 0;
+    }
+    
+    .hero-section h1 {
+        font-size: 2rem;
+    }
+    
+    .hero-section p {
+        font-size: 1rem;
     }
     
     .hero-icon {
-        font-size: 8rem;
+        font-size: 6rem;
     }
     
     .about-icon {
@@ -2779,8 +2796,16 @@ canvas {
     }
     
     .hero-section {
-        min-height: 60vh;
-        padding: 1.5rem 0;
+        min-height: 35vh;
+        padding: 1rem 0;
+    }
+    
+    .hero-section h1 {
+        font-size: 1.8rem;
+    }
+    
+    .hero-section p {
+        font-size: 0.9rem;
     }
     
     .stat-card {
@@ -3078,12 +3103,20 @@ canvas {
     
     /* Ultra Mobile Styles */
     .hero-section {
-        min-height: 50vh;
-        padding: 1rem 0;
+        min-height: 30vh;
+        padding: 0.8rem 0;
+    }
+    
+    .hero-section h1 {
+        font-size: 1.5rem;
+    }
+    
+    .hero-section p {
+        font-size: 0.8rem;
     }
     
     .hero-icon {
-        font-size: 4rem;
+        font-size: 3.5rem;
     }
     
     .about-icon {
@@ -3159,12 +3192,20 @@ canvas {
     
     /* Ultra Mobile Extra Small Styles */
     .hero-section {
-        min-height: 40vh;
-        padding: 0.8rem 0;
+        min-height: 25vh;
+        padding: 0.6rem 0;
+    }
+    
+    .hero-section h1 {
+        font-size: 1.3rem;
+    }
+    
+    .hero-section p {
+        font-size: 0.75rem;
     }
     
     .hero-icon {
-        font-size: 3rem;
+        font-size: 2.5rem;
     }
     
     .about-icon {
@@ -3219,12 +3260,20 @@ canvas {
     
     /* Ultra Mobile Extra Extra Small Styles */
     .hero-section {
-        min-height: 35vh;
-        padding: 0.6rem 0;
+        min-height: 20vh;
+        padding: 0.4rem 0;
+    }
+    
+    .hero-section h1 {
+        font-size: 1.1rem;
+    }
+    
+    .hero-section p {
+        font-size: 0.7rem;
     }
     
     .hero-icon {
-        font-size: 2.5rem;
+        font-size: 2rem;
     }
     
     .about-icon {
@@ -3279,12 +3328,20 @@ canvas {
     
     /* Ultra Mobile Extra Extra Extra Small Styles */
     .hero-section {
-        min-height: 30vh;
-        padding: 0.4rem 0;
+        min-height: 15vh;
+        padding: 0.3rem 0;
+    }
+    
+    .hero-section h1 {
+        font-size: 1rem;
+    }
+    
+    .hero-section p {
+        font-size: 0.65rem;
     }
     
     .hero-icon {
-        font-size: 2rem;
+        font-size: 1.5rem;
     }
     
     .about-icon {

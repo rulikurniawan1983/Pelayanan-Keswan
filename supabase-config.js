@@ -1,5 +1,5 @@
 // Supabase Configuration
-const SUPABASE_URL = 'https://zboaitjekevseafkpwwu.supabase.co;
+const SUPABASE_URL = 'https://zboaitjekevseafkpwwu.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inpib2FpdGpla2V2c2VhZmtwd3d1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTkzODA0MTgsImV4cCI6MjA3NDk1NjQxOH0.PtlvXdNsKwZa3E8_bwzbvstrhrLc1uQaW8au5c8jKYw';
 
 // Initialize Supabase client

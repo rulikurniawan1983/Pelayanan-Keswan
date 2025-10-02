@@ -5,18 +5,26 @@
   "installCommand": "",
   "framework": null,
   "public": true,
-  "rewrites": [
+  "routes": [
     {
-      "source": "/petugas",
-      "destination": "/petugas.html"
+      "src": "/",
+      "dest": "/index.html"
     },
     {
-      "source": "/admin",
-      "destination": "/admin.html"
+      "src": "/petugas",
+      "dest": "/petugas.html"
     },
     {
-      "source": "/masyarakat",
-      "destination": "/masyarakat.html"
+      "src": "/admin",
+      "dest": "/admin.html"
+    },
+    {
+      "src": "/masyarakat",
+      "dest": "/masyarakat.html"
+    },
+    {
+      "src": "/(.*\\.(js|css|png|jpg|jpeg|gif|svg|ico|woff|woff2|ttf|eot))",
+      "dest": "/$1"
     }
   ],
   "headers": [

@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Database Connection - Direct</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+            min-height: 100vh;
+            font-family: 'Inter', sans-serif;
+        }
+        .test-container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+        }
+        .status-indicator {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 10px;
+        }
+        .status-success { background-color: #10b981; }
+        .status-error { background-color: #ef4444; }
+        .status-warning { background-color: #f59e0b; }
+        .status-info { background-color: #3b82f6; }
+    </style>
+</head>
+<body>
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="test-container p-4">
+                    <h2 class="text-center mb-4">
+                        <i class="fas fa-database me-2"></i>
+                        Test Database Connection
+                    </h2>
+                    
+                    <div id="connectionStatus" class="mb-4">
+                        <div class="alert alert-info">
+                            <i class="fas fa-spinner fa-spin me-2"></i>
+                            Testing database connection...
+                        </div>
+                    </div>
+                    
+                    <div id="testResults" class="mb-4">
+                        <!-- Test results will be displayed here -->
+                    </div>
+                    
+                    <div class="text-center">
+                        <button class="btn btn-primary" onclick="runTests()">
+                            <i class="fas fa-play me-2"></i>
+                            Run Tests Again
+                        </button>
+                        <button class="btn btn-secondary ms-2" onclick="window.close()">
+                            <i class="fas fa-times me-2"></i>
+                            Close
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-config.js"></script>
+    
+    <script>
+        // Test database connection
+        async function testConnection() {
+            try {
+                console.log('Testing Supabase connection...');
+                
+                // Test basic connection
+                const { data, error } = await supabaseClient
+                    .from('users')
+                    .select('count')
+                    .limit(1);
+                
+                if (error) {
+                    console.error('Connection error:', error);
+                    return {
+                        success: false,
+                        message: `Connection failed: ${error.message}`,
+                        details: error
+                    };
+                }
+                
+                return {
+                    success: true,
+                    message: 'Database connection successful!',
+                    details: data
+                };
+            } catch (error) {
+                console.error('Connection test error:', error);
+                return {
+                    success: false,
+                    message: `Connection test failed: ${error.message}`,
+                    details: error
+                };
+            }
+        }
+        
+        // Test table existence
+        async function testTables() {
+            const tables = ['users', 'animals', 'services', 'medicines', 'vaccinations', 'telemedicine_sessions'];
+            const results = [];
+            
+            for (const table of tables) {
+                try {
+                    const { data, error } = await supabaseClient
+                        .from(table)
+                        .select('*')
+                        .limit(1);
+                    
+                    if (error) {
+                        results.push({
+                            table: table,
+                            exists: false,
+                            error: error.message
+                        });
+                    } else {
+                        results.push({
+                            table: table,
+                            exists: true,
+                            count: data ? data.length : 0
+                        });
+                    }
+                } catch (error) {
+                    results.push({
+                        table: table,
+                        exists: false,
+                        error: error.message
+                    });
+                }
+            }
+            
+            return results;
+        }
+        
+        // Test user service
+        async function testUserService() {
+            try {
+                // Test get all users
+                const { data, error } = await supabaseClient
+                    .from('users')
+                    .select('*')
+                    .limit(5);
+                
+                if (error) {
+                    return {
+                        success: false,
+                        message: `User service test failed: ${error.message}`,
+                        details: error
+                    };
+                }
+                
+                return {
+                    success: true,
+                    message: `User service working! Found ${data ? data.length : 0} users`,
+                    details: data
+                };
+            } catch (error) {
+                return {
+                    success: false,
+                    message: `User service test failed: ${error.message}`,
+                    details: error
+                };
+            }
+        }
+        
+        // Run all tests
+        async function runTests() {
+            const statusDiv = document.getElementById('connectionStatus');
+            const resultsDiv = document.getElementById('testResults');
+            
+            // Show loading
+            statusDiv.innerHTML = `
+                <div class="alert alert-info">
+                    <i class="fas fa-spinner fa-spin me-2"></i>
+                    Running database tests...
+                </div>
+            `;
+            
+            resultsDiv.innerHTML = '';
+            
+            try {
+                // Test 1: Basic connection
+                const connectionTest = await testConnection();
+                displayTestResult('Database Connection', connectionTest);
+                
+                // Test 2: Table existence
+                const tableTests = await testTables();
+                displayTableResults(tableTests);
+                
+                // Test 3: User service
+                const userServiceTest = await testUserService();
+                displayTestResult('User Service', userServiceTest);
+                
+                // Update status
+                const allTestsPassed = connectionTest.success && 
+                                     tableTests.every(t => t.exists) && 
+                                     userServiceTest.success;
+                
+                if (allTestsPassed) {
+                    statusDiv.innerHTML = `
+                        <div class="alert alert-success">
+                            <i class="fas fa-check-circle me-2"></i>
+                            All database tests passed! Database is ready to use.
+                        </div>
+                    `;
+                } else {
+                    statusDiv.innerHTML = `
+                        <div class="alert alert-warning">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            Some tests failed. Check the results below.
+                        </div>
+                    `;
+                }
+                
+            } catch (error) {
+                statusDiv.innerHTML = `
+                    <div class="alert alert-danger">
+                        <i class="fas fa-times-circle me-2"></i>
+                        Test execution failed: ${error.message}
+                    </div>
+                `;
+            }
+        }
+        
+        // Display test result
+        function displayTestResult(testName, result) {
+            const resultsDiv = document.getElementById('testResults');
+            const statusClass = result.success ? 'success' : 'error';
+            const statusIcon = result.success ? 'check-circle' : 'times-circle';
+            
+            resultsDiv.innerHTML += `
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h6 class="card-title">
+                            <span class="status-indicator status-${statusClass}"></span>
+                            <i class="fas fa-${statusIcon} me-2"></i>
+                            ${testName}
+                        </h6>
+                        <p class="card-text">${result.message}</p>
+                        ${result.details ? `
+                            <details class="mt-2">
+                                <summary>Details</summary>
+                                <pre class="mt-2"><code>${JSON.stringify(result.details, null, 2)}</code></pre>
+                            </details>
+                        ` : ''}
+                    </div>
+                </div>
+            `;
+        }
+        
+        // Display table results
+        function displayTableResults(tableResults) {
+            const resultsDiv = document.getElementById('testResults');
+            
+            resultsDiv.innerHTML += `
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h6 class="card-title">
+                            <i class="fas fa-table me-2"></i>
+                            Database Tables
+                        </h6>
+                        <div class="table-responsive">
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>Table Name</th>
+                                        <th>Status</th>
+                                        <th>Details</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${tableResults.map(result => `
+                                        <tr>
+                                            <td><code>${result.table}</code></td>
+                                            <td>
+                                                <span class="status-indicator status-${result.exists ? 'success' : 'error'}"></span>
+                                                ${result.exists ? 'Exists' : 'Missing'}
+                                            </td>
+                                            <td>
+                                                ${result.exists ? 
+                                                    `Records: ${result.count}` : 
+                                                    `Error: ${result.error}`
+                                                }
+                                            </td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+        
+        // Run tests on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            runTests();
+        });
+    </script>
+</body>
+</html>
