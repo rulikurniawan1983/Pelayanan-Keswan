@@ -48,6 +48,9 @@ function initializeApp() {
     document.querySelectorAll('.service-card, .contact-card, .stat-item').forEach(el => {
         observer.observe(el);
     });
+    
+    // Initialize statistics chart
+    initializeStatisticsChart();
 }
 
 // Setup Event Listeners
@@ -572,6 +575,119 @@ function showRegistrationPrompt() {
     setTimeout(() => {
         showRegisterModal();
     }, 1500);
+}
+
+// Initialize Statistics Chart
+function initializeStatisticsChart() {
+    const ctx = document.getElementById('statisticsChart');
+    if (!ctx) return;
+
+    const chart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: ['Hewan Terselamatkan', 'Dokter Hewan', 'Kepuasan'],
+            datasets: [{
+                label: 'Statistik Pelayanan',
+                data: [2500, 15, 98],
+                backgroundColor: [
+                    'rgba(59, 130, 246, 0.8)',
+                    'rgba(16, 185, 129, 0.8)',
+                    'rgba(245, 158, 11, 0.8)'
+                ],
+                borderColor: [
+                    'rgba(59, 130, 246, 1)',
+                    'rgba(16, 185, 129, 1)',
+                    'rgba(245, 158, 11, 1)'
+                ],
+                borderWidth: 2,
+                borderRadius: 8,
+                borderSkipped: false,
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(30, 58, 138, 0.9)',
+                    titleColor: 'white',
+                    bodyColor: 'white',
+                    borderColor: 'rgba(59, 130, 246, 0.5)',
+                    borderWidth: 1,
+                    cornerRadius: 8,
+                    displayColors: false,
+                    callbacks: {
+                        title: function(context) {
+                            return context[0].label;
+                        },
+                        label: function(context) {
+                            const value = context.parsed.y;
+                            const label = context.label;
+                            if (label === 'Hewan Terselamatkan') {
+                                return `${value.toLocaleString()} hewan`;
+                            } else if (label === 'Dokter Hewan') {
+                                return `${value} dokter profesional`;
+                            } else if (label === 'Kepuasan') {
+                                return `${value}% tingkat kepuasan`;
+                            }
+                            return value;
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    grid: {
+                        color: 'rgba(30, 58, 138, 0.1)',
+                        drawBorder: false
+                    },
+                    ticks: {
+                        color: '#64748b',
+                        font: {
+                            size: 12,
+                            weight: '500'
+                        },
+                        callback: function(value) {
+                            if (value >= 1000) {
+                                return (value / 1000).toFixed(1) + 'K';
+                            }
+                            return value;
+                        }
+                    }
+                },
+                x: {
+                    grid: {
+                        display: false
+                    },
+                    ticks: {
+                        color: '#64748b',
+                        font: {
+                            size: 12,
+                            weight: '500'
+                        }
+                    }
+                }
+            },
+            animation: {
+                duration: 2000,
+                easing: 'easeInOutQuart'
+            }
+        }
+    });
+
+    // Add hover effect
+    ctx.addEventListener('mousemove', function(event) {
+        const points = chart.getElementsAtEventForMode(event, 'nearest', { intersect: true }, true);
+        if (points.length > 0) {
+            ctx.style.cursor = 'pointer';
+        } else {
+            ctx.style.cursor = 'default';
+        }
+    });
 }
 
 // Export functions for use in other pages

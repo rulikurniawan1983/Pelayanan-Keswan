@@ -64,34 +64,16 @@
                             <p class="card-subtitle">Sistem terintegrasi untuk pelayanan kesehatan hewan terbaik</p>
                         </div>
                         <div class="card-body">
-                            <!-- Statistics Row -->
-                            <div class="stats-row">
-                                <div class="stat-item">
-                                    <div class="stat-icon">
-                                        <i class="fas fa-paw"></i>
-                                    </div>
-                                    <div class="stat-content">
-                                        <h4 class="stat-number">2.5K</h4>
-                                        <p class="stat-label">Hewan Terselamatkan</p>
-                                    </div>
+                            <!-- Statistics Chart -->
+                            <div class="chart-container">
+                                <div class="chart-header">
+                                    <h4 class="chart-title">
+                                        <i class="fas fa-chart-bar me-2"></i>Statistik Pelayanan
+                                    </h4>
+                                    <p class="chart-subtitle">Data real-time sistem pelayanan kesehatan hewan</p>
                                 </div>
-                                <div class="stat-item">
-                                    <div class="stat-icon">
-                                        <i class="fas fa-user-md"></i>
-                                    </div>
-                                    <div class="stat-content">
-                                        <h4 class="stat-number">15</h4>
-                                        <p class="stat-label">Dokter Hewan</p>
-                                    </div>
-                                </div>
-                                <div class="stat-item">
-                                    <div class="stat-icon">
-                                        <i class="fas fa-star"></i>
-                                    </div>
-                                    <div class="stat-content">
-                                        <h4 class="stat-number">98%</h4>
-                                        <p class="stat-label">Kepuasan</p>
-                                    </div>
+                                <div class="chart-wrapper">
+                                    <canvas id="statisticsChart"></canvas>
                                 </div>
                             </div>
                             
@@ -318,6 +300,8 @@
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!-- Supabase JS -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <!-- Supabase Config -->
