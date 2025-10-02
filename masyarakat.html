@@ -125,6 +125,9 @@
                                 <button class="btn btn-navy" onclick="showTelemedicineModal()">
                                     <i class="fas fa-video me-2"></i>Telemedicine
                                 </button>
+                                <button class="btn btn-navy" onclick="showProfileServiceModal()">
+                                    <i class="fas fa-user-edit me-2"></i>Layanan Profil
+                                </button>
                                 <button class="btn btn-navy" onclick="showAnimalModal()">
                                     <i class="fas fa-paw me-2"></i>Daftar Hewan
                                 </button>
@@ -354,6 +357,59 @@
                             </button>
                         </div>
                     </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Profile Service Modal -->
+    <div class="modal fade" id="profileServiceModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-navy text-white">
+                    <h5 class="modal-title">
+                        <i class="fas fa-user-edit me-2"></i>Layanan Profil
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="card h-100">
+                                <div class="card-header bg-primary text-white">
+                                    <h6 class="mb-0">
+                                        <i class="fas fa-user me-2"></i>Update Profil Pemilik
+                                    </h6>
+                                </div>
+                                <div class="card-body">
+                                    <p class="text-muted mb-3">Update informasi profil Anda</p>
+                                    <button class="btn btn-primary w-100" onclick="showEditProfileModal()">
+                                        <i class="fas fa-edit me-2"></i>Edit Profil
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card h-100">
+                                <div class="card-header bg-success text-white">
+                                    <h6 class="mb-0">
+                                        <i class="fas fa-paw me-2"></i>Kelola Hewan Peliharaan
+                                    </h6>
+                                </div>
+                                <div class="card-body">
+                                    <p class="text-muted mb-3">Tambah atau edit data hewan peliharaan</p>
+                                    <button class="btn btn-success w-100" onclick="showAnimalModal()">
+                                        <i class="fas fa-plus me-2"></i>Kelola Hewan
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-2"></i>Tutup
+                    </button>
                 </div>
             </div>
         </div>

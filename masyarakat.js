@@ -88,6 +88,12 @@ function setupEventListeners() {
     if (animalForm) {
         animalForm.addEventListener('submit', handleAnimal);
     }
+
+    // Edit Profile Form
+    const editProfileForm = document.getElementById('editProfileForm');
+    if (editProfileForm) {
+        editProfileForm.addEventListener('submit', handleEditProfile);
+    }
 }
 
 // Update Dashboard
@@ -446,8 +452,51 @@ function showAnimalModal() {
     modal.show();
 }
 
+function showProfileServiceModal() {
+    const modal = new bootstrap.Modal(document.getElementById('profileServiceModal'));
+    modal.show();
+}
+
 function showEditProfileModal() {
-    showAlert('Fitur edit profil akan segera tersedia!', 'info');
+    // Load current user data into the form
+    const user = JSON.parse(localStorage.getItem('currentUser') || '{}');
+    
+    document.getElementById('editFullName').value = user.fullName || '';
+    document.getElementById('editEmail').value = user.email || '';
+    document.getElementById('editPhone').value = user.phone || '';
+    document.getElementById('editAddress').value = user.address || '';
+    document.getElementById('editNIK').value = user.nik || '';
+    
+    const modal = new bootstrap.Modal(document.getElementById('editProfileModal'));
+    modal.show();
+}
+
+// Handle Edit Profile
+function handleEditProfile(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(e.target);
+    const updatedUser = {
+        ...currentUser,
+        fullName: formData.get('fullName'),
+        email: formData.get('email'),
+        phone: formData.get('phone'),
+        address: formData.get('address'),
+        nik: formData.get('nik')
+    };
+    
+    // Update localStorage
+    localStorage.setItem('currentUser', JSON.stringify(updatedUser));
+    currentUser = updatedUser;
+    
+    // Update dashboard
+    updateDashboard();
+    
+    // Close modal
+    const modal = bootstrap.Modal.getInstance(document.getElementById('editProfileModal'));
+    modal.hide();
+    
+    showAlert('Profil berhasil diperbarui!', 'success');
 }
 
 // Animal Management
@@ -569,7 +618,9 @@ window.showNewServiceModal = showNewServiceModal;
 window.showVaccinationModal = showVaccinationModal;
 window.showTelemedicineModal = showTelemedicineModal;
 window.showAnimalModal = showAnimalModal;
+window.showProfileServiceModal = showProfileServiceModal;
 window.showEditProfileModal = showEditProfileModal;
+window.handleEditProfile = handleEditProfile;
 window.editAnimal = editAnimal;
 window.deleteAnimal = deleteAnimal;
 window.viewService = viewService;
