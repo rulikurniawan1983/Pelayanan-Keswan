@@ -24,6 +24,12 @@ function initializeApp() {
             }
         });
     });
+    
+    // Initialize tooltips
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
 
     // Add animation classes on scroll
     const observerOptions = {
@@ -548,6 +554,26 @@ function generateId() {
     return Date.now().toString(36) + Math.random().toString(36).substr(2);
 }
 
+// Show Registration Prompt
+function showRegistrationPrompt() {
+    // Check if user is already logged in
+    const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+    
+    if (currentUser && currentUser.nik) {
+        // User is logged in, show alert
+        showAlert('Anda sudah terdaftar! Silahkan login untuk mengakses layanan.', 'info');
+        return;
+    }
+    
+    // User is not logged in, show registration prompt
+    showAlert('Silahkan daftar terlebih dahulu untuk mengakses layanan kami!', 'warning');
+    
+    // Show registration modal after a short delay
+    setTimeout(() => {
+        showRegisterModal();
+    }, 1500);
+}
+
 // Export functions for use in other pages
 window.showRegisterModal = showRegisterModal;
 window.showLoginModal = showLoginModal;
@@ -560,3 +586,4 @@ window.formatDate = formatDate;
 window.generateId = generateId;
 window.updateUserMenu = updateUserMenu;
 window.updateUserMenuAfterLogin = updateUserMenuAfterLogin;
+window.showRegistrationPrompt = showRegistrationPrompt;

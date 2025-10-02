@@ -244,6 +244,51 @@ body {
 }
 
 
+/* Service Card Tooltip */
+.service-card {
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.service-card:hover {
+    transform: translateY(-8px);
+    box-shadow: var(--shadow-strong);
+}
+
+.service-card:active {
+    transform: translateY(-4px);
+}
+
+/* Custom Tooltip Styling */
+.tooltip {
+    font-size: 0.9rem;
+}
+
+.tooltip-inner {
+    background-color: var(--navy-primary);
+    color: white;
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-weight: 500;
+    box-shadow: 0 4px 12px rgba(30, 58, 138, 0.3);
+}
+
+.tooltip.bs-tooltip-top .tooltip-arrow::before {
+    border-top-color: var(--navy-primary);
+}
+
+.tooltip.bs-tooltip-bottom .tooltip-arrow::before {
+    border-bottom-color: var(--navy-primary);
+}
+
+.tooltip.bs-tooltip-start .tooltip-arrow::before {
+    border-left-color: var(--navy-primary);
+}
+
+.tooltip.bs-tooltip-end .tooltip-arrow::before {
+    border-right-color: var(--navy-primary);
+}
+
 /* Footer */
 footer {
     background: var(--gradient-primary) !important;
