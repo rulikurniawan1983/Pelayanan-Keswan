@@ -419,6 +419,285 @@ h2 {
     padding-right: 3rem !important;
 }
 
+/* Command Center Style */
+.bg-dark {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%) !important;
+}
+
+/* Command Cards */
+.command-card {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 12px;
+    padding: 1rem;
+    text-align: center;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    min-height: 120px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.command-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, rgba(59, 130, 246, 0.1), rgba(147, 197, 253, 0.1));
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.command-card:hover::before {
+    opacity: 1;
+}
+
+.command-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(59, 130, 246, 0.3);
+    border-color: rgba(59, 130, 246, 0.5);
+}
+
+.command-icon {
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 0.5rem;
+    position: relative;
+    z-index: 1;
+}
+
+.command-icon i {
+    font-size: 1.2rem;
+    color: white;
+}
+
+.command-content {
+    position: relative;
+    z-index: 1;
+}
+
+.command-number {
+    color: white;
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 0.25rem;
+    line-height: 1;
+}
+
+.command-label {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 0.8rem;
+    font-weight: 500;
+    margin-bottom: 0;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Service Modules */
+.service-module {
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 1rem;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    min-height: 100px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    cursor: pointer;
+}
+
+.service-module::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #3b82f6, #1e40af);
+    transform: scaleX(0);
+    transition: transform 0.3s ease;
+}
+
+.service-module:hover::before {
+    transform: scaleX(1);
+}
+
+.service-module:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(30, 58, 138, 0.15);
+    border-color: #3b82f6;
+}
+
+.module-icon {
+    width: 35px;
+    height: 35px;
+    background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 0.75rem;
+}
+
+.module-icon i {
+    font-size: 1rem;
+    color: white;
+}
+
+.module-content {
+    flex-grow: 1;
+}
+
+.module-title {
+    color: #1e40af;
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+    line-height: 1.2;
+}
+
+.module-desc {
+    color: #64748b;
+    font-size: 0.75rem;
+    margin-bottom: 0;
+    line-height: 1.3;
+}
+
+.module-status {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+}
+
+.status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.status-dot.active {
+    background: #10b981;
+    box-shadow: 0 0 6px rgba(16, 185, 129, 0.5);
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+/* Responsive Command Center */
+@media (max-width: 768px) {
+    .command-card {
+        min-height: 100px;
+        padding: 0.75rem;
+    }
+    
+    .command-icon {
+        width: 35px;
+        height: 35px;
+        margin-bottom: 0.5rem;
+    }
+    
+    .command-icon i {
+        font-size: 1rem;
+    }
+    
+    .command-number {
+        font-size: 1.2rem;
+    }
+    
+    .command-label {
+        font-size: 0.7rem;
+    }
+    
+    .service-module {
+        min-height: 90px;
+        padding: 0.75rem;
+    }
+    
+    .module-icon {
+        width: 30px;
+        height: 30px;
+        margin-bottom: 0.5rem;
+    }
+    
+    .module-icon i {
+        font-size: 0.9rem;
+    }
+    
+    .module-title {
+        font-size: 0.8rem;
+    }
+    
+    .module-desc {
+        font-size: 0.7rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .command-card {
+        min-height: 80px;
+        padding: 0.5rem;
+    }
+    
+    .command-icon {
+        width: 30px;
+        height: 30px;
+        margin-bottom: 0.25rem;
+    }
+    
+    .command-icon i {
+        font-size: 0.9rem;
+    }
+    
+    .command-number {
+        font-size: 1rem;
+    }
+    
+    .command-label {
+        font-size: 0.65rem;
+    }
+    
+    .service-module {
+        min-height: 80px;
+        padding: 0.5rem;
+    }
+    
+    .module-icon {
+        width: 25px;
+        height: 25px;
+        margin-bottom: 0.25rem;
+    }
+    
+    .module-icon i {
+        font-size: 0.8rem;
+    }
+    
+    .module-title {
+        font-size: 0.75rem;
+    }
+    
+    .module-desc {
+        font-size: 0.65rem;
+    }
+}
+
 /* Perfect Grid Alignment */
 .row {
     display: flex;
