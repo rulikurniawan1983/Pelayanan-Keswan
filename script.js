@@ -589,11 +589,10 @@ async function initializeStatisticsChart() {
     const statisticsData = await getRealStatisticsData();
     
     const chart = new Chart(ctx, {
-        type: 'bar',
+        type: 'pie',
         data: {
             labels: ['Total Hewan', 'Pengobatan Hewan', 'Vaksinasi Rabies'],
             datasets: [{
-                label: 'Statistik Pelayanan',
                 data: [
                     statisticsData.totalAnimals,
                     statisticsData.treatmentCount,
@@ -610,8 +609,6 @@ async function initializeStatisticsChart() {
                     'rgba(245, 158, 11, 1)'
                 ],
                 borderWidth: 2,
-                borderRadius: 8,
-                borderSkipped: false,
             }]
         },
         options: {
@@ -619,7 +616,16 @@ async function initializeStatisticsChart() {
             maintainAspectRatio: false,
             plugins: {
                 legend: {
-                    display: false
+                    display: true,
+                    position: 'bottom',
+                    labels: {
+                        usePointStyle: true,
+                        padding: 20,
+                        font: {
+                            size: 12,
+                            weight: 'bold'
+                        }
+                    }
                 },
                 tooltip: {
                     backgroundColor: 'rgba(30, 58, 138, 0.9)',
