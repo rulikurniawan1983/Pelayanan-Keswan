@@ -566,6 +566,63 @@
         </div>
     </div>
 
+    <!-- Edit Profile Modal -->
+    <div class="modal fade" id="editProfileModal" tabindex="-1" aria-labelledby="editProfileModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-navy text-white">
+                    <h5 class="modal-title" id="editProfileModalLabel">
+                        <i class="fas fa-user-edit me-2"></i>Edit Profil
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editProfileForm">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="editFullName" class="form-label">Nama Lengkap *</label>
+                                <input type="text" class="form-control" id="editFullName" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="editNIK" class="form-label">NIK *</label>
+                                <input type="text" class="form-control" id="editNIK" readonly>
+                                <div class="form-text">NIK tidak dapat diubah</div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="editEmail" class="form-label">Email</label>
+                                <input type="email" class="form-control" id="editEmail">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="editPhone" class="form-label">Nomor Telepon</label>
+                                <input type="tel" class="form-control" id="editPhone">
+                            </div>
+                            <div class="col-12">
+                                <label for="editAddress" class="form-label">Alamat</label>
+                                <textarea class="form-control" id="editAddress" rows="3"></textarea>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="editPassword" class="form-label">Password Baru</label>
+                                <input type="password" class="form-control" id="editPassword" placeholder="Kosongkan jika tidak ingin mengubah">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="editConfirmPassword" class="form-label">Konfirmasi Password</label>
+                                <input type="password" class="form-control" id="editConfirmPassword" placeholder="Konfirmasi password baru">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-2"></i>Batal
+                    </button>
+                    <button type="button" class="btn btn-navy" onclick="saveProfile()">
+                        <i class="fas fa-save me-2"></i>Simpan Perubahan
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
     <!-- Supabase JS -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>

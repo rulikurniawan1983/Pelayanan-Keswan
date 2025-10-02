@@ -29,6 +29,9 @@ function loadUserData() {
     if (userAnimals.length === 0) {
         initializeSampleAnimals();
     }
+    
+    // Load profile info
+    loadProfileInfo();
 }
 
 // Initialize Sample Animals
@@ -586,3 +589,211 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 });
+
+// =====================================================
+// EDIT PROFILE FUNCTIONS
+// =====================================================
+
+// Show Edit Profile Modal
+function showEditProfileModal() {
+    // Load current user data
+    const user = JSON.parse(localStorage.getItem('currentUser') || '{}');
+    
+    // Populate form fields
+    document.getElementById('editFullName').value = user.fullName || '';
+    document.getElementById('editNIK').value = user.nik || '';
+    document.getElementById('editEmail').value = user.email || '';
+    document.getElementById('editPhone').value = user.phone || '';
+    document.getElementById('editAddress').value = user.address || '';
+    document.getElementById('editPassword').value = '';
+    document.getElementById('editConfirmPassword').value = '';
+    
+    // Show modal
+    const modal = new bootstrap.Modal(document.getElementById('editProfileModal'));
+    modal.show();
+}
+
+// Save Profile Changes
+async function saveProfile() {
+    try {
+        // Get form data
+        const fullName = document.getElementById('editFullName').value.trim();
+        const email = document.getElementById('editEmail').value.trim();
+        const phone = document.getElementById('editPhone').value.trim();
+        const address = document.getElementById('editAddress').value.trim();
+        const password = document.getElementById('editPassword').value;
+        const confirmPassword = document.getElementById('editConfirmPassword').value;
+        
+        // Validation
+        if (!fullName) {
+            showAlert('Nama lengkap harus diisi!', 'error');
+            return;
+        }
+        
+        if (password && password !== confirmPassword) {
+            showAlert('Konfirmasi password tidak sesuai!', 'error');
+            return;
+        }
+        
+        if (password && password.length < 6) {
+            showAlert('Password minimal 6 karakter!', 'error');
+            return;
+        }
+        
+        // Show loading
+        const saveBtn = document.querySelector('#editProfileModal .btn-navy');
+        const originalText = saveBtn.innerHTML;
+        saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Menyimpan...';
+        saveBtn.disabled = true;
+        
+        // Prepare update data
+        const updateData = {
+            full_name: fullName,
+            email: email || null,
+            phone: phone || null,
+            address: address || null
+        };
+        
+        // Add password if provided
+        if (password) {
+            updateData.password = password;
+        }
+        
+        // Try Supabase first
+        if (typeof UserService !== 'undefined' && UserService.updateUser) {
+            try {
+                const result = await UserService.updateUser(currentUser.nik, updateData);
+                
+                if (result.success) {
+                    // Update local storage
+                    const updatedUser = {
+                        ...currentUser,
+                        fullName: fullName,
+                        email: email,
+                        phone: phone,
+                        address: address
+                    };
+                    
+                    localStorage.setItem('currentUser', JSON.stringify(updatedUser));
+                    currentUser = updatedUser;
+                    
+                    // Update display
+                    updateUserDisplay();
+                    loadProfileInfo();
+                    
+                    // Close modal
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('editProfileModal'));
+                    modal.hide();
+                    
+                    showAlert('Profil berhasil diperbarui!', 'success');
+                    return;
+                } else {
+                    throw new Error(result.error || 'Gagal memperbarui profil');
+                }
+            } catch (error) {
+                console.warn('Supabase update failed, using localStorage:', error);
+            }
+        }
+        
+        // Fallback to localStorage
+        const updatedUser = {
+            ...currentUser,
+            fullName: fullName,
+            email: email,
+            phone: phone,
+            address: address
+        };
+        
+        // Update password if provided
+        if (password) {
+            updatedUser.password = password;
+        }
+        
+        localStorage.setItem('currentUser', JSON.stringify(updatedUser));
+        currentUser = updatedUser;
+        
+        // Update display
+        updateUserDisplay();
+        loadProfileInfo();
+        
+        // Close modal
+        const modal = bootstrap.Modal.getInstance(document.getElementById('editProfileModal'));
+        modal.hide();
+        
+        showAlert('Profil berhasil diperbarui!', 'success');
+        
+    } catch (error) {
+        console.error('Error saving profile:', error);
+        showAlert('Gagal memperbarui profil: ' + error.message, 'error');
+    } finally {
+        // Reset button
+        const saveBtn = document.querySelector('#editProfileModal .btn-navy');
+        saveBtn.innerHTML = '<i class="fas fa-save me-2"></i>Simpan Perubahan';
+        saveBtn.disabled = false;
+    }
+}
+
+// Update User Display
+function updateUserDisplay() {
+    const userDisplayName = document.getElementById('userDisplayName');
+    if (userDisplayName && currentUser) {
+        userDisplayName.textContent = currentUser.fullName || 'Masyarakat';
+    }
+}
+
+// Load Profile Info
+function loadProfileInfo() {
+    const profileInfo = document.getElementById('profileInfo');
+    if (!profileInfo || !currentUser) return;
+    
+    profileInfo.innerHTML = `
+        <div class="row g-3">
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Nama Lengkap</label>
+                    <p class="form-control-plaintext">${currentUser.fullName || '-'}</p>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <label class="form-label fw-bold">NIK</label>
+                    <p class="form-control-plaintext">${currentUser.nik || '-'}</p>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Email</label>
+                    <p class="form-control-plaintext">${currentUser.email || '-'}</p>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Nomor Telepon</label>
+                    <p class="form-control-plaintext">${currentUser.phone || '-'}</p>
+                </div>
+            </div>
+            <div class="col-12">
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Alamat</label>
+                    <p class="form-control-plaintext">${currentUser.address || '-'}</p>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Role</label>
+                    <p class="form-control-plaintext">
+                        <span class="badge bg-primary">${currentUser.role || 'masyarakat'}</span>
+                    </p>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Status</label>
+                    <p class="form-control-plaintext">
+                        <span class="badge bg-success">${currentUser.status || 'active'}</span>
+                    </p>
+                </div>
+            </div>
+        </div>
+    `;
+}

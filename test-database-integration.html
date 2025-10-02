@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Database Integration</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+            min-height: 100vh;
+            font-family: 'Inter', sans-serif;
+        }
+        .test-container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+        }
+        .test-result {
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+        .test-success {
+            background-color: #d1fae5;
+            border: 1px solid #10b981;
+            color: #065f46;
+        }
+        .test-error {
+            background-color: #fee2e2;
+            border: 1px solid #ef4444;
+            color: #991b1b;
+        }
+        .test-warning {
+            background-color: #fef3c7;
+            border: 1px solid #f59e0b;
+            color: #92400e;
+        }
+        .test-info {
+            background-color: #dbeafe;
+            border: 1px solid #3b82f6;
+            color: #1e40af;
+        }
+        .status-indicator {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 10px;
+        }
+        .status-success { background-color: #10b981; }
+        .status-error { background-color: #ef4444; }
+        .status-warning { background-color: #f59e0b; }
+        .status-info { background-color: #3b82f6; }
+    </style>
+</head>
+<body>
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <div class="test-container p-4">
+                    <h2 class="text-center mb-4">
+                        <i class="fas fa-database me-2"></i>
+                        Test Database Integration
+                    </h2>
+                    
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        Testing all database functions and services to ensure proper integration.
+                    </div>
+                    
+                    <div id="testResults">
+                        <!-- Test results will be displayed here -->
+                    </div>
+                    
+                    <div class="text-center">
+                        <button class="btn btn-primary btn-lg" onclick="runAllTests()">
+                            <i class="fas fa-play me-2"></i>
+                            Run All Tests
+                        </button>
+                        <button class="btn btn-secondary btn-lg ms-2" onclick="window.close()">
+                            <i class="fas fa-times me-2"></i>
+                            Close
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-config.js"></script>
+    
+    <script>
+        // Test functions
+        async function testConnection() {
+            try {
+                const { data, error } = await supabaseClient
+                    .from('users')
+                    .select('count')
+                    .limit(1);
+                
+                if (error) {
+                    return {
+                        success: false,
+                        message: `Connection failed: ${error.message}`,
+                        details: error
+                    };
+                }
+                
+                return {
+                    success: true,
+                    message: 'Database connection successful!',
+                    details: data
+                };
+            } catch (error) {
+                return {
+                    success: false,
+                    message: `Connection test failed: ${error.message}`,
+                    details: error
+                };
+            }
+        }
+        
+        async function testUserService() {
+            try {
+                // Test get all users
+                const { data, error } = await supabaseClient
+                    .from('users')
+                    .select('*')
+                    .limit(5);
+                
+                if (error) {
+                    return {
+                        success: false,
+                        message: `User service test failed: ${error.message}`,
+                        details: error
+                    };
+                }
+                
+                return {
+                    success: true,
+                    message: `User service working! Found ${data ? data.length : 0} users`,
+                    details: data
+                };
+            } catch (error) {
+                return {
+                    success: false,
+                    message: `User service test failed: ${error.message}`,
+                    details: error
+                };
+            }
+        }
+        
+        async function testAnimalService() {
+            try {
+                // Test get all animals
+                const { data, error } = await supabaseClient
+                    .from('animals')
+                    .select('*')
+                    .limit(5);
+                
+                if (error) {
+                    return {
+                        success: false,
+                        message: `Animal service test failed: ${error.message}`,
+                        details: error
+                    };
+                }
+                
+                return {
+                    success: true,
+                    message: `Animal service working! Found ${data ? data.length : 0} animals`,
+                    details: data
+                };
+            } catch (error) {
+                return {
+                    success: false,
+                    message: `Animal service test failed: ${error.message}`,
+                    details: error
+                };
+            }
+        }
+        
+        async function testServiceService() {
+            try {
+                // Test get all services
+                const { data, error } = await supabaseClient
+                    .from('services')
+                    .select('*')
+                    .limit(5);
+                
+                if (error) {
+                    return {
+                        success: false,
+                        message: `Service service test failed: ${error.message}`,
+                        details: error
+                    };
+                }
+                
+                return {
+                    success: true,
+                    message: `Service service working! Found ${data ? data.length : 0} services`,
+                    details: data
+                };
+            } catch (error) {
+                return {
+                    success: false,
+                    message: `Service service test failed: ${error.message}`,
+                    details: error
+                };
+            }
+        }
+        
+        async function testMedicineService() {
+            try {
+                // Test get all medicines
+                const { data, error } = await supabaseClient
+                    .from('medicines')
+                    .select('*')
+                    .limit(5);
+                
+                if (error) {
+                    return {
+                        success: false,
+                        message: `Medicine service test failed: ${error.message}`,
+                        details: error
+                    };
+                }
+                
+                return {
+                    success: true,
+                    message: `Medicine service working! Found ${data ? data.length : 0} medicines`,
+                    details: data
+                };
+            } catch (error) {
+                return {
+                    success: false,
+                    message: `Medicine service test failed: ${error.message}`,
+                    details: error
+                };
+            }
+        }
+        
+        async function testVaccinationService() {
+            try {
+                // Test get all vaccinations
+                const { data, error } = await supabaseClient
+                    .from('vaccinations')
+                    .select('*')
+                    .limit(5);
+                
+                if (error) {
+                    return {
+                        success: false,
+                        message: `Vaccination service test failed: ${error.message}`,
+                        details: error
+                    };
+                }
+                
+                return {
+                    success: true,
+                    message: `Vaccination service working! Found ${data ? data.length : 0} vaccinations`,
+                    details: data
+                };
+            } catch (error) {
+                return {
+                    success: false,
+                    message: `Vaccination service test failed: ${error.message}`,
+                    details: error
+                };
+            }
+        }
+        
+        async function testTelemedicineService() {
+            try {
+                // Test get all telemedicine sessions
+                const { data, error } = await supabaseClient
+                    .from('telemedicine_sessions')
+                    .select('*')
+                    .limit(5);
+                
+                if (error) {
+                    return {
+                        success: false,
+                        message: `Telemedicine service test failed: ${error.message}`,
+                        details: error
+                    };
+                }
+                
+                return {
+                    success: true,
+                    message: `Telemedicine service working! Found ${data ? data.length : 0} sessions`,
+                    details: data
+                };
+            } catch (error) {
+                return {
+                    success: false,
+                    message: `Telemedicine service test failed: ${error.message}`,
+                    details: error
+                };
+            }
+        }
+        
+        async function testStatsService() {
+            try {
+                // Test get dashboard stats
+                const [usersResult, servicesResult, medicinesResult] = await Promise.all([
+                    supabaseClient.from('users').select('id', { count: 'exact' }),
+                    supabaseClient.from('services').select('id', { count: 'exact' }),
+                    supabaseClient.from('medicines').select('id', { count: 'exact' })
+                ]);
+                
+                return {
+                    success: true,
+                    message: `Stats service working! Users: ${usersResult.count || 0}, Services: ${servicesResult.count || 0}, Medicines: ${medicinesResult.count || 0}`,
+                    details: {
+                        users: usersResult.count || 0,
+                        services: servicesResult.count || 0,
+                        medicines: medicinesResult.count || 0
+                    }
+                };
+            } catch (error) {
+                return {
+                    success: false,
+                    message: `Stats service test failed: ${error.message}`,
+                    details: error
+                };
+            }
+        }
+        
+        // Display test result
+        function displayTestResult(testName, result) {
+            const resultsDiv = document.getElementById('testResults');
+            const statusClass = result.success ? 'success' : 'error';
+            const statusIcon = result.success ? 'check-circle' : 'times-circle';
+            
+            resultsDiv.innerHTML += `
+                <div class="test-result test-${statusClass}">
+                    <h6>
+                        <span class="status-indicator status-${statusClass}"></span>
+                        <i class="fas fa-${statusIcon} me-2"></i>
+                        ${testName}
+                    </h6>
+                    <p class="mb-2">${result.message}</p>
+                    ${result.details ? `
+                        <details class="mt-2">
+                            <summary>Details</summary>
+                            <pre class="mt-2"><code>${JSON.stringify(result.details, null, 2)}</code></pre>
+                        </details>
+                    ` : ''}
+                </div>
+            `;
+        }
+        
+        // Run all tests
+        async function runAllTests() {
+            const resultsDiv = document.getElementById('testResults');
+            resultsDiv.innerHTML = '<div class="test-result test-info"><h6><i class="fas fa-spinner fa-spin me-2"></i>Running tests...</h6></div>';
+            
+            try {
+                // Test 1: Connection
+                const connectionTest = await testConnection();
+                displayTestResult('Database Connection', connectionTest);
+                
+                // Test 2: User Service
+                const userServiceTest = await testUserService();
+                displayTestResult('User Service', userServiceTest);
+                
+                // Test 3: Animal Service
+                const animalServiceTest = await testAnimalService();
+                displayTestResult('Animal Service', animalServiceTest);
+                
+                // Test 4: Service Service
+                const serviceServiceTest = await testServiceService();
+                displayTestResult('Service Service', serviceServiceTest);
+                
+                // Test 5: Medicine Service
+                const medicineServiceTest = await testMedicineService();
+                displayTestResult('Medicine Service', medicineServiceTest);
+                
+                // Test 6: Vaccination Service
+                const vaccinationServiceTest = await testVaccinationService();
+                displayTestResult('Vaccination Service', vaccinationServiceTest);
+                
+                // Test 7: Telemedicine Service
+                const telemedicineServiceTest = await testTelemedicineService();
+                displayTestResult('Telemedicine Service', telemedicineServiceTest);
+                
+                // Test 8: Stats Service
+                const statsServiceTest = await testStatsService();
+                displayTestResult('Stats Service', statsServiceTest);
+                
+                // Summary
+                const allTests = [connectionTest, userServiceTest, animalServiceTest, serviceServiceTest, 
+                                medicineServiceTest, vaccinationServiceTest, telemedicineServiceTest, statsServiceTest];
+                const passedTests = allTests.filter(test => test.success).length;
+                const totalTests = allTests.length;
+                
+                resultsDiv.innerHTML += `
+                    <div class="test-result test-${passedTests === totalTests ? 'success' : 'warning'}">
+                        <h6>
+                            <i class="fas fa-chart-bar me-2"></i>
+                            Test Summary
+                        </h6>
+                        <p>Passed: ${passedTests}/${totalTests} tests</p>
+                        <p>Success Rate: ${Math.round((passedTests / totalTests) * 100)}%</p>
+                    </div>
+                `;
+                
+            } catch (error) {
+                resultsDiv.innerHTML += `
+                    <div class="test-result test-error">
+                        <h6>
+                            <i class="fas fa-times-circle me-2"></i>
+                            Test Execution Failed
+                        </h6>
+                        <p>Error: ${error.message}</p>
+                    </div>
+                `;
+            }
+        }
+        
+        // Run tests on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            runAllTests();
+        });
+    </script>
+</body>
+</html>
