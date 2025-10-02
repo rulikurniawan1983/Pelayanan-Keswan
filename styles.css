@@ -214,18 +214,6 @@ body {
     margin-bottom: 1.5rem;
 }
 
-/* About Section */
-.about-image {
-    text-align: center;
-    position: relative;
-}
-
-.about-icon {
-    font-size: 12rem;
-    color: var(--navy-light);
-    opacity: 0.3;
-    animation: pulse 4s ease-in-out infinite;
-}
 
 @keyframes pulse {
     0%, 100% { transform: scale(1); opacity: 0.3; }
@@ -713,9 +701,6 @@ footer::before {
 /* Responsive Design */
 @media (max-width: 768px) {
     
-    .about-icon {
-        font-size: 8rem;
-    }
     
     .display-4 {
         font-size: 2.5rem;
@@ -868,9 +853,6 @@ footer::before {
         font-size: 6rem;
     }
     
-    .about-icon {
-        font-size: 6rem;
-    }
     
     .display-4 {
         font-size: 2rem;
@@ -2692,9 +2674,6 @@ canvas {
         font-size: 8rem;
     }
     
-    .about-icon {
-        font-size: 8rem;
-    }
     
     .display-4 {
         font-size: 2.5rem;
@@ -2754,9 +2733,6 @@ canvas {
         font-size: 6rem;
     }
     
-    .about-icon {
-        font-size: 6rem;
-    }
     
     .display-4 {
         font-size: 2rem;
@@ -3023,9 +2999,6 @@ canvas {
     }
     
     
-    .about-icon {
-        font-size: 4rem;
-    }
     
     .display-4 {
         font-size: 1.8rem;
@@ -3091,9 +3064,6 @@ canvas {
     }
     
     
-    .about-icon {
-        font-size: 3rem;
-    }
     
     .display-4 {
         font-size: 1.6rem;
@@ -3142,9 +3112,6 @@ canvas {
     }
     
     
-    .about-icon {
-        font-size: 2.5rem;
-    }
     
     .display-4 {
         font-size: 1.4rem;
@@ -3193,9 +3160,6 @@ canvas {
     }
     
     
-    .about-icon {
-        font-size: 2rem;
-    }
     
     .display-4 {
         font-size: 1.2rem;
