@@ -50,10 +50,10 @@ function initializeApp() {
     });
     
     // Initialize statistics chart
-    initializeStatisticsChart();
+    initializeStatistics();
     
     // Auto-refresh chart every 30 seconds
-    setInterval(refreshStatisticsChart, 30000);
+    setInterval(updateStatistics, 30000);
 }
 
 // Setup Event Listeners
@@ -735,7 +735,77 @@ function closeRecommendationModal() {
     }
 }
 
-// Initialize Statistics Chart
+// Initialize Real-time Statistics
+function initializeStatistics() {
+    updateStatistics();
+    // Update statistics every 30 seconds
+    setInterval(updateStatistics, 30000);
+}
+
+// Update Statistics Display
+function updateStatistics() {
+    // Load data from localStorage
+    const userServices = JSON.parse(localStorage.getItem('userServices') || '[]');
+    const vetPracticeRecommendations = JSON.parse(localStorage.getItem('vetPracticeRecommendations') || '[]');
+    
+    // Calculate statistics
+    const totalServices = userServices.length + vetPracticeRecommendations.length;
+    const pendingServices = userServices.filter(s => s.status === 'pending').length + 
+                           vetPracticeRecommendations.filter(r => r.status === 'submitted').length;
+    const inProgressServices = userServices.filter(s => s.status === 'in_progress').length;
+    const completedServices = userServices.filter(s => s.status === 'completed').length;
+    const vaccinationServices = userServices.filter(s => s.serviceType === 'vaksinasi').length;
+    const telemedicineServices = userServices.filter(s => s.serviceType === 'telemedicine').length;
+    const recommendationServices = vetPracticeRecommendations.length;
+    
+    // Update DOM elements
+    updateStatElement('totalServices', totalServices);
+    updateStatElement('pendingServices', pendingServices);
+    updateStatElement('inProgressServices', inProgressServices);
+    updateStatElement('completedServices', completedServices);
+    updateStatElement('vaccinationServices', vaccinationServices);
+    updateStatElement('telemedicineServices', telemedicineServices);
+    updateStatElement('recommendationServices', recommendationServices);
+}
+
+// Update individual statistic element with animation
+function updateStatElement(elementId, value) {
+    const element = document.getElementById(elementId);
+    if (!element) return;
+    
+    const currentValue = parseInt(element.textContent) || 0;
+    const targetValue = value;
+    
+    if (currentValue !== targetValue) {
+        // Animate the number change
+        animateNumber(element, currentValue, targetValue, 1000);
+    }
+}
+
+// Animate number change
+function animateNumber(element, start, end, duration) {
+    const startTime = performance.now();
+    const difference = end - start;
+    
+    function updateNumber(currentTime) {
+        const elapsed = currentTime - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        
+        // Easing function (ease-out)
+        const easeOut = 1 - Math.pow(1 - progress, 3);
+        const currentValue = Math.round(start + (difference * easeOut));
+        
+        element.textContent = currentValue;
+        
+        if (progress < 1) {
+            requestAnimationFrame(updateNumber);
+        }
+    }
+    
+    requestAnimationFrame(updateNumber);
+}
+
+// Initialize Statistics Chart (Legacy - keeping for compatibility)
 async function initializeStatisticsChart() {
     const ctx = document.getElementById('statisticsChart');
     if (!ctx) return;

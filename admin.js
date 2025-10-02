@@ -1,16 +1,14 @@
-// Admin Panel JavaScript
-let users = [];
-let services = [];
-let medicines = [];
-let telemedicineSessions = [];
+// Admin Panel JavaScript - Service Requests Data
+
+let serviceRequests = [];
+let currentPage = 1;
+const itemsPerPage = 10;
 
 // Initialize Admin Panel
 document.addEventListener('DOMContentLoaded', function() {
     checkAuth();
-    loadData();
+    loadServiceRequests();
     setupEventListeners();
-    updateDashboard();
-    initializeCharts();
 });
 
 // Check Authentication
@@ -21,555 +19,275 @@ function checkAuth() {
     }
 }
 
-// Load Data from LocalStorage
-function loadData() {
-    users = JSON.parse(localStorage.getItem('users') || '[]');
-    services = JSON.parse(localStorage.getItem('services') || '[]');
-    medicines = JSON.parse(localStorage.getItem('medicines') || '[]');
-    telemedicineSessions = JSON.parse(localStorage.getItem('telemedicineSessions') || '[]');
-}
-
 // Setup Event Listeners
 function setupEventListeners() {
-    // Add any specific event listeners for admin panel
+    // Filter controls
+    const statusFilter = document.getElementById('statusFilter');
+    const serviceTypeFilter = document.getElementById('serviceTypeFilter');
+    const startDateFilter = document.getElementById('startDateFilter');
+    const endDateFilter = document.getElementById('endDateFilter');
+    
+    [statusFilter, serviceTypeFilter, startDateFilter, endDateFilter].forEach(filter => {
+        if (filter) {
+            filter.addEventListener('change', () => {
+                currentPage = 1;
+                updateServiceRequestsTable();
+            });
+        }
+    });
 }
 
-// Update Dashboard
-function updateDashboard() {
-    updateKeyMetrics();
-    updateRecentActivity();
-    updateAlerts();
-    updateUsersTable();
-    updateStockTable();
+// Load Service Requests Data
+function loadServiceRequests() {
+    // Load from localStorage
+    const userServices = JSON.parse(localStorage.getItem('userServices') || '[]');
+    const vetPracticeRecommendations = JSON.parse(localStorage.getItem('vetPracticeRecommendations') || '[]');
+    
+    // Combine all service requests
+    serviceRequests = [
+        ...userServices.map(service => ({
+            id: service.id,
+            ticketNumber: service.ticketNumber || 'N/A',
+            date: service.createdAt,
+            requester: service.ownerName || 'N/A',
+            serviceType: service.serviceType,
+            animal: service.animalName || 'N/A',
+            priority: service.priority || 'normal',
+            status: service.status || 'pending',
+            type: 'service'
+        })),
+        ...vetPracticeRecommendations.map(rec => ({
+            id: rec.id,
+            ticketNumber: rec.ticketNumber || 'N/A',
+            date: rec.createdAt,
+            requester: rec.ownerName || 'N/A',
+            serviceType: 'rekomendasi_praktek',
+            animal: 'N/A',
+            priority: 'normal',
+            status: rec.status || 'submitted',
+            type: 'recommendation'
+        }))
+    ];
+    
+    // Sort by date (newest first)
+    serviceRequests.sort((a, b) => new Date(b.date) - new Date(a.date));
+    
+    updateServiceRequestsTable();
 }
 
-// Update Key Metrics
-function updateKeyMetrics() {
-    document.getElementById('totalUsers').textContent = users.length;
-    document.getElementById('totalServices').textContent = services.length;
-    document.getElementById('totalVaccinations').textContent = 
-        services.filter(s => s.serviceType === 'vaksinasi').length;
-    document.getElementById('totalTelemedicine').textContent = telemedicineSessions.length;
-}
-
-// Update Recent Activity
-function updateRecentActivity() {
-    const tbody = document.getElementById('recentActivityTable');
+// Update Service Requests Table
+function updateServiceRequestsTable() {
+    const tbody = document.getElementById('serviceRequestsTable');
+    const pagination = document.getElementById('serviceRequestsPagination');
+    
     if (!tbody) return;
-
-    // Get recent services (last 10)
-    const recentServices = services
-        .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-        .slice(0, 10);
-
-    if (recentServices.length === 0) {
+    
+    // Apply filters
+    let filteredRequests = serviceRequests;
+    
+    const statusFilter = document.getElementById('statusFilter')?.value;
+    const serviceTypeFilter = document.getElementById('serviceTypeFilter')?.value;
+    const startDateFilter = document.getElementById('startDateFilter')?.value;
+    const endDateFilter = document.getElementById('endDateFilter')?.value;
+    
+    if (statusFilter) {
+        filteredRequests = filteredRequests.filter(req => req.status === statusFilter);
+    }
+    
+    if (serviceTypeFilter) {
+        filteredRequests = filteredRequests.filter(req => req.serviceType === serviceTypeFilter);
+    }
+    
+    if (startDateFilter) {
+        filteredRequests = filteredRequests.filter(req => new Date(req.date) >= new Date(startDateFilter));
+    }
+    
+    if (endDateFilter) {
+        filteredRequests = filteredRequests.filter(req => new Date(req.date) <= new Date(endDateFilter + 'T23:59:59'));
+    }
+    
+    // Pagination
+    const totalPages = Math.ceil(filteredRequests.length / itemsPerPage);
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    const paginatedRequests = filteredRequests.slice(startIndex, endIndex);
+    
+    // Update table
+    if (paginatedRequests.length === 0) {
         tbody.innerHTML = `
             <tr>
-                <td colspan="5" class="text-center text-muted">
-                    <i class="fas fa-calendar-times me-2"></i>Tidak ada aktivitas
+                <td colspan="9" class="text-center text-muted">
+                    <i class="fas fa-inbox me-2"></i>Tidak ada data permohonan
                 </td>
             </tr>
         `;
-        return;
-    }
-
-    tbody.innerHTML = recentServices.map(service => `
-        <tr>
-            <td>${formatDate(service.createdAt)}</td>
-            <td>
-                <span class="badge bg-navy">${service.serviceType}</span>
-            </td>
-            <td>${service.animalName}</td>
-            <td>${service.ownerName || 'N/A'}</td>
-            <td>
-                <span class="badge bg-${getStatusColor(service.status)}">${service.status}</span>
-            </td>
-        </tr>
-    `).join('');
-}
-
-// Update Alerts
-function updateAlerts() {
-    const container = document.getElementById('alertsContainer');
-    if (!container) return;
-
-    const alerts = generateAlerts();
-    
-    if (alerts.length === 0) {
-        container.innerHTML = `
-            <div class="text-center text-muted">
-                <i class="fas fa-check-circle fa-2x mb-2"></i>
-                <p>Tidak ada alert</p>
-            </div>
-        `;
-        return;
-    }
-
-    container.innerHTML = alerts.map(alert => `
-        <div class="alert alert-${alert.type} alert-dismissible fade show">
-            <i class="fas fa-${alert.icon} me-2"></i>
-            ${alert.message}
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-    `).join('');
-}
-
-// Generate Alerts
-function generateAlerts() {
-    const alerts = [];
-    
-    // Low stock alert
-    const lowStockMedicines = medicines.filter(m => m.stock < 10);
-    if (lowStockMedicines.length > 0) {
-        alerts.push({
-            type: 'warning',
-            icon: 'exclamation-triangle',
-            message: `${lowStockMedicines.length} obat dengan stok rendah`
-        });
-    }
-    
-    // Pending services alert
-    const pendingServices = services.filter(s => s.status === 'pending');
-    if (pendingServices.length > 0) {
-        alerts.push({
-            type: 'info',
-            icon: 'clock',
-            message: `${pendingServices.length} layanan menunggu proses`
-        });
-    }
-    
-    // Active telemedicine sessions
-    const activeTelemedicine = telemedicineSessions.filter(s => s.status === 'active');
-    if (activeTelemedicine.length > 0) {
-        alerts.push({
-            type: 'success',
-            icon: 'video',
-            message: `${activeTelemedicine.length} sesi telemedicine aktif`
-        });
-    }
-    
-    return alerts;
-}
-
-// Update Users Table
-function updateUsersTable() {
-    const tbody = document.getElementById('usersTable');
-    if (!tbody) return;
-
-    if (users.length === 0) {
-        tbody.innerHTML = `
+    } else {
+        tbody.innerHTML = paginatedRequests.map(request => `
             <tr>
-                <td colspan="5" class="text-center text-muted">
-                    <i class="fas fa-users me-2"></i>Tidak ada pengguna
+                <td><code>${request.id.substring(0, 8)}</code></td>
+                <td><strong>${request.ticketNumber}</strong></td>
+                <td>${formatDate(request.date)}</td>
+                <td>${request.requester}</td>
+                <td>
+                    <span class="badge bg-navy">${getServiceTypeLabel(request.serviceType)}</span>
+                </td>
+                <td>${request.animal}</td>
+                <td>
+                    <span class="badge bg-${getPriorityColor(request.priority)}">${getPriorityLabel(request.priority)}</span>
+                </td>
+                <td>
+                    <span class="badge bg-${getStatusColor(request.status)}">${getStatusLabel(request.status)}</span>
+                </td>
+                <td>
+                    <div class="btn-group" role="group">
+                        <button class="btn btn-sm btn-outline-primary" onclick="viewServiceRequest('${request.id}')" title="Lihat Detail">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                        <button class="btn btn-sm btn-outline-success" onclick="updateServiceStatus('${request.id}', 'in_progress')" title="Proses">
+                            <i class="fas fa-play"></i>
+                        </button>
+                        <button class="btn btn-sm btn-outline-warning" onclick="updateServiceStatus('${request.id}', 'completed')" title="Selesai">
+                            <i class="fas fa-check"></i>
+                        </button>
+                    </div>
                 </td>
             </tr>
-        `;
+        `).join('');
+    }
+    
+    // Update pagination
+    if (pagination) {
+        updatePagination(totalPages);
+    }
+}
+
+// Update Pagination
+function updatePagination(totalPages) {
+    const pagination = document.getElementById('serviceRequestsPagination');
+    if (!pagination) return;
+    
+    if (totalPages <= 1) {
+        pagination.innerHTML = '';
         return;
     }
-
-    tbody.innerHTML = users.map(user => `
-        <tr>
-            <td>${user.nik}</td>
-            <td>${user.fullName}</td>
-            <td>${user.email}</td>
-            <td>
-                <span class="badge bg-${user.status === 'active' ? 'success' : 'secondary'}">${user.status}</span>
-            </td>
-            <td>
-                <button class="btn btn-sm btn-outline-primary" onclick="viewUser('${user.nik}')">
-                    <i class="fas fa-eye"></i>
-                </button>
-                <button class="btn btn-sm btn-outline-${user.status === 'active' ? 'warning' : 'success'}" 
-                        onclick="toggleUserStatus('${user.nik}')">
-                    <i class="fas fa-${user.status === 'active' ? 'ban' : 'check'}"></i>
-                </button>
-            </td>
-        </tr>
-    `).join('');
-}
-
-// Update Stock Table
-function updateStockTable() {
-    const tbody = document.getElementById('stockTable');
-    if (!tbody) return;
-
-    if (medicines.length === 0) {
-        tbody.innerHTML = `
-            <tr>
-                <td colspan="4" class="text-center text-muted">
-                    <i class="fas fa-pills me-2"></i>Tidak ada data obat
-                </td>
-            </tr>
-        `;
-        return;
-    }
-
-    tbody.innerHTML = medicines.map(medicine => `
-        <tr>
-            <td>${medicine.name}</td>
-            <td>
-                <span class="badge bg-${medicine.stock < 10 ? 'danger' : medicine.stock < 20 ? 'warning' : 'success'}">
-                    ${medicine.stock}
-                </span>
-            </td>
-            <td>
-                <span class="badge bg-${getMedicineStatusColor(medicine.status)}">${medicine.status}</span>
-            </td>
-            <td>
-                <button class="btn btn-sm btn-outline-primary" onclick="editMedicine('${medicine.id}')">
-                    <i class="fas fa-edit"></i>
-                </button>
-                <button class="btn btn-sm btn-outline-success" onclick="restockMedicine('${medicine.id}')">
-                    <i class="fas fa-plus"></i>
-                </button>
-            </td>
-        </tr>
-    `).join('');
-}
-
-// Initialize Charts
-function initializeCharts() {
-    initializeMonthlyTrendChart();
-    initializeServiceDistributionChart();
-    initializeMonthlyServicesChart();
-    initializeVaccinationTrendChart();
-    initializeAnimalTypeChart();
-    initializeSatisfactionChart();
-}
-
-// Monthly Trend Chart
-function initializeMonthlyTrendChart() {
-    const ctx = document.getElementById('monthlyTrendChart');
-    if (!ctx) return;
-
-    const last6Months = getLast6Months();
-    const monthlyData = last6Months.map(month => {
-        return services.filter(service => {
-            const serviceDate = new Date(service.createdAt);
-            return serviceDate.getMonth() === month.getMonth() && 
-                   serviceDate.getFullYear() === month.getFullYear();
-        }).length;
-    });
-
-    new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: last6Months.map(month => month.toLocaleDateString('id-ID', { month: 'short', year: 'numeric' })),
-            datasets: [{
-                label: 'Total Layanan',
-                data: monthlyData,
-                borderColor: '#1e3a8a',
-                backgroundColor: 'rgba(30, 58, 138, 0.1)',
-                tension: 0.4,
-                fill: true
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    display: false
-                }
-            },
-            scales: {
-                y: {
-                    beginAtZero: true
-                }
-            }
-        }
-    });
-}
-
-// Service Distribution Chart
-function initializeServiceDistributionChart() {
-    const ctx = document.getElementById('serviceDistributionChart');
-    if (!ctx) return;
-
-    const serviceTypes = ['pengobatan', 'vaksinasi', 'konsultasi', 'telemedicine'];
-    const serviceCounts = serviceTypes.map(type => {
-        if (type === 'telemedicine') {
-            return telemedicineSessions.length;
-        }
-        return services.filter(s => s.serviceType === type).length;
-    });
-
-    new Chart(ctx, {
-        type: 'doughnut',
-        data: {
-            labels: serviceTypes.map(type => type.charAt(0).toUpperCase() + type.slice(1)),
-            datasets: [{
-                data: serviceCounts,
-                backgroundColor: [
-                    '#1e3a8a',
-                    '#3b82f6',
-                    '#60a5fa',
-                    '#93c5fd'
-                ]
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    position: 'bottom'
-                }
-            }
-        }
-    });
-}
-
-// Monthly Services Chart
-function initializeMonthlyServicesChart() {
-    const ctx = document.getElementById('monthlyServicesChart');
-    if (!ctx) return;
-
-    const last6Months = getLast6Months();
-    const monthlyServices = last6Months.map(month => {
-        return services.filter(service => {
-            const serviceDate = new Date(service.createdAt);
-            return serviceDate.getMonth() === month.getMonth() && 
-                   serviceDate.getFullYear() === month.getFullYear();
-        }).length;
-    });
-
-    new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: last6Months.map(month => month.toLocaleDateString('id-ID', { month: 'short' })),
-            datasets: [{
-                label: 'Layanan',
-                data: monthlyServices,
-                backgroundColor: '#1e3a8a',
-                borderColor: '#1e40af',
-                borderWidth: 1
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    display: false
-                }
-            },
-            scales: {
-                y: {
-                    beginAtZero: true
-                }
-            }
-        }
-    });
-}
-
-// Vaccination Trend Chart
-function initializeVaccinationTrendChart() {
-    const ctx = document.getElementById('vaccinationTrendChart');
-    if (!ctx) return;
-
-    const last6Months = getLast6Months();
-    const vaccinationData = last6Months.map(month => {
-        return services.filter(service => {
-            const serviceDate = new Date(service.createdAt);
-            return service.serviceType === 'vaksinasi' &&
-                   serviceDate.getMonth() === month.getMonth() && 
-                   serviceDate.getFullYear() === month.getFullYear();
-        }).length;
-    });
-
-    new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: last6Months.map(month => month.toLocaleDateString('id-ID', { month: 'short' })),
-            datasets: [{
-                label: 'Vaksinasi',
-                data: vaccinationData,
-                borderColor: '#10b981',
-                backgroundColor: 'rgba(16, 185, 129, 0.1)',
-                tension: 0.4,
-                fill: true
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    display: false
-                }
-            },
-            scales: {
-                y: {
-                    beginAtZero: true
-                }
-            }
-        }
-    });
-}
-
-// Animal Type Chart
-function initializeAnimalTypeChart() {
-    const ctx = document.getElementById('animalTypeChart');
-    if (!ctx) return;
-
-    const animalTypes = ['anjing', 'kucing', 'burung', 'kelinci', 'lainnya'];
-    const animalCounts = animalTypes.map(type => {
-        return services.filter(s => s.animalType === type).length;
-    });
-
-    new Chart(ctx, {
-        type: 'doughnut',
-        data: {
-            labels: animalTypes.map(type => type.charAt(0).toUpperCase() + type.slice(1)),
-            datasets: [{
-                data: animalCounts,
-                backgroundColor: [
-                    '#1e3a8a',
-                    '#3b82f6',
-                    '#60a5fa',
-                    '#93c5fd',
-                    '#dbeafe'
-                ]
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    position: 'bottom'
-                }
-            }
-        }
-    });
-}
-
-// Satisfaction Chart
-function initializeSatisfactionChart() {
-    const ctx = document.getElementById('satisfactionChart');
-    if (!ctx) return;
-
-    // Simulate satisfaction data
-    const satisfactionData = [4.2, 4.5, 4.3, 4.6, 4.4, 4.7];
-    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun'];
-
-    new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: months,
-            datasets: [{
-                label: 'Skor Kepuasan',
-                data: satisfactionData,
-                borderColor: '#f59e0b',
-                backgroundColor: 'rgba(245, 158, 11, 0.1)',
-                tension: 0.4,
-                fill: true
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    display: false
-                }
-            },
-            scales: {
-                y: {
-                    min: 0,
-                    max: 5
-                }
-            }
-        }
-    });
-}
-
-// Report Functions
-function generateMonthlyReport() {
-    showAlert('Laporan bulanan sedang diproses...', 'info');
-    // Simulate report generation
-    setTimeout(() => {
-        showAlert('Laporan bulanan berhasil diunduh!', 'success');
-    }, 2000);
-}
-
-function exportToExcel() {
-    showAlert('Data sedang diekspor ke Excel...', 'info');
-    // Simulate export
-    setTimeout(() => {
-        showAlert('Data berhasil diekspor ke Excel!', 'success');
-    }, 2000);
-}
-
-function showDetailedStats() {
-    const modal = new bootstrap.Modal(document.getElementById('detailedStatsModal'));
     
-    // Update detailed stats
-    document.getElementById('avgServiceTime').textContent = '45';
-    document.getElementById('completionRate').textContent = '92%';
-    document.getElementById('satisfactionScore').textContent = '4.5';
-    document.getElementById('revenue').textContent = 'Rp 15.750.000';
+    let paginationHTML = '';
     
-    modal.show();
-}
-
-// User Management
-function viewUser(nik) {
-    const user = users.find(u => u.nik === nik);
-    if (user) {
-        alert(`Detail Pengguna:\n\nNIK: ${user.nik}\nNama: ${user.fullName}\nEmail: ${user.email}\nTelepon: ${user.phone}\nAlamat: ${user.address}\nStatus: ${user.status}`);
-    }
-}
-
-function toggleUserStatus(nik) {
-    const userIndex = users.findIndex(u => u.nik === nik);
-    if (userIndex !== -1) {
-        users[userIndex].status = users[userIndex].status === 'active' ? 'inactive' : 'active';
-        localStorage.setItem('users', JSON.stringify(users));
-        showAlert(`Status pengguna diubah menjadi ${users[userIndex].status}!`, 'success');
-        updateUsersTable();
-    }
-}
-
-// Medicine Management
-function editMedicine(medicineId) {
-    const medicine = medicines.find(m => m.id === medicineId);
-    if (medicine) {
-        const newStock = prompt(`Edit stock untuk ${medicine.name}:`, medicine.stock);
-        if (newStock !== null && !isNaN(newStock) && newStock >= 0) {
-            medicine.stock = parseInt(newStock);
-            medicine.status = medicine.stock < 10 ? 'low_stock' : 'available';
-            localStorage.setItem('medicines', JSON.stringify(medicines));
-            showAlert('Stock obat berhasil diupdate!', 'success');
-            updateStockTable();
+    // Previous button
+    paginationHTML += `
+        <li class="page-item ${currentPage === 1 ? 'disabled' : ''}">
+            <a class="page-link" href="#" onclick="changePage(${currentPage - 1})">Previous</a>
+        </li>
+    `;
+    
+    // Page numbers
+    for (let i = 1; i <= totalPages; i++) {
+        if (i === 1 || i === totalPages || (i >= currentPage - 2 && i <= currentPage + 2)) {
+            paginationHTML += `
+                <li class="page-item ${i === currentPage ? 'active' : ''}">
+                    <a class="page-link" href="#" onclick="changePage(${i})">${i}</a>
+                </li>
+            `;
+        } else if (i === currentPage - 3 || i === currentPage + 3) {
+            paginationHTML += `<li class="page-item disabled"><span class="page-link">...</span></li>`;
         }
     }
+    
+    // Next button
+    paginationHTML += `
+        <li class="page-item ${currentPage === totalPages ? 'disabled' : ''}">
+            <a class="page-link" href="#" onclick="changePage(${currentPage + 1})">Next</a>
+        </li>
+    `;
+    
+    pagination.innerHTML = paginationHTML;
 }
 
-function restockMedicine(medicineId) {
-    const medicine = medicines.find(m => m.id === medicineId);
-    if (medicine) {
-        const restockAmount = prompt(`Jumlah restock untuk ${medicine.name}:`, 50);
-        if (restockAmount !== null && !isNaN(restockAmount) && restockAmount > 0) {
-            medicine.stock += parseInt(restockAmount);
-            medicine.status = medicine.stock < 10 ? 'low_stock' : 'available';
-            localStorage.setItem('medicines', JSON.stringify(medicines));
-            showAlert(`Stock ${medicine.name} berhasil ditambah ${restockAmount} unit!`, 'success');
-            updateStockTable();
+// Change Page
+function changePage(page) {
+    const totalPages = Math.ceil(serviceRequests.length / itemsPerPage);
+    if (page >= 1 && page <= totalPages) {
+        currentPage = page;
+        updateServiceRequestsTable();
+    }
+}
+
+// View Service Request Details
+function viewServiceRequest(requestId) {
+    const request = serviceRequests.find(req => req.id === requestId);
+    if (request) {
+        alert(`Detail Permohonan:\n\nID: ${request.id}\nTanggal: ${formatDate(request.date)}\nPemohon: ${request.requester}\nJenis: ${getServiceTypeLabel(request.serviceType)}\nHewan: ${request.animal}\nPrioritas: ${getPriorityLabel(request.priority)}\nStatus: ${getStatusLabel(request.status)}`);
+    }
+}
+
+// Update Service Status
+function updateServiceStatus(requestId, newStatus) {
+    const request = serviceRequests.find(req => req.id === requestId);
+    if (request) {
+        request.status = newStatus;
+        
+        // Update in localStorage
+        if (request.type === 'service') {
+            const userServices = JSON.parse(localStorage.getItem('userServices') || '[]');
+            const serviceIndex = userServices.findIndex(s => s.id === requestId);
+            if (serviceIndex !== -1) {
+                userServices[serviceIndex].status = newStatus;
+                localStorage.setItem('userServices', JSON.stringify(userServices));
+            }
+        } else if (request.type === 'recommendation') {
+            const vetPracticeRecommendations = JSON.parse(localStorage.getItem('vetPracticeRecommendations') || '[]');
+            const recIndex = vetPracticeRecommendations.findIndex(r => r.id === requestId);
+            if (recIndex !== -1) {
+                vetPracticeRecommendations[recIndex].status = newStatus;
+                localStorage.setItem('vetPracticeRecommendations', JSON.stringify(vetPracticeRecommendations));
+            }
         }
+        
+        showAlert(`Status permohonan berhasil diubah menjadi ${getStatusLabel(newStatus)}!`, 'success');
+        updateServiceRequestsTable();
     }
 }
 
 // Utility Functions
-function getLast6Months() {
-    const months = [];
-    const now = new Date();
-    for (let i = 5; i >= 0; i--) {
-        const date = new Date(now.getFullYear(), now.getMonth() - i, 1);
-        months.push(date);
-    }
-    return months;
+function getServiceTypeLabel(type) {
+    const labels = {
+        'pengobatan': 'Pengobatan',
+        'vaksinasi': 'Vaksinasi',
+        'konsultasi': 'Konsultasi',
+        'telemedicine': 'Telemedicine',
+        'rekomendasi_praktek': 'Rekomendasi Praktek',
+        'rekomendasi_kontrol': 'Rekomendasi Kontrol'
+    };
+    return labels[type] || type;
+}
+
+function getPriorityLabel(priority) {
+    const labels = {
+        'normal': 'Normal',
+        'urgent': 'Mendesak',
+        'emergency': 'Darurat'
+    };
+    return labels[priority] || priority;
+}
+
+function getPriorityColor(priority) {
+    const colors = {
+        'normal': 'secondary',
+        'urgent': 'warning',
+        'emergency': 'danger'
+    };
+    return colors[priority] || 'secondary';
+}
+
+function getStatusLabel(status) {
+    const labels = {
+        'pending': 'Menunggu',
+        'in_progress': 'Diproses',
+        'completed': 'Selesai',
+        'cancelled': 'Dibatalkan',
+        'submitted': 'Diajukan'
+    };
+    return labels[status] || status;
 }
 
 function getStatusColor(status) {
@@ -577,19 +295,23 @@ function getStatusColor(status) {
         'pending': 'warning',
         'in_progress': 'info',
         'completed': 'success',
-        'cancelled': 'danger'
+        'cancelled': 'danger',
+        'submitted': 'primary'
     };
     return colors[status] || 'secondary';
 }
 
-function getMedicineStatusColor(status) {
-    const colors = {
-        'available': 'success',
-        'low_stock': 'warning',
-        'out_of_stock': 'danger'
-    };
-    return colors[status] || 'secondary';
+function formatDate(dateString) {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('id-ID', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+    });
 }
+
 
 // Logout Function
 function logout() {
@@ -658,13 +380,9 @@ function showAlert(message, type) {
 }
 
 // Export functions
-window.generateMonthlyReport = generateMonthlyReport;
-window.exportToExcel = exportToExcel;
-window.showDetailedStats = showDetailedStats;
-window.viewUser = viewUser;
-window.toggleUserStatus = toggleUserStatus;
-window.editMedicine = editMedicine;
-window.restockMedicine = restockMedicine;
+window.viewServiceRequest = viewServiceRequest;
+window.updateServiceStatus = updateServiceStatus;
+window.changePage = changePage;
 window.logout = logout;
 window.confirmLogout = confirmLogout;
 window.goToHomepage = goToHomepage;

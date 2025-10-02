@@ -69,380 +69,137 @@
             <div class="row mb-4">
                 <div class="col-12">
                     <h2 class="display-5 fw-bold text-navy mb-3">Dashboard Administrator</h2>
-                    <p class="lead text-muted">Analisis dan statistik pelayanan kesehatan hewan</p>
+                    <p class="lead text-muted">Panel administrator kosong - siap untuk kustomisasi</p>
                 </div>
             </div>
 
-            <!-- Key Metrics -->
-            <div class="row g-4 mb-5">
-                <div class="col-lg-3 col-md-6">
-                    <div class="stat-card">
-                        <div class="stat-icon">
-                            <i class="fas fa-users"></i>
-                        </div>
-                        <div class="stat-content">
-                            <h3 id="totalUsers">0</h3>
-                            <p>Total Pengguna</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-6">
-                    <div class="stat-card">
-                        <div class="stat-icon">
-                            <i class="fas fa-calendar-check"></i>
-                        </div>
-                        <div class="stat-content">
-                            <h3 id="totalServices">0</h3>
-                            <p>Total Layanan</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-6">
-                    <div class="stat-card">
-                        <div class="stat-icon">
-                            <i class="fas fa-syringe"></i>
-                        </div>
-                        <div class="stat-content">
-                            <h3 id="totalVaccinations">0</h3>
-                            <p>Total Vaksinasi</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-6">
-                    <div class="stat-card">
-                        <div class="stat-icon">
-                            <i class="fas fa-video"></i>
-                        </div>
-                        <div class="stat-content">
-                            <h3 id="totalTelemedicine">0</h3>
-                            <p>Total Telemedicine</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Charts Row -->
-            <div class="row g-4 mb-5">
-                <div class="col-lg-8">
-                    <div class="card">
-                        <div class="card-header bg-navy text-white">
-                            <h5 class="mb-0">
-                                <i class="fas fa-chart-line me-2"></i>Trend Layanan Bulanan
-                            </h5>
-                        </div>
-                        <div class="card-body">
-                            <canvas id="monthlyTrendChart" height="300"></canvas>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-4">
-                    <div class="card">
-                        <div class="card-header bg-navy text-white">
-                            <h5 class="mb-0">
-                                <i class="fas fa-chart-pie me-2"></i>Distribusi Layanan
-                            </h5>
-                        </div>
-                        <div class="card-body">
-                            <canvas id="serviceDistributionChart" height="300"></canvas>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Recent Activity -->
+            <!-- Service Requests Data -->
             <div class="row g-4">
-                <div class="col-lg-8">
+                <div class="col-12">
                     <div class="card">
                         <div class="card-header bg-navy text-white">
                             <h5 class="mb-0">
-                                <i class="fas fa-history me-2"></i>Aktivitas Terbaru
+                                <i class="fas fa-clipboard-list me-2"></i>Data Permohonan Pelayanan
                             </h5>
                         </div>
                         <div class="card-body">
+                            <!-- Filter Controls -->
+                            <div class="row g-3 mb-4">
+                                <div class="col-md-3">
+                                    <label class="form-label">Status</label>
+                                    <select class="form-select" id="statusFilter">
+                                        <option value="">Semua Status</option>
+                                        <option value="pending">Menunggu</option>
+                                        <option value="in_progress">Sedang Diproses</option>
+                                        <option value="completed">Selesai</option>
+                                        <option value="cancelled">Dibatalkan</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label">Jenis Layanan</label>
+                                    <select class="form-select" id="serviceTypeFilter">
+                                        <option value="">Semua Jenis</option>
+                                        <option value="pengobatan">Pengobatan</option>
+                                        <option value="vaksinasi">Vaksinasi</option>
+                                        <option value="konsultasi">Konsultasi</option>
+                                        <option value="telemedicine">Telemedicine</option>
+                                        <option value="rekomendasi_praktek">Rekomendasi Praktek</option>
+                                        <option value="rekomendasi_kontrol">Rekomendasi Kontrol</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label">Tanggal Mulai</label>
+                                    <input type="date" class="form-control" id="startDateFilter">
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label">Tanggal Akhir</label>
+                                    <input type="date" class="form-control" id="endDateFilter">
+                                </div>
+                            </div>
+
+                            <!-- Service Requests Table -->
                             <div class="table-responsive">
                                 <table class="table table-hover">
                                     <thead>
                                         <tr>
+                                            <th>ID</th>
+                                            <th>Nomor Tiket</th>
                                             <th>Tanggal</th>
-                                            <th>Layanan</th>
+                                            <th>Pemohon</th>
+                                            <th>Jenis Layanan</th>
                                             <th>Hewan</th>
-                                            <th>Pemilik</th>
-                                            <th>Status</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="recentActivityTable">
-                                        <!-- Data will be loaded here -->
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-4">
-                    <div class="card">
-                        <div class="card-header bg-navy text-white">
-                            <h5 class="mb-0">
-                                <i class="fas fa-exclamation-triangle me-2"></i>Alert & Notifikasi
-                            </h5>
-                        </div>
-                        <div class="card-body">
-                            <div id="alertsContainer">
-                                <!-- Alerts will be loaded here -->
-                            </div>
-                            <hr>
-                            <div class="d-grid gap-2">
-                                <button class="btn btn-outline-secondary" onclick="goToHomepage()">
-                                    <i class="fas fa-home me-2"></i>Kembali ke Homepage
-                                </button>
-                                <button class="btn btn-outline-danger" onclick="confirmLogout()">
-                                    <i class="fas fa-sign-out-alt me-2"></i>Logout
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Analytics Section -->
-    <section id="analytics" class="py-5 bg-light">
-        <div class="container">
-            <div class="row mb-4">
-                <div class="col-12">
-                    <h2 class="display-5 fw-bold text-navy mb-3">Analisis Mendalam</h2>
-                    <p class="lead text-muted">Analisis detail performa layanan dan tren</p>
-                </div>
-            </div>
-
-            <div class="row g-4">
-                <div class="col-lg-6">
-                    <div class="card">
-                        <div class="card-header bg-navy text-white">
-                            <h5 class="mb-0">
-                                <i class="fas fa-chart-bar me-2"></i>Layanan per Bulan
-                            </h5>
-                        </div>
-                        <div class="card-body">
-                            <canvas id="monthlyServicesChart" height="250"></canvas>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-6">
-                    <div class="card">
-                        <div class="card-header bg-navy text-white">
-                            <h5 class="mb-0">
-                                <i class="fas fa-chart-area me-2"></i>Trend Vaksinasi
-                            </h5>
-                        </div>
-                        <div class="card-body">
-                            <canvas id="vaccinationTrendChart" height="250"></canvas>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-6">
-                    <div class="card">
-                        <div class="card-header bg-navy text-white">
-                            <h5 class="mb-0">
-                                <i class="fas fa-chart-doughnut me-2"></i>Jenis Hewan
-                            </h5>
-                        </div>
-                        <div class="card-body">
-                            <canvas id="animalTypeChart" height="250"></canvas>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-6">
-                    <div class="card">
-                        <div class="card-header bg-navy text-white">
-                            <h5 class="mb-0">
-                                <i class="fas fa-chart-line me-2"></i>Kepuasan Layanan
-                            </h5>
-                        </div>
-                        <div class="card-body">
-                            <canvas id="satisfactionChart" height="250"></canvas>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Reports Section -->
-    <section id="reports" class="py-5">
-        <div class="container">
-            <div class="row mb-4">
-                <div class="col-12">
-                    <h2 class="display-5 fw-bold text-navy mb-3">Laporan & Export</h2>
-                    <p class="lead text-muted">Generate laporan dan export data</p>
-                </div>
-            </div>
-
-            <div class="row g-4">
-                <div class="col-lg-4">
-                    <div class="card">
-                        <div class="card-body text-center">
-                            <div class="report-icon mb-3">
-                                <i class="fas fa-file-pdf"></i>
-                            </div>
-                            <h5>Laporan Bulanan</h5>
-                            <p class="text-muted">Generate laporan aktivitas bulanan</p>
-                            <button class="btn btn-navy" onclick="generateMonthlyReport()">
-                                <i class="fas fa-download me-2"></i>Generate PDF
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-4">
-                    <div class="card">
-                        <div class="card-body text-center">
-                            <div class="report-icon mb-3">
-                                <i class="fas fa-file-excel"></i>
-                            </div>
-                            <h5>Export Data</h5>
-                            <p class="text-muted">Export data ke format Excel</p>
-                            <button class="btn btn-navy" onclick="exportToExcel()">
-                                <i class="fas fa-download me-2"></i>Export Excel
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-4">
-                    <div class="card">
-                        <div class="card-body text-center">
-                            <div class="report-icon mb-3">
-                                <i class="fas fa-chart-line"></i>
-                            </div>
-                            <h5>Statistik Detail</h5>
-                            <p class="text-muted">Lihat statistik mendalam</p>
-                            <button class="btn btn-navy" onclick="showDetailedStats()">
-                                <i class="fas fa-chart-bar me-2"></i>Lihat Statistik
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Management Section -->
-    <section id="management" class="py-5 bg-light">
-        <div class="container">
-            <div class="row mb-4">
-                <div class="col-12">
-                    <h2 class="display-5 fw-bold text-navy mb-3">Manajemen Sistem</h2>
-                    <p class="lead text-muted">Kelola pengguna, obat, dan konfigurasi sistem</p>
-                </div>
-            </div>
-
-            <div class="row g-4">
-                <div class="col-lg-6">
-                    <div class="card">
-                        <div class="card-header bg-navy text-white">
-                            <h5 class="mb-0">
-                                <i class="fas fa-users me-2"></i>Manajemen Pengguna
-                            </h5>
-                        </div>
-                        <div class="card-body">
-                            <div class="table-responsive">
-                                <table class="table table-hover">
-                                    <thead>
-                                        <tr>
-                                            <th>NIK</th>
-                                            <th>Nama</th>
-                                            <th>Email</th>
+                                            <th>Prioritas</th>
                                             <th>Status</th>
                                             <th>Aksi</th>
                                         </tr>
                                     </thead>
-                                    <tbody id="usersTable">
+                                    <tbody id="serviceRequestsTable">
                                         <!-- Data will be loaded here -->
                                     </tbody>
                                 </table>
                             </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-6">
-                    <div class="card">
-                        <div class="card-header bg-navy text-white">
-                            <h5 class="mb-0">
-                                <i class="fas fa-pills me-2"></i>Stock Obat
-                            </h5>
-                        </div>
-                        <div class="card-body">
-                            <div class="table-responsive">
-                                <table class="table table-hover">
-                                    <thead>
-                                        <tr>
-                                            <th>Nama Obat</th>
-                                            <th>Stock</th>
-                                            <th>Status</th>
-                                            <th>Aksi</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="stockTable">
-                                        <!-- Data will be loaded here -->
-                                    </tbody>
-                                </table>
-                            </div>
+
+                            <!-- Pagination -->
+                            <nav aria-label="Service requests pagination">
+                                <ul class="pagination justify-content-center" id="serviceRequestsPagination">
+                                    <!-- Pagination will be loaded here -->
+                                </ul>
+                            </nav>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </section>
 
-    <!-- Detailed Stats Modal -->
-    <div class="modal fade" id="detailedStatsModal" tabindex="-1">
-        <div class="modal-dialog modal-xl">
-            <div class="modal-content">
-                <div class="modal-header bg-navy text-white">
-                    <h5 class="modal-title">
-                        <i class="fas fa-chart-bar me-2"></i>Statistik Detail
-                    </h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="row g-4">
-                        <div class="col-lg-6">
-                            <h6>Metrik Kunci</h6>
+            <!-- Tracking Section -->
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header bg-success text-white">
+                            <h5 class="mb-0">
+                                <i class="fas fa-search me-2"></i>Tracking Status Layanan
+                            </h5>
+                        </div>
+                        <div class="card-body">
                             <div class="row g-3">
-                                <div class="col-6">
-                                    <div class="stat-item">
-                                        <h4 class="text-navy" id="avgServiceTime">0</h4>
-                                        <p class="text-muted">Rata-rata Waktu Layanan (menit)</p>
+                                <div class="col-md-8">
+                                    <label class="form-label">Masukkan Nomor Tiket</label>
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" id="trackingTicketNumber" placeholder="Contoh: TK241201001">
+                                        <button class="btn btn-success" onclick="trackService()">
+                                            <i class="fas fa-search me-2"></i>Track
+                                        </button>
                                     </div>
                                 </div>
-                                <div class="col-6">
-                                    <div class="stat-item">
-                                        <h4 class="text-navy" id="completionRate">0%</h4>
-                                        <p class="text-muted">Tingkat Penyelesaian</p>
-                                    </div>
-                                </div>
-                                <div class="col-6">
-                                    <div class="stat-item">
-                                        <h4 class="text-navy" id="satisfactionScore">0</h4>
-                                        <p class="text-muted">Skor Kepuasan</p>
-                                    </div>
-                                </div>
-                                <div class="col-6">
-                                    <div class="stat-item">
-                                        <h4 class="text-navy" id="revenue">Rp 0</h4>
-                                        <p class="text-muted">Pendapatan Bulan Ini</p>
+                                <div class="col-md-4">
+                                    <label class="form-label">Status Terakhir</label>
+                                    <div id="trackingResult" class="text-muted">
+                                        <i class="fas fa-info-circle me-2"></i>Masukkan nomor tiket untuk melihat status
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-lg-6">
-                            <h6>Trend 6 Bulan Terakhir</h6>
-                            <canvas id="sixMonthTrendChart" height="200"></canvas>
-                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-center">
+                        <button class="btn btn-outline-secondary" onclick="goToHomepage()">
+                            <i class="fas fa-home me-2"></i>Kembali ke Homepage
+                        </button>
+                        <button class="btn btn-outline-danger" onclick="confirmLogout()">
+                            <i class="fas fa-sign-out-alt me-2"></i>Logout
+                        </button>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
+    </section>
+
+
+
 
     <!-- Logout Confirmation Modal -->
     <div class="modal fade" id="logoutModal" tabindex="-1">

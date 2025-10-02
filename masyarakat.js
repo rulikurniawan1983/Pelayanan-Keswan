@@ -296,8 +296,10 @@ function handleNewService(e) {
         return;
     }
     
+    const ticketNumber = generateTicketNumber();
     const serviceData = {
         id: generateId(),
+        ticketNumber: ticketNumber,
         animalId: animalId,
         animalName: animal.name,
         animalType: animal.type,
@@ -314,7 +316,7 @@ function handleNewService(e) {
     userServices.push(serviceData);
     localStorage.setItem('userServices', JSON.stringify(userServices));
     
-    showAlert('Layanan berhasil diajukan!', 'success');
+    showAlert(`Layanan berhasil diajukan!<br><strong>Nomor Tiket: ${ticketNumber}</strong><br>Gunakan nomor ini untuk tracking status layanan.`, 'success');
     
     // Close modal and reset form
     const modal = bootstrap.Modal.getInstance(document.getElementById('newServiceModal'));
@@ -337,8 +339,10 @@ function handleVaccination(e) {
         return;
     }
     
+    const ticketNumber = generateTicketNumber();
     const vaccinationData = {
         id: generateId(),
+        ticketNumber: ticketNumber,
         animalId: animalId,
         animalName: animal.name,
         animalType: animal.type,
@@ -356,7 +360,7 @@ function handleVaccination(e) {
     userServices.push(vaccinationData);
     localStorage.setItem('userServices', JSON.stringify(userServices));
     
-    showAlert('Vaksinasi berhasil didaftarkan!', 'success');
+    showAlert(`Vaksinasi berhasil didaftarkan!<br><strong>Nomor Tiket: ${ticketNumber}</strong><br>Gunakan nomor ini untuk tracking status layanan.`, 'success');
     
     // Close modal and reset form
     const modal = bootstrap.Modal.getInstance(document.getElementById('vaccinationModal'));
@@ -379,8 +383,10 @@ function handleTelemedicine(e) {
         return;
     }
     
+    const ticketNumber = generateTicketNumber();
     const telemedicineData = {
         id: generateId(),
+        ticketNumber: ticketNumber,
         animalId: animalId,
         animalName: animal.name,
         animalType: animal.type,
@@ -397,7 +403,7 @@ function handleTelemedicine(e) {
     userServices.push(telemedicineData);
     localStorage.setItem('userServices', JSON.stringify(userServices));
     
-    showAlert('Konsultasi telemedicine berhasil diajukan!', 'success');
+    showAlert(`Konsultasi telemedicine berhasil diajukan!<br><strong>Nomor Tiket: ${ticketNumber}</strong><br>Gunakan nomor ini untuk tracking status layanan.`, 'success');
     
     // Close modal and reset form
     const modal = bootstrap.Modal.getInstance(document.getElementById('telemedicineModal'));
@@ -618,6 +624,16 @@ function showAlert(message, type) {
     }, 5000);
 }
 
+// Generate Ticket Number
+function generateTicketNumber() {
+    const now = new Date();
+    const year = now.getFullYear().toString().slice(-2);
+    const month = (now.getMonth() + 1).toString().padStart(2, '0');
+    const day = now.getDate().toString().padStart(2, '0');
+    const random = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
+    return `TK${year}${month}${day}${random}`;
+}
+
 // Utility Functions
 function getStatusColor(status) {
     const colors = {
@@ -643,8 +659,10 @@ function handleVetPracticeRecommendation(e) {
     e.preventDefault();
 
     const form = e.target;
+    const ticketNumber = generateTicketNumber();
     const data = {
         id: generateId(),
+        ticketNumber: ticketNumber,
         type: 'rekomendasi_praktek_dokter_hewan',
         drhName: document.getElementById('drhName').value.trim(),
         drhNIK: document.getElementById('drhNIK').value.trim(),
@@ -758,7 +776,7 @@ function handleVetPracticeRecommendation(e) {
                 localStorage.setItem('vetPracticeRecommendations', JSON.stringify(submissions));
             }
 
-            showAlert('Pengajuan rekomendasi praktek dokter hewan berhasil dikirim!', 'success');
+            showAlert(`Pengajuan rekomendasi praktek dokter hewan berhasil dikirim!<br><strong>Nomor Tiket: ${ticketNumber}</strong><br>Gunakan nomor ini untuk tracking status pengajuan.`, 'success');
             const modal = bootstrap.Modal.getInstance(document.getElementById('vetPracticeRecommendationModal'));
             if (modal) modal.hide();
             form.reset();

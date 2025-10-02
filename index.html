@@ -64,16 +64,80 @@
                             <p class="card-subtitle">Sistem terintegrasi untuk pelayanan kesehatan hewan terbaik</p>
                         </div>
                         <div class="card-body">
-                            <!-- Statistics Chart -->
-                            <div class="chart-container">
-                                <div class="chart-header">
-                                    <h4 class="chart-title">
-                                        <i class="fas fa-chart-pie me-2"></i>Statistik Pelayanan
+                            <!-- Real-time Statistics -->
+                            <div class="statistics-container">
+                                <div class="statistics-header">
+                                    <h4 class="statistics-title">
+                                        <i class="fas fa-chart-line me-2"></i>Statistik Pelayanan Real-time
                                     </h4>
-                                    <p class="chart-subtitle">Data real-time sistem pelayanan kesehatan hewan</p>
+                                    <p class="statistics-subtitle">Data terkini sistem pelayanan kesehatan hewan</p>
                                 </div>
-                                <div class="chart-wrapper">
-                                    <canvas id="statisticsChart"></canvas>
+                                <div class="single-stat-card">
+                                    <div class="stats-line">
+                                        <div class="stat-item">
+                                            <div class="stat-icon bg-primary">
+                                                <i class="fas fa-clipboard-list"></i>
+                                            </div>
+                                            <div class="stat-content">
+                                                <div class="stat-number" id="totalServices">0</div>
+                                                <div class="stat-label">Total</div>
+                                            </div>
+                                        </div>
+                                        <div class="stat-item">
+                                            <div class="stat-icon bg-warning">
+                                                <i class="fas fa-clock"></i>
+                                            </div>
+                                            <div class="stat-content">
+                                                <div class="stat-number" id="pendingServices">0</div>
+                                                <div class="stat-label">Menunggu</div>
+                                            </div>
+                                        </div>
+                                        <div class="stat-item">
+                                            <div class="stat-icon bg-info">
+                                                <i class="fas fa-cogs"></i>
+                                            </div>
+                                            <div class="stat-content">
+                                                <div class="stat-number" id="inProgressServices">0</div>
+                                                <div class="stat-label">Diproses</div>
+                                            </div>
+                                        </div>
+                                        <div class="stat-item">
+                                            <div class="stat-icon bg-success">
+                                                <i class="fas fa-check-circle"></i>
+                                            </div>
+                                            <div class="stat-content">
+                                                <div class="stat-number" id="completedServices">0</div>
+                                                <div class="stat-label">Selesai</div>
+                                            </div>
+                                        </div>
+                                        <div class="stat-item">
+                                            <div class="stat-icon bg-danger">
+                                                <i class="fas fa-syringe"></i>
+                                            </div>
+                                            <div class="stat-content">
+                                                <div class="stat-number" id="vaccinationServices">0</div>
+                                                <div class="stat-label">Vaksinasi</div>
+                                            </div>
+                                        </div>
+                                        <div class="stat-item">
+                                            <div class="stat-icon bg-secondary">
+                                                <i class="fas fa-video"></i>
+                                            </div>
+                                            <div class="stat-content">
+                                                <div class="stat-number" id="telemedicineServices">0</div>
+                                                <div class="stat-label">Telemedicine</div>
+                                            </div>
+                                        </div>
+                                        <div class="stat-item">
+                                            <div class="stat-icon bg-dark">
+                                                <i class="fas fa-user-md"></i>
+                                            </div>
+                                            <div class="stat-content">
+                                                <div class="stat-number" id="recommendationServices">0</div>
+                                                <div class="stat-label">Rekomendasi</div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                             
