@@ -211,8 +211,6 @@ body::before {
     position: relative;
     overflow: hidden;
     backdrop-filter: blur(10px);
-    max-width: 400px;
-    width: 100%;
 }
 
 .service-card::before {
@@ -355,41 +353,14 @@ h2 {
     animation: fadeInUp 0.6s ease-out;
 }
 
-/* Three Row Layout Styling */
+/* Single Row Layout Styling */
 .services-section .row {
-    margin-bottom: 2rem;
-}
-
-.services-section .row:last-child {
     margin-bottom: 0;
 }
 
-/* Staggered animations for three rows */
-.services-section .row:nth-child(1) .service-card {
+/* Uniform animations for single row */
+.service-card {
     animation: fadeInUp 0.6s ease-out;
-}
-
-.services-section .row:nth-child(2) .service-card {
-    animation: fadeInUp 0.8s ease-out;
-}
-
-.services-section .row:nth-child(3) .service-card {
-    animation: fadeInUp 1s ease-out;
-}
-
-/* Responsive adjustments for three row layout */
-@media (max-width: 768px) {
-    .service-card {
-        max-width: 350px;
-        padding: 2rem 1.5rem;
-    }
-}
-
-@media (max-width: 576px) {
-    .service-card {
-        max-width: 300px;
-        padding: 1.5rem 1rem;
-    }
 }
 
 @keyframes fadeInUp {
