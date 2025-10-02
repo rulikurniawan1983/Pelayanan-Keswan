@@ -75,53 +75,6 @@ body {
     width: 100%;
 }
 
-/* Hero Section */
-.hero-section {
-    background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 50%, #60a5fa 100%);
-    min-height: 50vh;
-    display: flex;
-    align-items: center;
-    position: relative;
-    overflow: hidden;
-    padding: 2rem 0;
-}
-
-.hero-section h1 {
-    font-size: 2.5rem;
-    font-weight: 700;
-}
-
-.hero-section p {
-    font-size: 1.1rem;
-}
-
-.hero-section::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"><defs><radialGradient id="a" cx="50%" cy="50%"><stop offset="0%" stop-color="%23ffffff" stop-opacity="0.1"/><stop offset="100%" stop-color="%23ffffff" stop-opacity="0"/></radialGradient></defs><circle cx="200" cy="200" r="100" fill="url(%23a)"/><circle cx="800" cy="300" r="150" fill="url(%23a)"/><circle cx="400" cy="700" r="120" fill="url(%23a)"/></svg>');
-    opacity: 0.3;
-}
-
-.hero-section .container {
-    position: relative;
-    z-index: 2;
-}
-
-.hero-image {
-    text-align: center;
-    position: relative;
-}
-
-.hero-icon {
-    font-size: 8rem;
-    color: rgba(255, 255, 255, 0.15);
-    animation: float 6s ease-in-out infinite;
-    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
-}
 
 @keyframes float {
     0%, 100% { transform: translateY(0px); }
@@ -759,22 +712,6 @@ footer::before {
 
 /* Responsive Design */
 @media (max-width: 768px) {
-    .hero-section {
-        text-align: center;
-        padding: 1.5rem 0;
-    }
-    
-    .hero-section h1 {
-        font-size: 2rem;
-    }
-    
-    .hero-section p {
-        font-size: 1rem;
-    }
-    
-    .hero-icon {
-        font-size: 6rem;
-    }
     
     .about-icon {
         font-size: 8rem;
@@ -2795,18 +2732,6 @@ canvas {
         font-size: 13px;
     }
     
-    .hero-section {
-        min-height: 35vh;
-        padding: 1rem 0;
-    }
-    
-    .hero-section h1 {
-        font-size: 1.8rem;
-    }
-    
-    .hero-section p {
-        font-size: 0.9rem;
-    }
     
     .stat-card {
         padding: 1.2rem;
@@ -2892,10 +2817,6 @@ canvas {
         font-size: 0.85rem;
     }
     
-    /* Enhanced Mobile Styles */
-    .hero-section {
-        background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 50%, #60a5fa 100%);
-    }
     
     .service-card {
         box-shadow: 0 4px 16px rgba(30, 58, 138, 0.1);
@@ -3101,23 +3022,6 @@ canvas {
         font-size: 0.55rem;
     }
     
-    /* Ultra Mobile Styles */
-    .hero-section {
-        min-height: 30vh;
-        padding: 0.8rem 0;
-    }
-    
-    .hero-section h1 {
-        font-size: 1.5rem;
-    }
-    
-    .hero-section p {
-        font-size: 0.8rem;
-    }
-    
-    .hero-icon {
-        font-size: 3.5rem;
-    }
     
     .about-icon {
         font-size: 4rem;
@@ -3159,10 +3063,6 @@ canvas {
         font-size: 1.1rem;
     }
     
-    /* Enhanced Ultra Mobile Styles */
-    .hero-section {
-        background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 50%, #60a5fa 100%);
-    }
     
     .service-card {
         box-shadow: 0 2px 8px rgba(30, 58, 138, 0.1);
@@ -3190,23 +3090,6 @@ canvas {
         font-size: 0.9rem;
     }
     
-    /* Ultra Mobile Extra Small Styles */
-    .hero-section {
-        min-height: 25vh;
-        padding: 0.6rem 0;
-    }
-    
-    .hero-section h1 {
-        font-size: 1.3rem;
-    }
-    
-    .hero-section p {
-        font-size: 0.75rem;
-    }
-    
-    .hero-icon {
-        font-size: 2.5rem;
-    }
     
     .about-icon {
         font-size: 3rem;
@@ -3258,23 +3141,6 @@ canvas {
         font-size: 0.85rem;
     }
     
-    /* Ultra Mobile Extra Extra Small Styles */
-    .hero-section {
-        min-height: 20vh;
-        padding: 0.4rem 0;
-    }
-    
-    .hero-section h1 {
-        font-size: 1.1rem;
-    }
-    
-    .hero-section p {
-        font-size: 0.7rem;
-    }
-    
-    .hero-icon {
-        font-size: 2rem;
-    }
     
     .about-icon {
         font-size: 2.5rem;
@@ -3326,23 +3192,6 @@ canvas {
         font-size: 0.8rem;
     }
     
-    /* Ultra Mobile Extra Extra Extra Small Styles */
-    .hero-section {
-        min-height: 15vh;
-        padding: 0.3rem 0;
-    }
-    
-    .hero-section h1 {
-        font-size: 1rem;
-    }
-    
-    .hero-section p {
-        font-size: 0.65rem;
-    }
-    
-    .hero-icon {
-        font-size: 1.5rem;
-    }
     
     .about-icon {
         font-size: 2rem;
