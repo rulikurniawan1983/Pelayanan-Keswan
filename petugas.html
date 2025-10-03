@@ -69,176 +69,21 @@
     <!-- Dashboard Section -->
     <section id="dashboard" class="py-5">
         <div class="container">
-            <div class="row mb-4">
-                <div class="col-12">
-                    <h2 class="display-5 fw-bold text-navy mb-3">Dashboard Petugas</h2>
-                    <p class="lead text-muted">Kelola layanan kesehatan hewan dan pantau aktivitas harian</p>
-                </div>
-            </div>
-
-
-            <!-- Unified Service Management Card -->
-            <div class="row g-4">
-                <div class="col-12">
+            <div class="row justify-content-center">
+                <div class="col-md-8">
                     <div class="card">
-                        <div class="card-header bg-navy text-white">
-                            <h5 class="mb-0">
-                                <i class="fas fa-cogs me-2"></i>Kelola Layanan
-                            </h5>
-                        </div>
-                        <div class="card-body">
-                            <div class="row g-4">
-                                <!-- Service Actions Panel -->
-                                <div class="col-lg-4">
-                                    <div class="service-actions-panel">
-                                        <h6 class="text-navy mb-3">
-                                            <i class="fas fa-plus-circle me-2"></i>Tambah Layanan Baru
-                                        </h6>
-                                        <div class="d-grid gap-2 mb-4">
-                                            <button class="btn btn-navy" onclick="showNewServiceModal()">
-                                                <i class="fas fa-stethoscope me-2"></i>Pengobatan Hewan
-                                            </button>
-                                            <button class="btn btn-navy" onclick="showVaccinationModal()">
-                                                <i class="fas fa-syringe me-2"></i>Vaksinasi Rabies
-                                            </button>
-                                            <button class="btn btn-navy" onclick="showTelemedicineModal()">
-                                                <i class="fas fa-video me-2"></i>Telemedicine
-                                            </button>
-                                        </div>
-                                        
-                                        <hr class="my-4">
-                                        
-                                        <h6 class="text-navy mb-3">
-                                            <i class="fas fa-tools me-2"></i>Navigasi
-                                        </h6>
-                                        <div class="d-grid gap-2">
-                                            <button class="btn btn-outline-secondary" onclick="goToHomepage()">
-                                                <i class="fas fa-home me-2"></i>Kembali ke Homepage
-                                            </button>
-                                            <button class="btn btn-outline-danger" onclick="confirmLogout()">
-                                                <i class="fas fa-sign-out-alt me-2"></i>Logout
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                <!-- Today Services Table -->
-                                <div class="col-lg-8">
-                                    <div class="services-table-panel">
-                                        <h6 class="text-navy mb-3">
-                                            <i class="fas fa-tasks me-2"></i>Layanan Hari Ini
-                                        </h6>
-                                        <div class="table-responsive">
-                                            <table class="table table-hover">
-                                                <thead>
-                                                    <tr>
-                                                        <th>Waktu</th>
-                                                        <th>Nama Hewan</th>
-                                                        <th>Pemilik</th>
-                                                        <th>Layanan</th>
-                                                        <th>Status</th>
-                                                        <th>Aksi</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody id="todayServicesTable">
-                                                    <!-- Data will be loaded here -->
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Telemedicine Section -->
-    <section id="telemedicine" class="py-5 bg-light">
-        <div class="container">
-            <div class="row mb-4">
-                <div class="col-12">
-                    <h2 class="display-5 fw-bold text-navy mb-3">Telemedicine</h2>
-                    <p class="lead text-muted">Konsultasi kesehatan hewan secara online</p>
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col-12">
-                    <div class="card">
-                        <div class="card-header bg-navy text-white">
-                            <h5 class="mb-0">
-                                <i class="fas fa-video me-2"></i>Sesi Telemedicine Aktif
-                            </h5>
-                        </div>
-                        <div class="card-body">
-                            <div class="row g-4" id="telemedicineSessions">
-                                <!-- Telemedicine sessions will be loaded here -->
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Service History Section -->
-    <section id="history" class="py-5">
-        <div class="container">
-            <div class="row mb-4">
-                <div class="col-12">
-                    <h2 class="display-5 fw-bold text-navy mb-3">Riwayat Pelayanan</h2>
-                    <p class="lead text-muted">Pantau dan kelola riwayat pelayanan kesehatan hewan</p>
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col-12">
-                    <div class="card">
-                        <div class="card-header bg-navy text-white d-flex justify-content-between align-items-center">
-                            <h5 class="mb-0">
-                                <i class="fas fa-history me-2"></i>Daftar Riwayat Pelayanan
-                            </h5>
-                            <div class="d-flex gap-2">
-                                <select class="form-select form-select-sm" id="historyFilter" onchange="filterHistory()">
-                                    <option value="all">Semua Status</option>
-                                    <option value="completed">Selesai</option>
-                                    <option value="pending">Menunggu</option>
-                                    <option value="cancelled">Dibatalkan</option>
-                                </select>
-                                <button class="btn btn-light btn-sm" onclick="refreshHistory()">
-                                    <i class="fas fa-sync-alt me-1"></i>Refresh
+                        <div class="card-body text-center py-5">
+                            <h2 class="display-5 fw-bold text-navy mb-3">Panel Petugas</h2>
+                            <p class="lead text-muted mb-4">Selamat datang di panel petugas</p>
+                            
+                            <div class="d-grid gap-2 d-md-flex justify-content-md-center">
+                                <button class="btn btn-outline-secondary" onclick="goToHomepage()">
+                                    <i class="fas fa-home me-2"></i>Kembali ke Homepage
+                                </button>
+                                <button class="btn btn-outline-danger" onclick="confirmLogout()">
+                                    <i class="fas fa-sign-out-alt me-2"></i>Logout
                                 </button>
                             </div>
-                        </div>
-                        <div class="card-body">
-                            <div class="table-responsive">
-                                <table class="table table-hover">
-                                    <thead>
-                                        <tr>
-                                            <th>Tanggal</th>
-                                            <th>Nama Hewan</th>
-                                            <th>Pemilik</th>
-                                            <th>Jenis Layanan</th>
-                                            <th>Status</th>
-                                            <th>Dokter</th>
-                                            <th>Aksi</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="serviceHistoryTable">
-                                        <!-- History data will be loaded here -->
-                                    </tbody>
-                                </table>
-                            </div>
-                            
-                            <!-- Pagination -->
-                            <nav aria-label="History pagination" class="mt-4">
-                                <ul class="pagination justify-content-center" id="historyPagination">
-                                    <!-- Pagination will be generated here -->
-                                </ul>
-                            </nav>
                         </div>
                     </div>
                 </div>

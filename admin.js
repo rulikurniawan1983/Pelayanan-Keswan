@@ -8,11 +8,19 @@ const itemsPerPage = 10;
 let currentServiceId = null;
 let selectedServices = [];
 
+// Submission management variables
+let animalTreatmentRequests = [];
+let rabiesVaccinationRequests = [];
+let telemedicineRequests = [];
+let currentSubmissionId = null;
+
 // Initialize Admin Panel
 document.addEventListener('DOMContentLoaded', function() {
     checkAuth();
     loadAllServiceRequests();
+    loadSubmissionData();
     setupEventListeners();
+    setupSubmissionEventListeners();
     updateStatistics();
 });
 
