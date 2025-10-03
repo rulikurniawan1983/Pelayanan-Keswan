@@ -1609,7 +1609,18 @@ function showTreatmentService() {
 }
 
 function showVaccinationService() {
-    showSubmissionModal('vaksinasi');
+    const modal = new bootstrap.Modal(document.getElementById('rabiesVaccinationModal'));
+    
+    // Pre-fill owner data from current user
+    if (currentUser) {
+        document.getElementById('vaccinationOwnerName').value = currentUser.fullName || '';
+        document.getElementById('vaccinationOwnerNIK').value = currentUser.nik || '';
+        document.getElementById('vaccinationOwnerPhone').value = currentUser.phone || '';
+        document.getElementById('vaccinationOwnerEmail').value = currentUser.email || '';
+        document.getElementById('vaccinationOwnerAddress').value = currentUser.address || '';
+    }
+    
+    modal.show();
 }
 
 function showTelemedicineService() {
@@ -1766,6 +1777,166 @@ function submitAnimalTreatmentForm() {
     updateDashboard();
 }
 
+// Rabies Vaccination Form Functions
+function submitRabiesVaccinationForm() {
+    // Get form data
+    const ownerName = document.getElementById('vaccinationOwnerName').value.trim();
+    const ownerNIK = document.getElementById('vaccinationOwnerNIK').value.trim();
+    const ownerPhone = document.getElementById('vaccinationOwnerPhone').value.trim();
+    const ownerEmail = document.getElementById('vaccinationOwnerEmail').value.trim();
+    const ownerAddress = document.getElementById('vaccinationOwnerAddress').value.trim();
+    
+    const animalName = document.getElementById('vaccinationAnimalName').value.trim();
+    const animalType = document.getElementById('vaccinationAnimalType').value;
+    const animalBreed = document.getElementById('vaccinationAnimalBreed').value.trim();
+    const animalGender = document.getElementById('vaccinationAnimalGender').value;
+    const animalAge = document.getElementById('vaccinationAnimalAge').value.trim();
+    const animalWeight = document.getElementById('vaccinationAnimalWeight').value;
+    const animalColor = document.getElementById('vaccinationAnimalColor').value.trim();
+    const animalReproductive = document.getElementById('vaccinationAnimalReproductive').value;
+    
+    const rabiesStatus = document.getElementById('vaccinationRabiesStatus').value;
+    const lastVaccinationDate = document.getElementById('vaccinationLastDate').value;
+    const rabiesHistory = document.getElementById('vaccinationRabiesHistory').value.trim();
+    
+    const healthCondition = document.getElementById('vaccinationHealthCondition').value.trim();
+    const medicalHistory = document.getElementById('vaccinationMedicalHistory').value.trim();
+    const allergyHistory = document.getElementById('vaccinationAllergyHistory').value.trim();
+    const wildAnimalContact = document.getElementById('vaccinationWildAnimalContact').value.trim();
+    
+    const preferredSchedule = document.getElementById('vaccinationPreferredSchedule').value;
+    const location = document.getElementById('vaccinationLocation').value;
+    const additionalNotes = document.getElementById('vaccinationAdditionalNotes').value.trim();
+    
+    // Get file inputs
+    const ktpFile = document.getElementById('vaccinationKTPFile').files[0];
+    const animalPhotoFile = document.getElementById('vaccinationAnimalPhotoFile').files[0];
+    const previousCertFile = document.getElementById('vaccinationPreviousCertFile').files[0];
+    const otherFile = document.getElementById('vaccinationOtherFile').files[0];
+    
+    // Validation
+    if (!ownerName || !ownerNIK || !ownerPhone || !ownerAddress) {
+        showAlert('Mohon lengkapi data pemilik hewan!', 'warning');
+        return;
+    }
+    
+    if (!animalName || !animalType || !animalBreed || !animalGender || !animalAge) {
+        showAlert('Mohon lengkapi data hewan!', 'warning');
+        return;
+    }
+    
+    if (!rabiesStatus) {
+        showAlert('Mohon pilih status vaksinasi rabies!', 'warning');
+        return;
+    }
+    
+    if (!healthCondition) {
+        showAlert('Mohon isi kondisi kesehatan hewan!', 'warning');
+        return;
+    }
+    
+    if (!preferredSchedule) {
+        showAlert('Mohon pilih jadwal vaksinasi!', 'warning');
+        return;
+    }
+    
+    if (!ktpFile) {
+        showAlert('Mohon upload KTP pemilik!', 'warning');
+        return;
+    }
+    
+    // Create vaccination request
+    const vaccinationRequest = {
+        id: generateId(),
+        type: 'rabies_vaccination',
+        ticketNumber: generateTicketNumber(),
+        owner: {
+            name: ownerName,
+            nik: ownerNIK,
+            phone: ownerPhone,
+            email: ownerEmail,
+            address: ownerAddress
+        },
+        animal: {
+            name: animalName,
+            type: animalType,
+            breed: animalBreed,
+            gender: animalGender,
+            age: animalAge,
+            weight: animalWeight,
+            color: animalColor,
+            reproductiveStatus: animalReproductive
+        },
+        vaccinationHistory: {
+            rabiesStatus: rabiesStatus,
+            lastVaccinationDate: lastVaccinationDate,
+            rabiesHistory: rabiesHistory
+        },
+        health: {
+            condition: healthCondition,
+            medicalHistory: medicalHistory,
+            allergyHistory: allergyHistory,
+            wildAnimalContact: wildAnimalContact
+        },
+        documents: {
+            ktp: ktpFile ? ktpFile.name : null,
+            animalPhoto: animalPhotoFile ? animalPhotoFile.name : null,
+            previousCert: previousCertFile ? previousCertFile.name : null,
+            other: otherFile ? otherFile.name : null
+        },
+        schedule: {
+            preferredSchedule: preferredSchedule,
+            location: location
+        },
+        additionalNotes: additionalNotes,
+        status: 'pending',
+        ownerNIK: currentUser.nik,
+        ownerName: currentUser.fullName,
+        createdAt: new Date().toISOString()
+    };
+    
+    // Save to localStorage
+    let rabiesVaccinationRequests = JSON.parse(localStorage.getItem('rabiesVaccinationRequests') || '[]');
+    rabiesVaccinationRequests.push(vaccinationRequest);
+    localStorage.setItem('rabiesVaccinationRequests', JSON.stringify(rabiesVaccinationRequests));
+    
+    // Also add to userServices for tracking
+    userServices.push({
+        id: vaccinationRequest.id,
+        ticketNumber: vaccinationRequest.ticketNumber,
+        serviceType: 'rabies_vaccination',
+        animalName: animalName,
+        animalType: animalType,
+        status: 'pending',
+        ownerNIK: currentUser.nik,
+        ownerName: currentUser.fullName,
+        createdAt: new Date().toISOString(),
+        description: 'Vaksinasi Rabies - ' + animalName
+    });
+    localStorage.setItem('userServices', JSON.stringify(userServices));
+    
+    // Show success message
+    showAlert(`
+        <div class="text-center">
+            <i class="fas fa-check-circle fa-3x text-warning mb-3"></i>
+            <h5>Pengajuan Berhasil!</h5>
+            <p><strong>Nomor Tiket:</strong> ${vaccinationRequest.ticketNumber}</p>
+            <p class="text-muted">Pengajuan vaksinasi rabies untuk <strong>${animalName}</strong> telah diajukan.</p>
+            <p class="text-muted">Jadwal: <strong>${new Date(preferredSchedule).toLocaleDateString('id-ID')}</strong></p>
+        </div>
+    `, 'success');
+    
+    // Close modal
+    const modal = bootstrap.Modal.getInstance(document.getElementById('rabiesVaccinationModal'));
+    modal.hide();
+    
+    // Reset form
+    document.getElementById('rabiesVaccinationForm').reset();
+    
+    // Update dashboard
+    updateDashboard();
+}
+
 // Export functions
 window.showSubmissionModal = showSubmissionModal;
 window.submitServiceRequest = submitServiceRequest;
@@ -1778,3 +1949,4 @@ window.showTreatmentService = showTreatmentService;
 window.showVaccinationService = showVaccinationService;
 window.showTelemedicineService = showTelemedicineService;
 window.submitAnimalTreatmentForm = submitAnimalTreatmentForm;
+window.submitRabiesVaccinationForm = submitRabiesVaccinationForm;

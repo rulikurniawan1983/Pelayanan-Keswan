@@ -671,6 +671,246 @@
         </div>
     </div>
 
+    <!-- Rabies Vaccination Form Modal -->
+    <div class="modal fade" id="rabiesVaccinationModal" tabindex="-1">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header bg-warning text-white">
+                    <h5 class="modal-title">
+                        <i class="fas fa-syringe me-2"></i>Form Pengajuan Vaksinasi Rabies
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-warning">
+                        <i class="fas fa-info-circle me-2"></i>
+                        <strong>Informasi:</strong> Form ini untuk pengajuan layanan vaksinasi rabies dengan data pemilik dan anamnesis signalment hewan.
+                    </div>
+                    
+                    <form id="rabiesVaccinationForm">
+                        <div class="row g-3">
+                            <!-- Data Pemilik -->
+                            <div class="col-12">
+                                <h6 class="text-warning mb-3">
+                                    <i class="fas fa-user me-2"></i>Data Pemilik Hewan
+                                </h6>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label class="form-label">Nama Lengkap Pemilik <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="vaccinationOwnerName" required>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label class="form-label">NIK Pemilik <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="vaccinationOwnerNIK" required>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label class="form-label">No. Telepon <span class="text-danger">*</span></label>
+                                <input type="tel" class="form-control" id="vaccinationOwnerPhone" required>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label class="form-label">Email</label>
+                                <input type="email" class="form-control" id="vaccinationOwnerEmail">
+                            </div>
+                            
+                            <div class="col-12">
+                                <label class="form-label">Alamat Lengkap <span class="text-danger">*</span></label>
+                                <textarea class="form-control" id="vaccinationOwnerAddress" rows="3" required></textarea>
+                            </div>
+                            
+                            <!-- Data Anamnesis Signalment Hewan -->
+                            <div class="col-12">
+                                <h6 class="text-warning mb-3">
+                                    <i class="fas fa-paw me-2"></i>Data Anamnesis Signalment Hewan
+                                </h6>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label class="form-label">Nama Hewan <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="vaccinationAnimalName" required>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label class="form-label">Jenis Hewan <span class="text-danger">*</span></label>
+                                <select class="form-select" id="vaccinationAnimalType" required>
+                                    <option value="">Pilih Jenis Hewan</option>
+                                    <option value="anjing">Anjing</option>
+                                    <option value="kucing">Kucing</option>
+                                    <option value="ferret">Ferret</option>
+                                    <option value="lainnya">Lainnya</option>
+                                </select>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label class="form-label">Ras/Breed <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="vaccinationAnimalBreed" placeholder="Contoh: Golden Retriever, Persia, dll" required>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label class="form-label">Jenis Kelamin <span class="text-danger">*</span></label>
+                                <select class="form-select" id="vaccinationAnimalGender" required>
+                                    <option value="">Pilih Jenis Kelamin</option>
+                                    <option value="jantan">Jantan</option>
+                                    <option value="betina">Betina</option>
+                                </select>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label class="form-label">Umur <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="vaccinationAnimalAge" placeholder="Contoh: 2 tahun, 6 bulan, dll" required>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label class="form-label">Berat Badan (kg)</label>
+                                <input type="number" class="form-control" id="vaccinationAnimalWeight" placeholder="Berat badan dalam kg" step="0.1">
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label class="form-label">Warna Bulu/Rambut</label>
+                                <input type="text" class="form-control" id="vaccinationAnimalColor" placeholder="Contoh: Coklat, Hitam, Putih, dll">
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label class="form-label">Status Reproduksi</label>
+                                <select class="form-select" id="vaccinationAnimalReproductive">
+                                    <option value="">Pilih Status</option>
+                                    <option value="intact">Intact (Belum dikebiri/disteril)</option>
+                                    <option value="neutered">Neutered (Sudah dikebiri/disteril)</option>
+                                    <option value="unknown">Tidak Diketahui</option>
+                                </select>
+                            </div>
+                            
+                            <!-- Riwayat Vaksinasi Rabies -->
+                            <div class="col-12">
+                                <h6 class="text-warning mb-3">
+                                    <i class="fas fa-syringe me-2"></i>Riwayat Vaksinasi Rabies
+                                </h6>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label class="form-label">Status Vaksinasi Rabies <span class="text-danger">*</span></label>
+                                <select class="form-select" id="vaccinationRabiesStatus" required>
+                                    <option value="">Pilih Status</option>
+                                    <option value="belum_pernah">Belum Pernah Divaksinasi</option>
+                                    <option value="sudah_pernah">Sudah Pernah Divaksinasi</option>
+                                    <option value="tidak_tahu">Tidak Tahu</option>
+                                </select>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label class="form-label">Tanggal Vaksinasi Terakhir</label>
+                                <input type="date" class="form-control" id="vaccinationLastDate">
+                            </div>
+                            
+                            <div class="col-12">
+                                <label class="form-label">Riwayat Vaksinasi Rabies</label>
+                                <textarea class="form-control" id="vaccinationRabiesHistory" rows="2" placeholder="Jelaskan riwayat vaksinasi rabies yang pernah diberikan (jika ada)"></textarea>
+                            </div>
+                            
+                            <!-- Kesehatan Hewan -->
+                            <div class="col-12">
+                                <h6 class="text-warning mb-3">
+                                    <i class="fas fa-heartbeat me-2"></i>Kesehatan Hewan
+                                </h6>
+                            </div>
+                            
+                            <div class="col-12">
+                                <label class="form-label">Kondisi Kesehatan Saat Ini <span class="text-danger">*</span></label>
+                                <textarea class="form-control" id="vaccinationHealthCondition" rows="3" placeholder="Jelaskan kondisi kesehatan hewan saat ini..." required></textarea>
+                            </div>
+                            
+                            <div class="col-12">
+                                <label class="form-label">Riwayat Penyakit Sebelumnya</label>
+                                <textarea class="form-control" id="vaccinationMedicalHistory" rows="2" placeholder="Riwayat penyakit yang pernah dialami hewan (jika ada)"></textarea>
+                            </div>
+                            
+                            <div class="col-12">
+                                <label class="form-label">Riwayat Alergi</label>
+                                <textarea class="form-control" id="vaccinationAllergyHistory" rows="2" placeholder="Riwayat alergi yang diketahui (jika ada)"></textarea>
+                            </div>
+                            
+                            <div class="col-12">
+                                <label class="form-label">Riwayat Kontak dengan Hewan Liar</label>
+                                <textarea class="form-control" id="vaccinationWildAnimalContact" rows="2" placeholder="Riwayat kontak dengan hewan liar atau hewan yang dicurigai rabies (jika ada)"></textarea>
+                            </div>
+                            
+                            <!-- Dokumen Pendukung -->
+                            <div class="col-12">
+                                <h6 class="text-warning mb-3">
+                                    <i class="fas fa-file-upload me-2"></i>Dokumen Pendukung
+                                </h6>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label class="form-label">KTP Pemilik <span class="text-danger">*</span></label>
+                                <input type="file" class="form-control" id="vaccinationKTPFile" accept=".pdf,.jpg,.jpeg,.png" required>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label class="form-label">Foto Hewan</label>
+                                <input type="file" class="form-control" id="vaccinationAnimalPhotoFile" accept=".jpg,.jpeg,.png">
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label class="form-label">Sertifikat Vaksinasi Sebelumnya (jika ada)</label>
+                                <input type="file" class="form-control" id="vaccinationPreviousCertFile" accept=".pdf,.jpg,.jpeg,.png">
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label class="form-label">Dokumen Lainnya</label>
+                                <input type="file" class="form-control" id="vaccinationOtherFile" accept=".pdf,.jpg,.jpeg,.png">
+                            </div>
+                            
+                            <div class="col-12">
+                                <small class="text-muted">Format yang didukung: PDF, JPG, PNG. Maksimal 10MB per file.</small>
+                            </div>
+                            
+                            <!-- Jadwal Vaksinasi -->
+                            <div class="col-12">
+                                <h6 class="text-warning mb-3">
+                                    <i class="fas fa-calendar me-2"></i>Jadwal Vaksinasi
+                                </h6>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label class="form-label">Jadwal yang Diinginkan <span class="text-danger">*</span></label>
+                                <input type="datetime-local" class="form-control" id="vaccinationPreferredSchedule" required>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label class="form-label">Lokasi Vaksinasi</label>
+                                <select class="form-select" id="vaccinationLocation">
+                                    <option value="">Pilih Lokasi</option>
+                                    <option value="klinik">Klinik Hewan</option>
+                                    <option value="rumah">Rumah Pemilik</option>
+                                    <option value="kantor_dinas">Kantor Dinas</option>
+                                    <option value="posko_vaksinasi">Posko Vaksinasi</option>
+                                </select>
+                            </div>
+                            
+                            <!-- Catatan Tambahan -->
+                            <div class="col-12">
+                                <label class="form-label">Catatan Tambahan</label>
+                                <textarea class="form-control" id="vaccinationAdditionalNotes" rows="3" placeholder="Informasi tambahan yang perlu diketahui dokter hewan"></textarea>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-2"></i>Batal
+                    </button>
+                    <button type="button" class="btn btn-warning" onclick="submitRabiesVaccinationForm()">
+                        <i class="fas fa-paper-plane me-2"></i>Ajukan Vaksinasi
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Scripts -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
     <script src="masyarakat.js"></script>
