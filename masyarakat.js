@@ -100,6 +100,29 @@ function setupEventListeners() {
     if (vetPracticeRecommendationForm) {
         vetPracticeRecommendationForm.addEventListener('submit', handleVetPracticeRecommendation);
     }
+    
+    // Submission Card Event Listeners (backup for onclick)
+    const submissionCards = document.querySelectorAll('.submission-card');
+    submissionCards.forEach(card => {
+        card.addEventListener('click', function() {
+            // Try to determine service type from onclick attribute
+            const onclickAttr = this.getAttribute('onclick');
+            let serviceType = null;
+            
+            if (onclickAttr && onclickAttr.includes('pengobatan')) {
+                serviceType = 'pengobatan';
+            } else if (onclickAttr && onclickAttr.includes('vaksinasi')) {
+                serviceType = 'vaksinasi';
+            } else if (onclickAttr && onclickAttr.includes('telemedicine')) {
+                serviceType = 'telemedicine';
+            }
+            
+            if (serviceType) {
+                console.log('Submission card clicked via event listener:', serviceType);
+                showSubmissionModal(serviceType);
+            }
+        });
+    });
 }
 
 // Update Dashboard
@@ -1209,22 +1232,42 @@ function getServiceIcon(serviceType) {
 
 // Submission Menu Functions
 function showSubmissionModal(serviceType) {
-    const modal = new bootstrap.Modal(document.getElementById('submissionModal'));
+    console.log('Opening submission modal for service type:', serviceType);
+    
+    const modalElement = document.getElementById('submissionModal');
+    if (!modalElement) {
+        console.error('Submission modal not found!');
+        alert('Form submission tidak tersedia. Silakan refresh halaman dan coba lagi.');
+        return;
+    }
+    
+    const modal = new bootstrap.Modal(modalElement);
     
     // Pre-fill service type if provided
     if (serviceType) {
-        document.getElementById('serviceType').value = serviceType;
+        const serviceTypeSelect = document.getElementById('serviceType');
+        if (serviceTypeSelect) {
+            serviceTypeSelect.value = serviceType;
+        }
     }
     
     // Clear form
-    document.getElementById('submissionForm').reset();
+    const form = document.getElementById('submissionForm');
+    if (form) {
+        form.reset();
+    }
     
     // Set default date to tomorrow
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
-    document.getElementById('preferredDate').value = tomorrow.toISOString().split('T')[0];
+    const dateInput = document.getElementById('preferredDate');
+    if (dateInput) {
+        dateInput.value = tomorrow.toISOString().split('T')[0];
+    }
     
+    // Show modal
     modal.show();
+    console.log('Submission modal opened successfully');
 }
 
 function submitServiceRequest() {
