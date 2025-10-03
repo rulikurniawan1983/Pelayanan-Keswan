@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rekomendasi Praktek Dokter Hewan - Pelayanan Keswan</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="styles.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-navy">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">
+                <i class="fas fa-paw me-2"></i>
+                Pelayanan Keswan
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="masyarakat.html">Dashboard</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <section class="py-5">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-10">
+                    <div class="card shadow-lg">
+                        <div class="card-header bg-navy text-white">
+                            <h2 class="card-title mb-0">
+                                <i class="fas fa-user-md me-2"></i>Rekomendasi Praktek Dokter Hewan
+                            </h2>
+                            <p class="card-subtitle mb-0">Formulir pengajuan rekomendasi praktek dokter hewan</p>
+                        </div>
+                        <div class="card-body p-4">
+                            <form id="vetPracticeRecommendationForm">
+                                <!-- Data Dokter Hewan -->
+                                <div class="row mb-4">
+                                    <div class="col-12">
+                                        <h5 class="text-navy mb-3">
+                                            <i class="fas fa-user-md me-2"></i>Data Dokter Hewan
+                                        </h5>
+                                    </div>
+                                </div>
+
+                                <div class="row g-3 mb-4">
+                                    <div class="col-md-6">
+                                        <label class="form-label">Nama Lengkap Dokter Hewan <span class="text-danger">*</span></label>
+                                        <input type="text" class="form-control" id="drhName" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">NIK Dokter Hewan <span class="text-danger">*</span></label>
+                                        <input type="text" class="form-control" id="drhNIK" required maxlength="16">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Nomor STRV <span class="text-danger">*</span></label>
+                                        <input type="text" class="form-control" id="strvNumber" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Tanggal Diterbitkan STRV <span class="text-danger">*</span></label>
+                                        <input type="date" class="form-control" id="strvIssuedAt" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">STRV Berlaku Sampai <span class="text-danger">*</span></label>
+                                        <input type="date" class="form-control" id="strvValidUntil" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Kualifikasi <span class="text-danger">*</span></label>
+                                        <select class="form-select" id="qualification" required>
+                                            <option value="">Pilih Kualifikasi</option>
+                                            <option value="drh">Dokter Hewan (DRH)</option>
+                                            <option value="drh_sp">Dokter Hewan Spesialis</option>
+                                            <option value="drh_master">Dokter Hewan Master</option>
+                                            <option value="drh_phd">Dokter Hewan PhD</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <!-- Data Alamat -->
+                                <div class="row mb-4">
+                                    <div class="col-12">
+                                        <h5 class="text-navy mb-3">
+                                            <i class="fas fa-map-marker-alt me-2"></i>Data Alamat
+                                        </h5>
+                                    </div>
+                                </div>
+
+                                <div class="row g-3 mb-4">
+                                    <div class="col-12">
+                                        <label class="form-label">Alamat Domisili <span class="text-danger">*</span></label>
+                                        <textarea class="form-control" id="domicileAddress" rows="3" required></textarea>
+                                    </div>
+                                    <div class="col-12">
+                                        <label class="form-label">Alamat Praktek <span class="text-danger">*</span></label>
+                                        <textarea class="form-control" id="practiceAddress" rows="3" required></textarea>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Jenis Praktek <span class="text-danger">*</span></label>
+                                        <select class="form-select" id="practiceType" required>
+                                            <option value="">Pilih Jenis Praktek</option>
+                                            <option value="mandiri">Praktek Mandiri</option>
+                                            <option value="klinik">Klinik Hewan</option>
+                                            <option value="rumah_sakit">Rumah Sakit Hewan</option>
+                                            <option value="mobil">Praktek Mobil</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Fasilitas Praktek</label>
+                                        <input type="text" class="form-control" id="facilities" placeholder="Contoh: Laboratorium, Radiologi, Operasi">
+                                    </div>
+                                </div>
+
+                                <!-- Persyaratan Dokumen -->
+                                <div class="row mb-4">
+                                    <div class="col-12">
+                                        <h5 class="text-navy mb-3">
+                                            <i class="fas fa-file-alt me-2"></i>Persyaratan Dokumen
+                                        </h5>
+                                    </div>
+                                </div>
+
+                                <div class="row g-3 mb-4">
+                                    <div class="col-md-6">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="reqHealthCert">
+                                            <label class="form-check-label" for="reqHealthCert">
+                                                Sertifikat Kesehatan
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="reqSKCK">
+                                            <label class="form-check-label" for="reqSKCK">
+                                                SKCK (Surat Keterangan Catatan Kepolisian)
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="reqDiploma">
+                                            <label class="form-check-label" for="reqDiploma">
+                                                Ijazah/Diploma
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="reqStatement">
+                                            <label class="form-check-label" for="reqStatement">
+                                                Surat Pernyataan
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Upload Dokumen -->
+                                <div class="row mb-4">
+                                    <div class="col-12">
+                                        <h5 class="text-navy mb-3">
+                                            <i class="fas fa-upload me-2"></i>Upload Dokumen
+                                        </h5>
+                                    </div>
+                                </div>
+
+                                <div class="row g-3 mb-4">
+                                    <div class="col-md-6">
+                                        <label class="form-label">Sertifikat Kesehatan</label>
+                                        <input type="file" class="form-control" id="docHealthCert" accept=".pdf,.jpg,.jpeg,.png">
+                                        <small class="text-muted">Format: PDF, JPG, PNG (Max: 5MB)</small>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">SKCK</label>
+                                        <input type="file" class="form-control" id="docSKCK" accept=".pdf,.jpg,.jpeg,.png">
+                                        <small class="text-muted">Format: PDF, JPG, PNG (Max: 5MB)</small>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Ijazah/Diploma</label>
+                                        <input type="file" class="form-control" id="docDiploma" accept=".pdf,.jpg,.jpeg,.png">
+                                        <small class="text-muted">Format: PDF, JPG, PNG (Max: 5MB)</small>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Surat Pernyataan</label>
+                                        <input type="file" class="form-control" id="docStatement" accept=".pdf,.jpg,.jpeg,.png">
+                                        <small class="text-muted">Format: PDF, JPG, PNG (Max: 5MB)</small>
+                                    </div>
+                                </div>
+
+                                <!-- Data Pemohon -->
+                                <div class="row mb-4">
+                                    <div class="col-12">
+                                        <h5 class="text-navy mb-3">
+                                            <i class="fas fa-user me-2"></i>Data Pemohon
+                                        </h5>
+                                    </div>
+                                </div>
+
+                                <div class="row g-3 mb-4">
+                                    <div class="col-md-6">
+                                        <label class="form-label">Nama Pemohon <span class="text-danger">*</span></label>
+                                        <input type="text" class="form-control" id="ownerName" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">NIK Pemohon <span class="text-danger">*</span></label>
+                                        <input type="text" class="form-control" id="ownerNIK" required maxlength="16">
+                                    </div>
+                                    <div class="col-12">
+                                        <label class="form-label">Catatan Tambahan</label>
+                                        <textarea class="form-control" id="notes" rows="3" placeholder="Catatan atau informasi tambahan (opsional)"></textarea>
+                                    </div>
+                                </div>
+
+                                <!-- Submit Button -->
+                                <div class="row">
+                                    <div class="col-12">
+                                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                                            <button type="button" class="btn btn-outline-secondary" onclick="goBack()">
+                                                <i class="fas fa-arrow-left me-2"></i>Kembali
+                                            </button>
+                                            <button type="submit" class="btn btn-navy">
+                                                <i class="fas fa-paper-plane me-2"></i>Ajukan Rekomendasi
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-navy text-white py-4">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <p class="mb-0">&copy; 2024 Pelayanan Keswan. All rights reserved.</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <p class="mb-0">Dibuat dengan <i class="fas fa-heart text-danger"></i> untuk kesehatan hewan</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-config.js"></script>
+    <script src="supabase-integration.js"></script>
+    <script src="script.js"></script>
+    <script src="vet-practice-recommendation.js"></script>
+</body>
+</html>

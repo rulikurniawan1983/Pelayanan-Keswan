@@ -43,29 +43,39 @@ function loadServiceRequests() {
     const userServices = JSON.parse(localStorage.getItem('userServices') || '[]');
     const vetPracticeRecommendations = JSON.parse(localStorage.getItem('vetPracticeRecommendations') || '[]');
     
-    // Combine all service requests
+    // Combine all service requests with enhanced data
     serviceRequests = [
         ...userServices.map(service => ({
             id: service.id,
-            ticketNumber: service.ticketNumber || 'N/A',
+            ticketNumber: service.ticketNumber || generateTicketNumber(),
             date: service.createdAt,
             requester: service.ownerName || 'N/A',
+            requesterNIK: service.ownerNIK || 'N/A',
             serviceType: service.serviceType,
             animal: service.animalName || 'N/A',
+            animalType: service.animalType || 'N/A',
+            symptoms: service.symptoms || 'N/A',
             priority: service.priority || 'normal',
             status: service.status || 'pending',
-            type: 'service'
+            notes: service.notes || '',
+            type: 'service',
+            veterinarian: service.veterinarian || 'Belum ditentukan'
         })),
         ...vetPracticeRecommendations.map(rec => ({
             id: rec.id,
-            ticketNumber: rec.ticketNumber || 'N/A',
+            ticketNumber: rec.ticketNumber || generateTicketNumber(),
             date: rec.createdAt,
             requester: rec.ownerName || 'N/A',
+            requesterNIK: rec.ownerNIK || 'N/A',
             serviceType: 'rekomendasi_praktek',
             animal: 'N/A',
+            animalType: 'N/A',
+            symptoms: 'Rekomendasi Praktek Dokter Hewan',
             priority: 'normal',
             status: rec.status || 'submitted',
-            type: 'recommendation'
+            notes: rec.notes || '',
+            type: 'recommendation',
+            veterinarian: 'N/A'
         }))
     ];
     
@@ -73,6 +83,36 @@ function loadServiceRequests() {
     serviceRequests.sort((a, b) => new Date(b.date) - new Date(a.date));
     
     updateServiceRequestsTable();
+    updateDashboardStats();
+}
+
+// Generate ticket number
+function generateTicketNumber() {
+    const now = new Date();
+    const year = now.getFullYear().toString().slice(-2);
+    const month = (now.getMonth() + 1).toString().padStart(2, '0');
+    const day = now.getDate().toString().padStart(2, '0');
+    const random = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
+    return `TK${year}${month}${day}${random}`;
+}
+
+// Update Dashboard Statistics
+function updateDashboardStats() {
+    const totalRequests = serviceRequests.length;
+    const pendingRequests = serviceRequests.filter(req => req.status === 'pending').length;
+    const inProgressRequests = serviceRequests.filter(req => req.status === 'in_progress').length;
+    const completedRequests = serviceRequests.filter(req => req.status === 'completed').length;
+    
+    // Update stats display if elements exist
+    const totalElement = document.getElementById('totalRequests');
+    const pendingElement = document.getElementById('pendingRequests');
+    const inProgressElement = document.getElementById('inProgressRequests');
+    const completedElement = document.getElementById('completedRequests');
+    
+    if (totalElement) totalElement.textContent = totalRequests;
+    if (pendingElement) pendingElement.textContent = pendingRequests;
+    if (inProgressElement) inProgressElement.textContent = inProgressRequests;
+    if (completedElement) completedElement.textContent = completedRequests;
 }
 
 // Update Service Requests Table
@@ -116,7 +156,7 @@ function updateServiceRequestsTable() {
     if (paginatedRequests.length === 0) {
         tbody.innerHTML = `
             <tr>
-                <td colspan="9" class="text-center text-muted">
+                <td colspan="10" class="text-center text-muted">
                     <i class="fas fa-inbox me-2"></i>Tidak ada data permohonan
                 </td>
             </tr>
@@ -127,16 +167,29 @@ function updateServiceRequestsTable() {
                 <td><code>${request.id.substring(0, 8)}</code></td>
                 <td><strong>${request.ticketNumber}</strong></td>
                 <td>${formatDate(request.date)}</td>
-                <td>${request.requester}</td>
+                <td>
+                    <div>
+                        <strong>${request.requester}</strong>
+                        <br><small class="text-muted">NIK: ${request.requesterNIK}</small>
+                    </div>
+                </td>
                 <td>
                     <span class="badge bg-navy">${getServiceTypeLabel(request.serviceType)}</span>
                 </td>
-                <td>${request.animal}</td>
+                <td>
+                    <div>
+                        <strong>${request.animal}</strong>
+                        <br><small class="text-muted">${request.animalType}</small>
+                    </div>
+                </td>
                 <td>
                     <span class="badge bg-${getPriorityColor(request.priority)}">${getPriorityLabel(request.priority)}</span>
                 </td>
                 <td>
                     <span class="badge bg-${getStatusColor(request.status)}">${getStatusLabel(request.status)}</span>
+                </td>
+                <td>
+                    <small class="text-muted">${request.veterinarian}</small>
                 </td>
                 <td>
                     <div class="btn-group" role="group">
@@ -216,7 +269,29 @@ function changePage(page) {
 function viewServiceRequest(requestId) {
     const request = serviceRequests.find(req => req.id === requestId);
     if (request) {
-        alert(`Detail Permohonan:\n\nID: ${request.id}\nTanggal: ${formatDate(request.date)}\nPemohon: ${request.requester}\nJenis: ${getServiceTypeLabel(request.serviceType)}\nHewan: ${request.animal}\nPrioritas: ${getPriorityLabel(request.priority)}\nStatus: ${getStatusLabel(request.status)}`);
+        const detailModal = document.getElementById('serviceDetailModal');
+        if (detailModal) {
+            // Populate modal with detailed information
+            document.getElementById('detailTicketNumber').textContent = request.ticketNumber;
+            document.getElementById('detailDate').textContent = formatDate(request.date);
+            document.getElementById('detailRequester').textContent = request.requester;
+            document.getElementById('detailRequesterNIK').textContent = request.requesterNIK;
+            document.getElementById('detailServiceType').textContent = getServiceTypeLabel(request.serviceType);
+            document.getElementById('detailAnimal').textContent = request.animal;
+            document.getElementById('detailAnimalType').textContent = request.animalType;
+            document.getElementById('detailSymptoms').textContent = request.symptoms;
+            document.getElementById('detailPriority').textContent = getPriorityLabel(request.priority);
+            document.getElementById('detailStatus').textContent = getStatusLabel(request.status);
+            document.getElementById('detailVeterinarian').textContent = request.veterinarian;
+            document.getElementById('detailNotes').textContent = request.notes || 'Tidak ada catatan';
+            
+            // Show modal
+            const modal = new bootstrap.Modal(detailModal);
+            modal.show();
+        } else {
+            // Fallback to alert if modal doesn't exist
+            alert(`Detail Permohonan:\n\nID: ${request.id}\nNomor Tiket: ${request.ticketNumber}\nTanggal: ${formatDate(request.date)}\nPemohon: ${request.requester}\nNIK: ${request.requesterNIK}\nJenis: ${getServiceTypeLabel(request.serviceType)}\nHewan: ${request.animal} (${request.animalType})\nGejala: ${request.symptoms}\nPrioritas: ${getPriorityLabel(request.priority)}\nStatus: ${getStatusLabel(request.status)}\nDokter Hewan: ${request.veterinarian}\nCatatan: ${request.notes || 'Tidak ada'}`);
+        }
     }
 }
 

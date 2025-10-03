@@ -69,7 +69,71 @@
             <div class="row mb-4">
                 <div class="col-12">
                     <h2 class="display-5 fw-bold text-navy mb-3">Dashboard Administrator</h2>
-                    <p class="lead text-muted">Panel administrator kosong - siap untuk kustomisasi</p>
+                    <p class="lead text-muted">Panel administrator untuk mengelola permohonan layanan kesehatan hewan</p>
+                </div>
+            </div>
+
+            <!-- Statistics Cards -->
+            <div class="row g-4 mb-4">
+                <div class="col-lg-3 col-md-6">
+                    <div class="card bg-primary text-white">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h4 id="totalRequests" class="mb-0">0</h4>
+                                    <p class="mb-0">Total Permohonan</p>
+                                </div>
+                                <div class="align-self-center">
+                                    <i class="fas fa-clipboard-list fa-2x"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="card bg-warning text-white">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h4 id="pendingRequests" class="mb-0">0</h4>
+                                    <p class="mb-0">Menunggu</p>
+                                </div>
+                                <div class="align-self-center">
+                                    <i class="fas fa-clock fa-2x"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="card bg-info text-white">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h4 id="inProgressRequests" class="mb-0">0</h4>
+                                    <p class="mb-0">Diproses</p>
+                                </div>
+                                <div class="align-self-center">
+                                    <i class="fas fa-cogs fa-2x"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="card bg-success text-white">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h4 id="completedRequests" class="mb-0">0</h4>
+                                    <p class="mb-0">Selesai</p>
+                                </div>
+                                <div class="align-self-center">
+                                    <i class="fas fa-check-circle fa-2x"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -130,6 +194,7 @@
                                             <th>Hewan</th>
                                             <th>Prioritas</th>
                                             <th>Status</th>
+                                            <th>Dokter Hewan</th>
                                             <th>Aksi</th>
                                         </tr>
                                     </thead>
@@ -200,6 +265,77 @@
 
 
 
+
+    <!-- Service Detail Modal -->
+    <div class="modal fade" id="serviceDetailModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-navy text-white">
+                    <h5 class="modal-title">
+                        <i class="fas fa-clipboard-list me-2"></i>Detail Permohonan Layanan
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Nomor Tiket</label>
+                            <p id="detailTicketNumber" class="form-control-plaintext">-</p>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Tanggal Permohonan</label>
+                            <p id="detailDate" class="form-control-plaintext">-</p>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Nama Pemohon</label>
+                            <p id="detailRequester" class="form-control-plaintext">-</p>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">NIK Pemohon</label>
+                            <p id="detailRequesterNIK" class="form-control-plaintext">-</p>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Jenis Layanan</label>
+                            <p id="detailServiceType" class="form-control-plaintext">-</p>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Dokter Hewan</label>
+                            <p id="detailVeterinarian" class="form-control-plaintext">-</p>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Nama Hewan</label>
+                            <p id="detailAnimal" class="form-control-plaintext">-</p>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Jenis Hewan</label>
+                            <p id="detailAnimalType" class="form-control-plaintext">-</p>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Prioritas</label>
+                            <p id="detailPriority" class="form-control-plaintext">-</p>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Status</label>
+                            <p id="detailStatus" class="form-control-plaintext">-</p>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label fw-bold">Keluhan/Gejala</label>
+                            <p id="detailSymptoms" class="form-control-plaintext">-</p>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label fw-bold">Catatan</label>
+                            <p id="detailNotes" class="form-control-plaintext">-</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-2"></i>Tutup
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Logout Confirmation Modal -->
     <div class="modal fade" id="logoutModal" tabindex="-1">
