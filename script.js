@@ -575,150 +575,192 @@ function showRegistrationPrompt() {
     }, 1500);
 }
 
-// Show Veterinary Practice Recommendation
-function showVetPracticeRecommendation() {
+// Show Recommendation Form
+function showRecommendationForm(type) {
     const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
     
     if (!currentUser || !currentUser.nik) {
-        showAlert('Silahkan login terlebih dahulu untuk mengakses rekomendasi praktek dokter hewan.', 'warning');
+        showAlert('Silahkan login terlebih dahulu untuk mengajukan surat rekomendasi.', 'warning');
         setTimeout(() => {
             showLoginModal();
         }, 1500);
         return;
     }
     
-    // Show veterinary practice recommendations
-    const recommendations = [
-        {
-            name: "Klinik Hewan Sejahtera",
-            address: "Jl. Veteran No. 123, Jakarta Pusat",
-            phone: "(021) 1234-5678",
-            rating: 4.8,
-            specialties: ["Umum", "Bedah", "Grooming"],
-            distance: "2.5 km"
-        },
-        {
-            name: "Pusat Kesehatan Hewan Modern",
-            address: "Jl. Gatot Subroto No. 456, Jakarta Selatan",
-            phone: "(021) 2345-6789",
-            rating: 4.9,
-            specialties: ["Spesialis", "Emergency", "Radiologi"],
-            distance: "3.2 km"
-        },
-        {
-            name: "Klinik Hewan Keluarga",
-            address: "Jl. Sudirman No. 789, Jakarta Pusat",
-            phone: "(021) 3456-7890",
-            rating: 4.7,
-            specialties: ["Umum", "Vaksinasi", "Konsultasi"],
-            distance: "1.8 km"
-        }
-    ];
+    // Show recommendation form modal
+    const modal = new bootstrap.Modal(document.getElementById('recommendationModal'));
     
-    let recommendationHTML = `
-        <div class="vet-recommendation-modal">
-            <h4><i class="fas fa-map-marker-alt me-2"></i>Rekomendasi Praktek Dokter Hewan</h4>
-            <p class="text-muted mb-4">Berikut adalah rekomendasi praktek dokter hewan terdekat berdasarkan lokasi Anda:</p>
-    `;
+    // Pre-fill recommendation type
+    document.getElementById('recommendationType').value = type;
     
-    recommendations.forEach((clinic, index) => {
-        recommendationHTML += `
-            <div class="clinic-card mb-3 p-3 border rounded">
-                <div class="d-flex justify-content-between align-items-start mb-2">
-                    <h6 class="mb-0 text-primary">${clinic.name}</h6>
-                    <span class="badge bg-success">${clinic.rating} ⭐</span>
-                </div>
-                <p class="mb-1"><i class="fas fa-map-marker-alt me-1"></i>${clinic.address}</p>
-                <p class="mb-1"><i class="fas fa-phone me-1"></i>${clinic.phone}</p>
-                <p class="mb-1"><i class="fas fa-route me-1"></i>Jarak: ${clinic.distance}</p>
-                <div class="specialties">
-                    <small class="text-muted">Spesialisasi: </small>
-                    ${clinic.specialties.map(spec => `<span class="badge bg-light text-dark me-1">${spec}</span>`).join('')}
-                </div>
-            </div>
-        `;
-    });
+    // Show/hide relevant fields based on type
+    toggleRecommendationFields(type);
     
-    recommendationHTML += `
-        <div class="text-center mt-3">
-            <button class="btn btn-primary" onclick="closeRecommendationModal()">
-                <i class="fas fa-check me-1"></i>Tutup
-            </button>
-        </div>
-    </div>`;
+    // Clear form
+    document.getElementById('recommendationForm').reset();
     
-    showAlert(recommendationHTML, 'info', 10000);
+    // Pre-fill with user data if available
+    if (currentUser.fullName) document.getElementById('applicantName').value = currentUser.fullName;
+    if (currentUser.nik) document.getElementById('applicantNIK').value = currentUser.nik;
+    if (currentUser.phone) document.getElementById('applicantPhone').value = currentUser.phone;
+    if (currentUser.email) document.getElementById('applicantEmail').value = currentUser.email;
+    if (currentUser.address) document.getElementById('applicantAddress').value = currentUser.address;
+    
+    modal.show();
 }
 
-// Show Veterinary Control Number Recommendation
-function showVetControlNumberRecommendation() {
-    const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+// Toggle recommendation form fields based on type
+function toggleRecommendationFields(type) {
+    const vetDataSection = document.getElementById('vetDataSection');
+    const vetNameField = document.getElementById('vetNameField');
+    const vetNIKField = document.getElementById('vetNIKField');
+    const strvNumberField = document.getElementById('strvNumberField');
+    const strvValidField = document.getElementById('strvValidField');
+    const practiceAddressField = document.getElementById('practiceAddressField');
+    const strvFileField = document.getElementById('strvFileField');
     
-    if (!currentUser || !currentUser.nik) {
-        showAlert('Silahkan login terlebih dahulu untuk mengakses rekomendasi nomor kontrol veteriner.', 'warning');
-        setTimeout(() => {
-            showLoginModal();
-        }, 1500);
+    const animalDataSection = document.getElementById('animalDataSection');
+    const animalNameField = document.getElementById('animalNameField');
+    const animalTypeField = document.getElementById('animalTypeField');
+    const animalAgeField = document.getElementById('animalAgeField');
+    const animalGenderField = document.getElementById('animalGenderField');
+    const animalPhotoField = document.getElementById('animalPhotoField');
+    
+    // Hide all fields first
+    [vetDataSection, vetNameField, vetNIKField, strvNumberField, strvValidField, practiceAddressField, strvFileField].forEach(field => {
+        if (field) field.style.display = 'none';
+    });
+    
+    [animalDataSection, animalNameField, animalTypeField, animalAgeField, animalGenderField, animalPhotoField].forEach(field => {
+        if (field) field.style.display = 'none';
+    });
+    
+    // Show relevant fields based on type
+    if (type === 'praktek') {
+        [vetDataSection, vetNameField, vetNIKField, strvNumberField, strvValidField, practiceAddressField, strvFileField].forEach(field => {
+            if (field) field.style.display = 'block';
+        });
+    } else if (type === 'kontrol') {
+        [animalDataSection, animalNameField, animalTypeField, animalAgeField, animalGenderField, animalPhotoField].forEach(field => {
+            if (field) field.style.display = 'block';
+        });
+    }
+}
+
+// Submit Recommendation Form
+function submitRecommendationForm() {
+    const form = document.getElementById('recommendationForm');
+    const formData = new FormData(form);
+    
+    // Get form values
+    const recommendationType = document.getElementById('recommendationType').value;
+    const applicantName = document.getElementById('applicantName').value.trim();
+    const applicantNIK = document.getElementById('applicantNIK').value.trim();
+    const applicantPhone = document.getElementById('applicantPhone').value.trim();
+    const applicantEmail = document.getElementById('applicantEmail').value.trim();
+    const applicantAddress = document.getElementById('applicantAddress').value.trim();
+    const purpose = document.getElementById('purpose').value.trim();
+    const notes = document.getElementById('notes').value.trim();
+    
+    // Validation
+    const errors = [];
+    if (!recommendationType) errors.push('Jenis rekomendasi wajib dipilih');
+    if (!applicantName) errors.push('Nama lengkap wajib diisi');
+    if (!applicantNIK) errors.push('NIK wajib diisi');
+    if (!applicantPhone) errors.push('No. telepon wajib diisi');
+    if (!applicantAddress) errors.push('Alamat lengkap wajib diisi');
+    if (!purpose) errors.push('Tujuan pengajuan wajib diisi');
+    
+    // Type-specific validation
+    if (recommendationType === 'praktek') {
+        const vetName = document.getElementById('vetName').value.trim();
+        const vetNIK = document.getElementById('vetNIK').value.trim();
+        const strvNumber = document.getElementById('strvNumber').value.trim();
+        const strvValidUntil = document.getElementById('strvValidUntil').value;
+        const practiceAddress = document.getElementById('practiceAddress').value.trim();
+        
+        if (!vetName) errors.push('Nama dokter hewan wajib diisi');
+        if (!vetNIK) errors.push('NIK dokter hewan wajib diisi');
+        if (!strvNumber) errors.push('Nomor STRV wajib diisi');
+        if (!strvValidUntil) errors.push('Tanggal berlaku STRV wajib diisi');
+        if (!practiceAddress) errors.push('Alamat tempat praktek wajib diisi');
+    } else if (recommendationType === 'kontrol') {
+        const animalName = document.getElementById('animalName').value.trim();
+        const animalType = document.getElementById('animalType').value;
+        const animalAge = document.getElementById('animalAge').value;
+        const animalGender = document.getElementById('animalGender').value;
+        
+        if (!animalName) errors.push('Nama hewan wajib diisi');
+        if (!animalType) errors.push('Jenis hewan wajib dipilih');
+        if (!animalAge) errors.push('Usia hewan wajib diisi');
+        if (!animalGender) errors.push('Jenis kelamin hewan wajib dipilih');
+    }
+    
+    if (errors.length > 0) {
+        showAlert('<strong>Validasi Gagal:</strong><br>' + errors.map(e => `- ${e}`).join('<br>'), 'danger');
         return;
     }
     
-    // Show veterinary control number recommendations
-    const controlNumbers = [
-        {
-            type: "Kontrol Rutin",
-            number: "KV-001-2024",
-            description: "Untuk pemeriksaan kesehatan rutin hewan peliharaan",
-            validity: "30 hari",
-            requirements: ["Kartu identitas", "Surat keterangan hewan"]
-        },
-        {
-            type: "Kontrol Darurat",
-            number: "KV-EMG-2024",
-            description: "Untuk situasi darurat kesehatan hewan",
-            validity: "7 hari",
-            requirements: ["Kartu identitas", "Laporan kondisi hewan"]
-        },
-        {
-            type: "Kontrol Vaksinasi",
-            number: "KV-VAC-2024",
-            description: "Untuk program vaksinasi dan imunisasi hewan",
-            validity: "14 hari",
-            requirements: ["Kartu identitas", "Riwayat vaksinasi"]
-        }
-    ];
+    // Generate ticket number
+    const ticketNumber = generateTicketNumber();
     
-    let controlNumberHTML = `
-        <div class="vet-control-modal">
-            <h4><i class="fas fa-id-card me-2"></i>Rekomendasi Nomor Kontrol Veteriner</h4>
-            <p class="text-muted mb-4">Berikut adalah jenis nomor kontrol veteriner yang tersedia:</p>
-    `;
+    // Prepare submission data
+    const submissionData = {
+        id: generateId(),
+        ticketNumber: ticketNumber,
+        type: 'recommendation_letter',
+        recommendationType: recommendationType,
+        applicantName: applicantName,
+        applicantNIK: applicantNIK,
+        applicantPhone: applicantPhone,
+        applicantEmail: applicantEmail,
+        applicantAddress: applicantAddress,
+        purpose: purpose,
+        notes: notes,
+        status: 'submitted',
+        createdAt: new Date().toISOString()
+    };
     
-    controlNumbers.forEach((control, index) => {
-        controlNumberHTML += `
-            <div class="control-card mb-3 p-3 border rounded">
-                <div class="d-flex justify-content-between align-items-start mb-2">
-                    <h6 class="mb-0 text-primary">${control.type}</h6>
-                    <span class="badge bg-info">${control.number}</span>
-                </div>
-                <p class="mb-2">${control.description}</p>
-                <p class="mb-1"><i class="fas fa-clock me-1"></i>Masa berlaku: ${control.validity}</p>
-                <div class="requirements">
-                    <small class="text-muted">Persyaratan: </small>
-                    ${control.requirements.map(req => `<span class="badge bg-light text-dark me-1">${req}</span>`).join('')}
-                </div>
+    // Add type-specific data
+    if (recommendationType === 'praktek') {
+        submissionData.vetName = document.getElementById('vetName').value.trim();
+        submissionData.vetNIK = document.getElementById('vetNIK').value.trim();
+        submissionData.strvNumber = document.getElementById('strvNumber').value.trim();
+        submissionData.strvValidUntil = document.getElementById('strvValidUntil').value;
+        submissionData.practiceAddress = document.getElementById('practiceAddress').value.trim();
+    } else if (recommendationType === 'kontrol') {
+        submissionData.animalName = document.getElementById('animalName').value.trim();
+        submissionData.animalType = document.getElementById('animalType').value;
+        submissionData.animalAge = document.getElementById('animalAge').value;
+        submissionData.animalGender = document.getElementById('animalGender').value;
+    }
+    
+    // Save to localStorage
+    const recommendations = JSON.parse(localStorage.getItem('recommendationLetters') || '[]');
+    recommendations.push(submissionData);
+    localStorage.setItem('recommendationLetters', JSON.stringify(recommendations));
+    
+    // Show success message
+    showAlert(`
+        <div class="text-center">
+            <i class="fas fa-check-circle text-success mb-3" style="font-size: 3rem;"></i>
+            <h5 class="text-success mb-3">Pengajuan Berhasil!</h5>
+            <p class="mb-3">Surat rekomendasi Anda telah berhasil diajukan ke Dinas Perikanan dan Peternakan Kabupaten Bogor.</p>
+            <div class="alert alert-info">
+                <strong>Nomor Tiket:</strong> ${ticketNumber}<br>
+                <strong>Jenis:</strong> ${recommendationType === 'praktek' ? 'Surat Rekomendasi Praktek Dokter Hewan' : 'Surat Rekomendasi Nomor Kontrol Veteriner'}<br>
+                <strong>Status:</strong> Menunggu Verifikasi
             </div>
-        `;
-    });
-    
-    controlNumberHTML += `
-        <div class="text-center mt-3">
-            <button class="btn btn-primary" onclick="closeRecommendationModal()">
-                <i class="fas fa-check me-1"></i>Tutup
-            </button>
+            <p class="text-muted">Gunakan nomor tiket untuk melacak status pengajuan Anda.</p>
         </div>
-    </div>`;
+    `, 'success', 15000);
     
-    showAlert(controlNumberHTML, 'info', 10000);
+    // Close modal
+    const modal = bootstrap.Modal.getInstance(document.getElementById('recommendationModal'));
+    modal.hide();
+    
+    // Reset form
+    form.reset();
 }
 
 // Close Recommendation Modal
@@ -955,7 +997,7 @@ window.generateId = generateId;
 window.updateUserMenu = updateUserMenu;
 window.updateUserMenuAfterLogin = updateUserMenuAfterLogin;
 window.showRegistrationPrompt = showRegistrationPrompt;
-window.showVetPracticeRecommendation = showVetPracticeRecommendation;
-window.showVetControlNumberRecommendation = showVetControlNumberRecommendation;
+window.showRecommendationForm = showRecommendationForm;
+window.submitRecommendationForm = submitRecommendationForm;
 window.closeRecommendationModal = closeRecommendationModal;
 window.refreshStatisticsChart = refreshStatisticsChart;

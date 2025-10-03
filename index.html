@@ -140,14 +140,14 @@
                                 <div class="service-item" 
                                      data-bs-toggle="tooltip" 
                                      data-bs-placement="top" 
-                                     title="Rekomendasi praktek dokter hewan terdekat"
-                                     onclick="showVetPracticeRecommendation()">
+                                     title="Ajukan surat rekomendasi praktek dokter hewan"
+                                     onclick="showRecommendationForm('praktek')">
                                     <div class="service-icon">
-                                        <i class="fas fa-map-marker-alt"></i>
+                                        <i class="fas fa-file-signature"></i>
                                     </div>
                                     <div class="service-content">
-                                        <h5 class="service-title">Rekomendasi Praktek Dokter Hewan</h5>
-                                        <p class="service-desc">Dokter hewan terdekat</p>
+                                        <h5 class="service-title">Surat Rekomendasi Praktek Dokter Hewan</h5>
+                                        <p class="service-desc">Perizinan praktek dokter hewan</p>
                                     </div>
                                     <div class="service-status">
                                         <span class="status-dot active"></span>
@@ -156,14 +156,14 @@
                                 <div class="service-item" 
                                      data-bs-toggle="tooltip" 
                                      data-bs-placement="top" 
-                                     title="Rekomendasi nomor kontrol veteriner"
-                                     onclick="showVetControlNumberRecommendation()">
+                                     title="Ajukan surat rekomendasi nomor kontrol veteriner"
+                                     onclick="showRecommendationForm('kontrol')">
                                     <div class="service-icon">
-                                        <i class="fas fa-id-card"></i>
+                                        <i class="fas fa-certificate"></i>
                                     </div>
                                     <div class="service-content">
-                                        <h5 class="service-title">Rekomendasi Nomor Kontrol Veteriner</h5>
-                                        <p class="service-desc">Kontrol veteriner</p>
+                                        <h5 class="service-title">Surat Rekomendasi Nomor Kontrol Veteriner</h5>
+                                        <p class="service-desc">Perizinan nomor kontrol veteriner</p>
                                     </div>
                                     <div class="service-status">
                                         <span class="status-dot active"></span>
@@ -176,6 +176,187 @@
             </div>
         </div>
     </section>
+
+    <!-- Recommendation Form Modal -->
+    <div class="modal fade" id="recommendationModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-navy text-white">
+                    <h5 class="modal-title">
+                        <i class="fas fa-file-signature me-2"></i>Form Pengajuan Surat Rekomendasi
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        <strong>Informasi:</strong> Form ini untuk mengajukan surat rekomendasi dari Dinas Perikanan dan Peternakan Kabupaten Bogor untuk keperluan perizinan.
+                    </div>
+                    
+                    <form id="recommendationForm">
+                        <div class="row g-3">
+                            <!-- Jenis Rekomendasi -->
+                            <div class="col-12">
+                                <label class="form-label">Jenis Rekomendasi <span class="text-danger">*</span></label>
+                                <select class="form-select" id="recommendationType" required>
+                                    <option value="">Pilih Jenis Rekomendasi</option>
+                                    <option value="praktek">Surat Rekomendasi Praktek Dokter Hewan</option>
+                                    <option value="kontrol">Surat Rekomendasi Nomor Kontrol Veteriner</option>
+                                </select>
+                            </div>
+                            
+                            <!-- Data Pemohon -->
+                            <div class="col-12">
+                                <h6 class="text-navy mb-3">
+                                    <i class="fas fa-user me-2"></i>Data Pemohon
+                                </h6>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label class="form-label">Nama Lengkap <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="applicantName" required>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label class="form-label">NIK <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="applicantNIK" required>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label class="form-label">No. Telepon <span class="text-danger">*</span></label>
+                                <input type="tel" class="form-control" id="applicantPhone" required>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label class="form-label">Email</label>
+                                <input type="email" class="form-control" id="applicantEmail">
+                            </div>
+                            
+                            <div class="col-12">
+                                <label class="form-label">Alamat Lengkap <span class="text-danger">*</span></label>
+                                <textarea class="form-control" id="applicantAddress" rows="3" required></textarea>
+                            </div>
+                            
+                            <!-- Data Dokter Hewan (untuk praktek) -->
+                            <div class="col-12" id="vetDataSection" style="display: none;">
+                                <h6 class="text-navy mb-3">
+                                    <i class="fas fa-user-md me-2"></i>Data Dokter Hewan
+                                </h6>
+                            </div>
+                            
+                            <div class="col-md-6" id="vetNameField" style="display: none;">
+                                <label class="form-label">Nama Dokter Hewan <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="vetName">
+                            </div>
+                            
+                            <div class="col-md-6" id="vetNIKField" style="display: none;">
+                                <label class="form-label">NIK Dokter Hewan <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="vetNIK">
+                            </div>
+                            
+                            <div class="col-md-6" id="strvNumberField" style="display: none;">
+                                <label class="form-label">Nomor STRV <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="strvNumber" placeholder="Nomor Surat Tanda Registrasi Veteriner">
+                            </div>
+                            
+                            <div class="col-md-6" id="strvValidField" style="display: none;">
+                                <label class="form-label">STRV Berlaku Hingga <span class="text-danger">*</span></label>
+                                <input type="date" class="form-control" id="strvValidUntil">
+                            </div>
+                            
+                            <div class="col-12" id="practiceAddressField" style="display: none;">
+                                <label class="form-label">Alamat Tempat Praktek <span class="text-danger">*</span></label>
+                                <textarea class="form-control" id="practiceAddress" rows="2"></textarea>
+                            </div>
+                            
+                            <!-- Data Hewan (untuk kontrol) -->
+                            <div class="col-12" id="animalDataSection" style="display: none;">
+                                <h6 class="text-navy mb-3">
+                                    <i class="fas fa-paw me-2"></i>Data Hewan
+                                </h6>
+                            </div>
+                            
+                            <div class="col-md-6" id="animalNameField" style="display: none;">
+                                <label class="form-label">Nama Hewan <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="animalName">
+                            </div>
+                            
+                            <div class="col-md-6" id="animalTypeField" style="display: none;">
+                                <label class="form-label">Jenis Hewan <span class="text-danger">*</span></label>
+                                <select class="form-select" id="animalType">
+                                    <option value="">Pilih Jenis Hewan</option>
+                                    <option value="anjing">Anjing</option>
+                                    <option value="kucing">Kucing</option>
+                                    <option value="sapi">Sapi</option>
+                                    <option value="kambing">Kambing</option>
+                                    <option value="ayam">Ayam</option>
+                                    <option value="lainnya">Lainnya</option>
+                                </select>
+                            </div>
+                            
+                            <div class="col-md-6" id="animalAgeField" style="display: none;">
+                                <label class="form-label">Usia Hewan (bulan) <span class="text-danger">*</span></label>
+                                <input type="number" class="form-control" id="animalAge" min="1">
+                            </div>
+                            
+                            <div class="col-md-6" id="animalGenderField" style="display: none;">
+                                <label class="form-label">Jenis Kelamin <span class="text-danger">*</span></label>
+                                <select class="form-select" id="animalGender">
+                                    <option value="">Pilih Jenis Kelamin</option>
+                                    <option value="jantan">Jantan</option>
+                                    <option value="betina">Betina</option>
+                                </select>
+                            </div>
+                            
+                            <!-- Tujuan Pengajuan -->
+                            <div class="col-12">
+                                <label class="form-label">Tujuan Pengajuan <span class="text-danger">*</span></label>
+                                <textarea class="form-control" id="purpose" rows="3" placeholder="Jelaskan tujuan dan alasan pengajuan surat rekomendasi..." required></textarea>
+                            </div>
+                            
+                            <!-- Dokumen Pendukung -->
+                            <div class="col-12">
+                                <label class="form-label">Dokumen Pendukung</label>
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label">KTP</label>
+                                        <input type="file" class="form-control" id="ktpFile" accept=".pdf,.jpg,.jpeg,.png">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Surat Keterangan</label>
+                                        <input type="file" class="form-control" id="certificateFile" accept=".pdf,.jpg,.jpeg,.png">
+                                    </div>
+                                    <div class="col-md-6" id="strvFileField" style="display: none;">
+                                        <label class="form-label">STRV</label>
+                                        <input type="file" class="form-control" id="strvFile" accept=".pdf,.jpg,.jpeg,.png">
+                                    </div>
+                                    <div class="col-md-6" id="animalPhotoField" style="display: none;">
+                                        <label class="form-label">Foto Hewan</label>
+                                        <input type="file" class="form-control" id="animalPhoto" accept=".jpg,.jpeg,.png">
+                                    </div>
+                                </div>
+                                <small class="text-muted">Format yang didukung: PDF, JPG, PNG. Maksimal 5MB per file.</small>
+                            </div>
+                            
+                            <!-- Catatan -->
+                            <div class="col-12">
+                                <label class="form-label">Catatan Tambahan</label>
+                                <textarea class="form-control" id="notes" rows="2" placeholder="Catatan atau informasi tambahan (opsional)"></textarea>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-2"></i>Batal
+                    </button>
+                    <button type="button" class="btn btn-navy" onclick="submitRecommendationForm()">
+                        <i class="fas fa-paper-plane me-2"></i>Ajukan Surat Rekomendasi
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Footer -->
     <footer class="bg-navy text-white py-4">
