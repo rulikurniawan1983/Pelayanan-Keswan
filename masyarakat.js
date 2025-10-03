@@ -1592,6 +1592,19 @@ function submitVetControlForm() {
     updateDashboard();
 }
 
+// Service Button Functions
+function showTreatmentService() {
+    showSubmissionModal('pengobatan');
+}
+
+function showVaccinationService() {
+    showSubmissionModal('vaksinasi');
+}
+
+function showTelemedicineService() {
+    showSubmissionModal('telemedicine');
+}
+
 // Export functions
 window.showSubmissionModal = showSubmissionModal;
 window.submitServiceRequest = submitServiceRequest;
@@ -1600,3 +1613,6 @@ window.showVetPracticeForm = showVetPracticeForm;
 window.submitVetPracticeForm = submitVetPracticeForm;
 window.showVetControlForm = showVetControlForm;
 window.submitVetControlForm = submitVetControlForm;
+window.showTreatmentService = showTreatmentService;
+window.showVaccinationService = showVaccinationService;
+window.showTelemedicineService = showTelemedicineService;
