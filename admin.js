@@ -41,7 +41,6 @@ function setupEventListeners() {
 function loadServiceRequests() {
     // Load from localStorage
     const userServices = JSON.parse(localStorage.getItem('userServices') || '[]');
-    const vetPracticeRecommendations = JSON.parse(localStorage.getItem('vetPracticeRecommendations') || '[]');
     
     // Combine all service requests with enhanced data
     serviceRequests = [
@@ -60,22 +59,6 @@ function loadServiceRequests() {
             notes: service.notes || '',
             type: 'service',
             veterinarian: service.veterinarian || 'Belum ditentukan'
-        })),
-        ...vetPracticeRecommendations.map(rec => ({
-            id: rec.id,
-            ticketNumber: rec.ticketNumber || generateTicketNumber(),
-            date: rec.createdAt,
-            requester: rec.ownerName || 'N/A',
-            requesterNIK: rec.ownerNIK || 'N/A',
-            serviceType: 'rekomendasi_praktek',
-            animal: 'N/A',
-            animalType: 'N/A',
-            symptoms: 'Rekomendasi Praktek Dokter Hewan',
-            priority: 'normal',
-            status: rec.status || 'submitted',
-            notes: rec.notes || '',
-            type: 'recommendation',
-            veterinarian: 'N/A'
         }))
     ];
     
@@ -527,9 +510,7 @@ function getServiceTypeLabel(type) {
         'pengobatan': 'Pengobatan',
         'vaksinasi': 'Vaksinasi',
         'konsultasi': 'Konsultasi',
-        'telemedicine': 'Telemedicine',
-        'rekomendasi_praktek': 'Rekomendasi Praktek',
-        'rekomendasi_kontrol': 'Rekomendasi Kontrol'
+        'telemedicine': 'Telemedicine'
     };
     return labels[type] || type;
 }
