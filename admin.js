@@ -1,14 +1,19 @@
-// Admin Panel JavaScript - Service Requests Data
+// Admin Panel JavaScript - Service Requests Control Panel
 
-let serviceRequests = [];
+// Global variables
+let allServiceRequests = [];
+let filteredServiceRequests = [];
 let currentPage = 1;
 const itemsPerPage = 10;
+let currentServiceId = null;
+let selectedServices = [];
 
 // Initialize Admin Panel
 document.addEventListener('DOMContentLoaded', function() {
     checkAuth();
-    loadServiceRequests();
+    loadAllServiceRequests();
     setupEventListeners();
+    updateStatistics();
 });
 
 // Check Authentication
@@ -22,7 +27,7 @@ function checkAuth() {
 // Setup Event Listeners
 function setupEventListeners() {
     // Filter controls
-    const statusFilter = document.getElementById('statusFilter');
+    const statusFilter = document.getElementById('serviceStatusFilter');
     const serviceTypeFilter = document.getElementById('serviceTypeFilter');
     const startDateFilter = document.getElementById('startDateFilter');
     const endDateFilter = document.getElementById('endDateFilter');
@@ -31,45 +36,583 @@ function setupEventListeners() {
         if (filter) {
             filter.addEventListener('change', () => {
                 currentPage = 1;
+                filterServiceRequests();
                 updateServiceRequestsTable();
             });
         }
     });
+
+    // Search functionality
+    const searchInput = document.getElementById('searchInput');
+    if (searchInput) {
+        searchInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                searchServiceRequests();
+            }
+        });
+    }
 }
 
-// Load Service Requests Data
-function loadServiceRequests() {
+// Load All Service Requests
+function loadAllServiceRequests() {
     // Load from localStorage
     const userServices = JSON.parse(localStorage.getItem('userServices') || '[]');
+    const animalTreatmentRequests = JSON.parse(localStorage.getItem('animalTreatmentRequests') || '[]');
+    const rabiesVaccinationRequests = JSON.parse(localStorage.getItem('rabiesVaccinationRequests') || '[]');
+    const telemedicineRequests = JSON.parse(localStorage.getItem('telemedicineRequests') || '[]');
+    const vetPracticeRecommendations = JSON.parse(localStorage.getItem('vetPracticeRecommendations') || '[]');
+    const vetControlRecommendations = JSON.parse(localStorage.getItem('vetControlRecommendations') || '[]');
     
-    // Combine all service requests with enhanced data
-    serviceRequests = [
+    // Combine all service requests
+    allServiceRequests = [
         ...userServices.map(service => ({
             id: service.id,
             ticketNumber: service.ticketNumber || generateTicketNumber(),
             date: service.createdAt,
-            requester: service.ownerName || 'N/A',
-            requesterNIK: service.ownerNIK || 'N/A',
-            serviceType: service.serviceType,
+            requester: service.ownerName || 'Unknown',
+            requesterNIK: service.ownerNIK || '',
+            serviceType: service.serviceType || 'unknown',
             animal: service.animalName || 'N/A',
             animalType: service.animalType || 'N/A',
-            symptoms: service.symptoms || 'N/A',
             priority: service.priority || 'normal',
             status: service.status || 'pending',
+            veterinarian: service.veterinarian || 'Belum Ditugaskan',
+            symptoms: service.description || 'N/A',
             notes: service.notes || '',
-            type: 'service',
-            veterinarian: service.veterinarian || 'Belum ditentukan'
+            source: 'userServices'
+        })),
+        ...animalTreatmentRequests.map(request => ({
+            id: request.id,
+            ticketNumber: request.ticketNumber,
+            date: request.createdAt,
+            requester: request.owner.name,
+            requesterNIK: request.owner.nik,
+            serviceType: 'animal_treatment',
+            animal: request.animal.name,
+            animalType: request.animal.type,
+            priority: request.priority || 'normal',
+            status: request.status || 'pending',
+            veterinarian: request.veterinarian || 'Belum Ditugaskan',
+            symptoms: request.anamnesis.mainComplaint,
+            notes: request.additionalNotes || '',
+            source: 'animalTreatmentRequests'
+        })),
+        ...rabiesVaccinationRequests.map(request => ({
+            id: request.id,
+            ticketNumber: request.ticketNumber,
+            date: request.createdAt,
+            requester: request.owner.name,
+            requesterNIK: request.owner.nik,
+            serviceType: 'rabies_vaccination',
+            animal: request.animal.name,
+            animalType: request.animal.type,
+            priority: 'normal',
+            status: request.status || 'pending',
+            veterinarian: request.veterinarian || 'Belum Ditugaskan',
+            symptoms: request.health.condition,
+            notes: request.additionalNotes || '',
+            source: 'rabiesVaccinationRequests'
+        })),
+        ...telemedicineRequests.map(request => ({
+            id: request.id,
+            ticketNumber: request.ticketNumber,
+            date: request.createdAt,
+            requester: request.owner.name,
+            requesterNIK: request.owner.nik,
+            serviceType: 'telemedicine_consultation',
+            animal: request.animal.name,
+            animalType: request.animal.type,
+            priority: 'normal',
+            status: request.status || 'pending',
+            veterinarian: request.veterinarian || 'Belum Ditugaskan',
+            symptoms: request.consultation.mainComplaint,
+            notes: request.additionalNotes || '',
+            source: 'telemedicineRequests'
+        })),
+        ...vetPracticeRecommendations.map(request => ({
+            id: request.id,
+            ticketNumber: request.ticketNumber,
+            date: request.createdAt,
+            requester: request.owner.name,
+            requesterNIK: request.owner.nik,
+            serviceType: 'vet_practice_recommendation',
+            animal: 'N/A',
+            animalType: 'N/A',
+            priority: 'normal',
+            status: request.status || 'pending',
+            veterinarian: request.veterinarian || 'Belum Ditugaskan',
+            symptoms: request.purpose,
+            notes: request.additionalNotes || '',
+            source: 'vetPracticeRecommendations'
+        })),
+        ...vetControlRecommendations.map(request => ({
+            id: request.id,
+            ticketNumber: request.ticketNumber,
+            date: request.createdAt,
+            requester: request.owner.name,
+            requesterNIK: request.owner.nik,
+            serviceType: 'vet_control_recommendation',
+            animal: request.animal.name,
+            animalType: request.animal.type,
+            priority: 'normal',
+            status: request.status || 'pending',
+            veterinarian: request.veterinarian || 'Belum Ditugaskan',
+            symptoms: request.purpose,
+            notes: request.additionalNotes || '',
+            source: 'vetControlRecommendations'
         }))
     ];
-    
+
     // Sort by date (newest first)
-    serviceRequests.sort((a, b) => new Date(b.date) - new Date(a.date));
+    allServiceRequests.sort((a, b) => new Date(b.date) - new Date(a.date));
     
+    filteredServiceRequests = [...allServiceRequests];
     updateServiceRequestsTable();
-    loadRequirementsData();
 }
 
-// Generate ticket number
+// Filter Service Requests
+function filterServiceRequests() {
+    const statusFilter = document.getElementById('serviceStatusFilter').value;
+    const serviceTypeFilter = document.getElementById('serviceTypeFilter').value;
+    const startDateFilter = document.getElementById('startDateFilter').value;
+    const endDateFilter = document.getElementById('endDateFilter').value;
+    
+    filteredServiceRequests = allServiceRequests.filter(request => {
+        // Status filter
+        if (statusFilter && request.status !== statusFilter) {
+            return false;
+        }
+        
+        // Service type filter
+        if (serviceTypeFilter && request.serviceType !== serviceTypeFilter) {
+            return false;
+        }
+        
+        // Date filters
+        if (startDateFilter) {
+            const requestDate = new Date(request.date);
+            const startDate = new Date(startDateFilter);
+            if (requestDate < startDate) {
+                return false;
+            }
+        }
+        
+        if (endDateFilter) {
+            const requestDate = new Date(request.date);
+            const endDate = new Date(endDateFilter);
+            if (requestDate > endDate) {
+                return false;
+            }
+        }
+        
+        return true;
+    });
+}
+
+// Search Service Requests
+function searchServiceRequests() {
+    const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+    
+    if (!searchTerm) {
+        filterServiceRequests();
+    } else {
+        filteredServiceRequests = allServiceRequests.filter(request => {
+            return request.ticketNumber.toLowerCase().includes(searchTerm) ||
+                   request.requester.toLowerCase().includes(searchTerm) ||
+                   request.animal.toLowerCase().includes(searchTerm) ||
+                   request.serviceType.toLowerCase().includes(searchTerm);
+        });
+    }
+    
+    currentPage = 1;
+    updateServiceRequestsTable();
+}
+
+// Update Service Requests Table
+function updateServiceRequestsTable() {
+    const tableBody = document.getElementById('serviceRequestsTable');
+    if (!tableBody) return;
+    
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    const pageData = filteredServiceRequests.slice(startIndex, endIndex);
+    
+    tableBody.innerHTML = '';
+    
+    pageData.forEach(request => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>
+                <input type="checkbox" class="service-checkbox" value="${request.id}" onchange="toggleServiceSelection('${request.id}')">
+            </td>
+            <td>${request.id}</td>
+            <td>${request.ticketNumber}</td>
+            <td>${new Date(request.date).toLocaleDateString('id-ID')}</td>
+            <td>${request.requester}</td>
+            <td>${getServiceTypeLabel(request.serviceType)}</td>
+            <td>${request.animal}</td>
+            <td>${getPriorityLabel(request.priority)}</td>
+            <td>${getStatusBadge(request.status)}</td>
+            <td>${request.veterinarian}</td>
+            <td>
+                <div class="btn-group" role="group">
+                    <button class="btn btn-sm btn-outline-primary" onclick="viewServiceDetail('${request.id}')" title="Lihat Detail">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                    <button class="btn btn-sm btn-outline-warning" onclick="updateServiceStatusModal('${request.id}')" title="Update Status">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                </div>
+            </td>
+        `;
+        tableBody.appendChild(row);
+    });
+    
+    updatePagination();
+}
+
+// Update Statistics
+function updateStatistics() {
+    const totalRequests = allServiceRequests.length;
+    const pendingRequests = allServiceRequests.filter(r => r.status === 'pending').length;
+    const inProgressRequests = allServiceRequests.filter(r => r.status === 'in_progress').length;
+    const completedRequests = allServiceRequests.filter(r => r.status === 'completed').length;
+    
+    document.getElementById('totalRequests').textContent = totalRequests;
+    document.getElementById('pendingRequests').textContent = pendingRequests;
+    document.getElementById('inProgressRequests').textContent = inProgressRequests;
+    document.getElementById('completedRequests').textContent = completedRequests;
+}
+
+// Update Pagination
+function updatePagination() {
+    const pagination = document.getElementById('serviceRequestsPagination');
+    if (!pagination) return;
+    
+    const totalPages = Math.ceil(filteredServiceRequests.length / itemsPerPage);
+    pagination.innerHTML = '';
+    
+    // Previous button
+    const prevLi = document.createElement('li');
+    prevLi.className = `page-item ${currentPage === 1 ? 'disabled' : ''}`;
+    prevLi.innerHTML = `<a class="page-link" href="#" onclick="changePage(${currentPage - 1})">Previous</a>`;
+    pagination.appendChild(prevLi);
+    
+    // Page numbers
+    for (let i = 1; i <= totalPages; i++) {
+        const li = document.createElement('li');
+        li.className = `page-item ${i === currentPage ? 'active' : ''}`;
+        li.innerHTML = `<a class="page-link" href="#" onclick="changePage(${i})">${i}</a>`;
+        pagination.appendChild(li);
+    }
+    
+    // Next button
+    const nextLi = document.createElement('li');
+    nextLi.className = `page-item ${currentPage === totalPages ? 'disabled' : ''}`;
+    nextLi.innerHTML = `<a class="page-link" href="#" onclick="changePage(${currentPage + 1})">Next</a>`;
+    pagination.appendChild(nextLi);
+}
+
+// Change Page
+function changePage(page) {
+    const totalPages = Math.ceil(filteredServiceRequests.length / itemsPerPage);
+    if (page >= 1 && page <= totalPages) {
+        currentPage = page;
+        updateServiceRequestsTable();
+    }
+}
+
+// Toggle Select All
+function toggleSelectAll() {
+    const selectAll = document.getElementById('selectAll');
+    const checkboxes = document.querySelectorAll('.service-checkbox');
+    
+    checkboxes.forEach(checkbox => {
+        checkbox.checked = selectAll.checked;
+        if (selectAll.checked) {
+            selectedServices.push(checkbox.value);
+        } else {
+            selectedServices = selectedServices.filter(id => id !== checkbox.value);
+        }
+    });
+}
+
+// Toggle Service Selection
+function toggleServiceSelection(serviceId) {
+    if (selectedServices.includes(serviceId)) {
+        selectedServices = selectedServices.filter(id => id !== serviceId);
+    } else {
+        selectedServices.push(serviceId);
+    }
+    
+    // Update select all checkbox
+    const selectAll = document.getElementById('selectAll');
+    const checkboxes = document.querySelectorAll('.service-checkbox');
+    const checkedCount = document.querySelectorAll('.service-checkbox:checked').length;
+    
+    selectAll.checked = checkedCount === checkboxes.length;
+    selectAll.indeterminate = checkedCount > 0 && checkedCount < checkboxes.length;
+}
+
+// View Service Detail
+function viewServiceDetail(serviceId) {
+    const request = allServiceRequests.find(r => r.id === serviceId);
+    if (!request) return;
+    
+    document.getElementById('detailTicketNumber').textContent = request.ticketNumber;
+    document.getElementById('detailDate').textContent = new Date(request.date).toLocaleDateString('id-ID');
+    document.getElementById('detailRequester').textContent = request.requester;
+    document.getElementById('detailRequesterNIK').textContent = request.requesterNIK;
+    document.getElementById('detailServiceType').textContent = getServiceTypeLabel(request.serviceType);
+    document.getElementById('detailStatus').textContent = getStatusLabel(request.status);
+    document.getElementById('detailAnimal').textContent = request.animal;
+    document.getElementById('detailAnimalType').textContent = request.animalType;
+    document.getElementById('detailPriority').textContent = getPriorityLabel(request.priority);
+    document.getElementById('detailVeterinarian').textContent = request.veterinarian;
+    document.getElementById('detailSymptoms').textContent = request.symptoms;
+    document.getElementById('detailNotes').textContent = request.notes;
+    
+    const modal = new bootstrap.Modal(document.getElementById('serviceDetailModal'));
+    modal.show();
+}
+
+// Update Service Status Modal
+function updateServiceStatusModal(serviceId) {
+    const request = allServiceRequests.find(r => r.id === serviceId);
+    if (!request) return;
+    
+    currentServiceId = serviceId;
+    document.getElementById('updateTicketNumber').textContent = request.ticketNumber;
+    document.getElementById('currentStatus').textContent = getStatusLabel(request.status);
+    document.getElementById('newStatus').value = request.status;
+    document.getElementById('assignedVeterinarian').value = request.veterinarian || '';
+    document.getElementById('statusUpdateNotes').value = '';
+    
+    const modal = new bootstrap.Modal(document.getElementById('statusUpdateModal'));
+    modal.show();
+}
+
+// Update Service Status
+function updateServiceStatus() {
+    const newStatus = document.getElementById('newStatus').value;
+    const veterinarian = document.getElementById('assignedVeterinarian').value;
+    const notes = document.getElementById('statusUpdateNotes').value;
+    
+    if (!currentServiceId) return;
+    
+    // Find and update the request
+    const request = allServiceRequests.find(r => r.id === currentServiceId);
+    if (request) {
+        request.status = newStatus;
+        if (veterinarian) {
+            request.veterinarian = veterinarian;
+        }
+        if (notes) {
+            request.notes = notes;
+        }
+        
+        // Update in localStorage based on source
+        updateRequestInStorage(request);
+        
+        // Refresh the table
+        filterServiceRequests();
+        updateServiceRequestsTable();
+        updateStatistics();
+        
+        // Close modal
+        const modal = bootstrap.Modal.getInstance(document.getElementById('statusUpdateModal'));
+        modal.hide();
+        
+        showAlert('Status berhasil diperbarui!', 'success');
+    }
+}
+
+// Update Request in Storage
+function updateRequestInStorage(request) {
+    // Update based on source
+    switch (request.source) {
+        case 'userServices':
+            const userServices = JSON.parse(localStorage.getItem('userServices') || '[]');
+            const userServiceIndex = userServices.findIndex(s => s.id === request.id);
+            if (userServiceIndex !== -1) {
+                userServices[userServiceIndex].status = request.status;
+                userServices[userServiceIndex].veterinarian = request.veterinarian;
+                userServices[userServiceIndex].notes = request.notes;
+                localStorage.setItem('userServices', JSON.stringify(userServices));
+            }
+            break;
+        case 'animalTreatmentRequests':
+            const animalTreatmentRequests = JSON.parse(localStorage.getItem('animalTreatmentRequests') || '[]');
+            const animalIndex = animalTreatmentRequests.findIndex(r => r.id === request.id);
+            if (animalIndex !== -1) {
+                animalTreatmentRequests[animalIndex].status = request.status;
+                animalTreatmentRequests[animalIndex].veterinarian = request.veterinarian;
+                animalTreatmentRequests[animalIndex].additionalNotes = request.notes;
+                localStorage.setItem('animalTreatmentRequests', JSON.stringify(animalTreatmentRequests));
+            }
+            break;
+        case 'rabiesVaccinationRequests':
+            const rabiesVaccinationRequests = JSON.parse(localStorage.getItem('rabiesVaccinationRequests') || '[]');
+            const rabiesIndex = rabiesVaccinationRequests.findIndex(r => r.id === request.id);
+            if (rabiesIndex !== -1) {
+                rabiesVaccinationRequests[rabiesIndex].status = request.status;
+                rabiesVaccinationRequests[rabiesIndex].veterinarian = request.veterinarian;
+                rabiesVaccinationRequests[rabiesIndex].additionalNotes = request.notes;
+                localStorage.setItem('rabiesVaccinationRequests', JSON.stringify(rabiesVaccinationRequests));
+            }
+            break;
+        case 'telemedicineRequests':
+            const telemedicineRequests = JSON.parse(localStorage.getItem('telemedicineRequests') || '[]');
+            const telemedicineIndex = telemedicineRequests.findIndex(r => r.id === request.id);
+            if (telemedicineIndex !== -1) {
+                telemedicineRequests[telemedicineIndex].status = request.status;
+                telemedicineRequests[telemedicineIndex].veterinarian = request.veterinarian;
+                telemedicineRequests[telemedicineIndex].additionalNotes = request.notes;
+                localStorage.setItem('telemedicineRequests', JSON.stringify(telemedicineRequests));
+            }
+            break;
+        case 'vetPracticeRecommendations':
+            const vetPracticeRecommendations = JSON.parse(localStorage.getItem('vetPracticeRecommendations') || '[]');
+            const practiceIndex = vetPracticeRecommendations.findIndex(r => r.id === request.id);
+            if (practiceIndex !== -1) {
+                vetPracticeRecommendations[practiceIndex].status = request.status;
+                vetPracticeRecommendations[practiceIndex].veterinarian = request.veterinarian;
+                vetPracticeRecommendations[practiceIndex].additionalNotes = request.notes;
+                localStorage.setItem('vetPracticeRecommendations', JSON.stringify(vetPracticeRecommendations));
+            }
+            break;
+        case 'vetControlRecommendations':
+            const vetControlRecommendations = JSON.parse(localStorage.getItem('vetControlRecommendations') || '[]');
+            const controlIndex = vetControlRecommendations.findIndex(r => r.id === request.id);
+            if (controlIndex !== -1) {
+                vetControlRecommendations[controlIndex].status = request.status;
+                vetControlRecommendations[controlIndex].veterinarian = request.veterinarian;
+                vetControlRecommendations[controlIndex].additionalNotes = request.notes;
+                localStorage.setItem('vetControlRecommendations', JSON.stringify(vetControlRecommendations));
+            }
+            break;
+    }
+}
+
+// Bulk Actions
+function bulkApprove() {
+    if (selectedServices.length === 0) {
+        showAlert('Pilih layanan yang akan disetujui!', 'warning');
+        return;
+    }
+    
+    selectedServices.forEach(serviceId => {
+        const request = allServiceRequests.find(r => r.id === serviceId);
+        if (request) {
+            request.status = 'completed';
+            updateRequestInStorage(request);
+        }
+    });
+    
+    filterServiceRequests();
+    updateServiceRequestsTable();
+    updateStatistics();
+    selectedServices = [];
+    document.getElementById('selectAll').checked = false;
+    
+    showAlert(`${selectedServices.length} layanan berhasil disetujui!`, 'success');
+}
+
+function bulkInProgress() {
+    if (selectedServices.length === 0) {
+        showAlert('Pilih layanan yang akan diproses!', 'warning');
+        return;
+    }
+    
+    selectedServices.forEach(serviceId => {
+        const request = allServiceRequests.find(r => r.id === serviceId);
+        if (request) {
+            request.status = 'in_progress';
+            updateRequestInStorage(request);
+        }
+    });
+    
+    filterServiceRequests();
+    updateServiceRequestsTable();
+    updateStatistics();
+    selectedServices = [];
+    document.getElementById('selectAll').checked = false;
+    
+    showAlert(`${selectedServices.length} layanan berhasil diproses!`, 'success');
+}
+
+function bulkReject() {
+    if (selectedServices.length === 0) {
+        showAlert('Pilih layanan yang akan ditolak!', 'warning');
+        return;
+    }
+    
+    selectedServices.forEach(serviceId => {
+        const request = allServiceRequests.find(r => r.id === serviceId);
+        if (request) {
+            request.status = 'rejected';
+            updateRequestInStorage(request);
+        }
+    });
+    
+    filterServiceRequests();
+    updateServiceRequestsTable();
+    updateStatistics();
+    selectedServices = [];
+    document.getElementById('selectAll').checked = false;
+    
+    showAlert(`${selectedServices.length} layanan berhasil ditolak!`, 'success');
+}
+
+// Helper Functions
+function getServiceTypeLabel(type) {
+    const labels = {
+        'animal_treatment': 'Pengobatan Hewan',
+        'rabies_vaccination': 'Vaksinasi Rabies',
+        'telemedicine_consultation': 'Konsultasi Telemedicine',
+        'vet_practice_recommendation': 'Rekomendasi Praktek Dokter Hewan',
+        'vet_control_recommendation': 'Rekomendasi Nomor Kontrol Veteriner',
+        'pengobatan': 'Pengobatan',
+        'vaksinasi': 'Vaksinasi',
+        'konsultasi': 'Konsultasi',
+        'telemedicine': 'Telemedicine'
+    };
+    return labels[type] || type;
+}
+
+function getStatusLabel(status) {
+    const labels = {
+        'pending': 'Menunggu',
+        'in_progress': 'Sedang Diproses',
+        'completed': 'Selesai',
+        'cancelled': 'Dibatalkan',
+        'rejected': 'Ditolak'
+    };
+    return labels[status] || status;
+}
+
+function getStatusBadge(status) {
+    const badges = {
+        'pending': '<span class="badge bg-warning">Menunggu</span>',
+        'in_progress': '<span class="badge bg-info">Sedang Diproses</span>',
+        'completed': '<span class="badge bg-success">Selesai</span>',
+        'cancelled': '<span class="badge bg-secondary">Dibatalkan</span>',
+        'rejected': '<span class="badge bg-danger">Ditolak</span>'
+    };
+    return badges[status] || `<span class="badge bg-secondary">${status}</span>`;
+}
+
+function getPriorityLabel(priority) {
+    const labels = {
+        'darurat': 'Darurat',
+        'tinggi': 'Tinggi',
+        'sedang': 'Sedang',
+        'rendah': 'Rendah',
+        'normal': 'Normal'
+    };
+    return labels[priority] || priority;
+}
+
 function generateTicketNumber() {
     const now = new Date();
     const year = now.getFullYear().toString().slice(-2);
@@ -79,690 +622,49 @@ function generateTicketNumber() {
     return `TK${year}${month}${day}${random}`;
 }
 
-// Requirements/Documents Data
-let requirementsData = [];
-let currentRequirementsPage = 1;
-const requirementsPerPage = 10;
-
-// Load Requirements Data
-function loadRequirementsData() {
-    // Load from localStorage - simulate uploaded documents
-    const userServices = JSON.parse(localStorage.getItem('userServices') || '[]');
-    
-    // Generate sample requirements data based on submissions
-    requirementsData = [];
-    
-    // Add requirements for each service submission
-    userServices.forEach(service => {
-        if (service.ownerName) {
-            // Add KTP requirement
-            requirementsData.push({
-                id: `req_${service.id}_ktp`,
-                requesterName: service.ownerName,
-                requesterNIK: service.ownerNIK || 'N/A',
-                documentType: 'ktp',
-                documentTypeLabel: 'KTP',
-                fileName: `ktp_${service.ownerName.replace(/\s+/g, '_')}.jpg`,
-                uploadDate: service.createdAt,
-                verificationStatus: 'pending',
-                filePath: `uploads/ktp_${service.id}.jpg`,
-                notes: ''
-            });
-            
-            // Add KK requirement
-            requirementsData.push({
-                id: `req_${service.id}_kk`,
-                requesterName: service.ownerName,
-                requesterNIK: service.ownerNIK || 'N/A',
-                documentType: 'kk',
-                documentTypeLabel: 'Kartu Keluarga',
-                fileName: `kk_${service.ownerName.replace(/\s+/g, '_')}.jpg`,
-                uploadDate: service.createdAt,
-                verificationStatus: 'pending',
-                filePath: `uploads/kk_${service.id}.jpg`,
-                notes: ''
-            });
-            
-            // Add animal certificate if available
-            if (service.animalName) {
-                requirementsData.push({
-                    id: `req_${service.id}_cert`,
-                    requesterName: service.ownerName,
-                    requesterNIK: service.ownerNIK || 'N/A',
-                    documentType: 'sertifikat',
-                    documentTypeLabel: 'Sertifikat Hewan',
-                    fileName: `sertifikat_${service.animalName.replace(/\s+/g, '_')}.pdf`,
-                    uploadDate: service.createdAt,
-                    verificationStatus: 'pending',
-                    filePath: `uploads/sertifikat_${service.id}.pdf`,
-                    notes: ''
-                });
-            }
-        }
-    });
-    
-    
-    // Sort by upload date (newest first)
-    requirementsData.sort((a, b) => new Date(b.uploadDate) - new Date(a.uploadDate));
-    
-    updateRequirementsTable();
-}
-
-// Update Requirements Table
-function updateRequirementsTable() {
-    const tbody = document.getElementById('requirementsTable');
-    const pagination = document.getElementById('requirementsPagination');
-    
-    if (!tbody) return;
-    
-    // Apply filters
-    const statusFilter = document.getElementById('verificationStatusFilter')?.value || '';
-    const typeFilter = document.getElementById('documentTypeFilter')?.value || '';
-    const dateFilter = document.getElementById('uploadDateFilter')?.value || '';
-    
-    let filteredRequirements = requirementsData.filter(req => {
-        const statusMatch = !statusFilter || req.verificationStatus === statusFilter;
-        const typeMatch = !typeFilter || req.documentType === typeFilter;
-        const dateMatch = !dateFilter || req.uploadDate.startsWith(dateFilter);
-        
-        return statusMatch && typeMatch && dateMatch;
-    });
-    
-    // Pagination
-    const totalPages = Math.ceil(filteredRequirements.length / requirementsPerPage);
-    const startIndex = (currentRequirementsPage - 1) * requirementsPerPage;
-    const endIndex = startIndex + requirementsPerPage;
-    const paginatedRequirements = filteredRequirements.slice(startIndex, endIndex);
-    
-    // Update table
-    if (paginatedRequirements.length === 0) {
-        tbody.innerHTML = `
-            <tr>
-                <td colspan="8" class="text-center text-muted">
-                    <i class="fas fa-inbox me-2"></i>Tidak ada dokumen persyaratan
-                </td>
-            </tr>
-        `;
-    } else {
-        tbody.innerHTML = paginatedRequirements.map(req => `
-            <tr>
-                <td><code>${req.id.substring(0, 8)}</code></td>
-                <td>
-                    <div>
-                        <strong>${req.requesterName}</strong>
-                        <br><small class="text-muted">NIK: ${req.requesterNIK}</small>
-                    </div>
-                </td>
-                <td>
-                    <span class="badge bg-info">${req.documentTypeLabel}</span>
-                </td>
-                <td>
-                    <div>
-                        <strong>${req.fileName}</strong>
-                        <br><small class="text-muted">${req.filePath}</small>
-                    </div>
-                </td>
-                <td>${formatDate(req.uploadDate)}</td>
-                <td>
-                    <span class="badge bg-${getVerificationStatusColor(req.verificationStatus)}">${getVerificationStatusLabel(req.verificationStatus)}</span>
-                </td>
-                <td>
-                    <button class="btn btn-sm btn-outline-primary" onclick="viewDocument('${req.id}')" title="Lihat Dokumen">
-                        <i class="fas fa-eye"></i>
-                    </button>
-                </td>
-                <td>
-                    <div class="btn-group" role="group">
-                        <button class="btn btn-sm btn-outline-success" onclick="approveDocument('${req.id}')" title="Setujui">
-                            <i class="fas fa-check"></i>
-                        </button>
-                        <button class="btn btn-sm btn-outline-danger" onclick="rejectDocument('${req.id}')" title="Tolak">
-                            <i class="fas fa-times"></i>
-                        </button>
-                    </div>
-                </td>
-            </tr>
-        `).join('');
-    }
-    
-    // Update pagination
-    if (pagination) {
-        updateRequirementsPagination(totalPages);
-    }
-}
-
-// Update Requirements Pagination
-function updateRequirementsPagination(totalPages) {
-    const pagination = document.getElementById('requirementsPagination');
-    if (!pagination) return;
-    
-    if (totalPages <= 1) {
-        pagination.innerHTML = '';
-        return;
-    }
-    
-    let paginationHTML = '';
-    
-    // Previous button
-    paginationHTML += `
-        <li class="page-item ${currentRequirementsPage === 1 ? 'disabled' : ''}">
-            <a class="page-link" href="#" onclick="changeRequirementsPage(${currentRequirementsPage - 1})">Previous</a>
-        </li>
+function showAlert(message, type) {
+    const alertDiv = document.createElement('div');
+    alertDiv.className = `alert alert-${type} alert-dismissible fade show position-fixed`;
+    alertDiv.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+    alertDiv.innerHTML = `
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
     `;
+    document.body.appendChild(alertDiv);
     
-    // Page numbers
-    for (let i = 1; i <= totalPages; i++) {
-        paginationHTML += `
-            <li class="page-item ${i === currentRequirementsPage ? 'active' : ''}">
-                <a class="page-link" href="#" onclick="changeRequirementsPage(${i})">${i}</a>
-            </li>
-        `;
-    }
-    
-    // Next button
-    paginationHTML += `
-        <li class="page-item ${currentRequirementsPage === totalPages ? 'disabled' : ''}">
-            <a class="page-link" href="#" onclick="changeRequirementsPage(${currentRequirementsPage + 1})">Next</a>
-        </li>
-    `;
-    
-    pagination.innerHTML = paginationHTML;
-}
-
-// Change Requirements Page
-function changeRequirementsPage(page) {
-    const totalPages = Math.ceil(requirementsData.length / requirementsPerPage);
-    if (page < 1 || page > totalPages) return;
-    
-    currentRequirementsPage = page;
-    updateRequirementsTable();
-}
-
-// Update Service Requests Table
-function updateServiceRequestsTable() {
-    const tbody = document.getElementById('serviceRequestsTable');
-    const pagination = document.getElementById('serviceRequestsPagination');
-    
-    if (!tbody) return;
-    
-    // Apply filters
-    let filteredRequests = serviceRequests;
-    
-    const statusFilter = document.getElementById('statusFilter')?.value;
-    const serviceTypeFilter = document.getElementById('serviceTypeFilter')?.value;
-    const startDateFilter = document.getElementById('startDateFilter')?.value;
-    const endDateFilter = document.getElementById('endDateFilter')?.value;
-    
-    if (statusFilter) {
-        filteredRequests = filteredRequests.filter(req => req.status === statusFilter);
-    }
-    
-    if (serviceTypeFilter) {
-        filteredRequests = filteredRequests.filter(req => req.serviceType === serviceTypeFilter);
-    }
-    
-    if (startDateFilter) {
-        filteredRequests = filteredRequests.filter(req => new Date(req.date) >= new Date(startDateFilter));
-    }
-    
-    if (endDateFilter) {
-        filteredRequests = filteredRequests.filter(req => new Date(req.date) <= new Date(endDateFilter + 'T23:59:59'));
-    }
-    
-    // Pagination
-    const totalPages = Math.ceil(filteredRequests.length / itemsPerPage);
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    const endIndex = startIndex + itemsPerPage;
-    const paginatedRequests = filteredRequests.slice(startIndex, endIndex);
-    
-    // Update table
-    if (paginatedRequests.length === 0) {
-        tbody.innerHTML = `
-            <tr>
-                <td colspan="10" class="text-center text-muted">
-                    <i class="fas fa-inbox me-2"></i>Tidak ada data permohonan
-                </td>
-            </tr>
-        `;
-    } else {
-        tbody.innerHTML = paginatedRequests.map(request => `
-            <tr>
-                <td><code>${request.id.substring(0, 8)}</code></td>
-                <td><strong>${request.ticketNumber}</strong></td>
-                <td>${formatDate(request.date)}</td>
-                <td>
-                    <div>
-                        <strong>${request.requester}</strong>
-                        <br><small class="text-muted">NIK: ${request.requesterNIK}</small>
-                    </div>
-                </td>
-                <td>
-                    <span class="badge bg-navy">${getServiceTypeLabel(request.serviceType)}</span>
-                </td>
-                <td>
-                    <div>
-                        <strong>${request.animal}</strong>
-                        <br><small class="text-muted">${request.animalType}</small>
-                    </div>
-                </td>
-                <td>
-                    <span class="badge bg-${getPriorityColor(request.priority)}">${getPriorityLabel(request.priority)}</span>
-                </td>
-                <td>
-                    <span class="badge bg-${getStatusColor(request.status)}">${getStatusLabel(request.status)}</span>
-                </td>
-                <td>
-                    <small class="text-muted">${request.veterinarian}</small>
-                </td>
-                <td>
-                    <div class="btn-group" role="group">
-                        <button class="btn btn-sm btn-outline-primary" onclick="viewServiceRequest('${request.id}')" title="Lihat Detail">
-                            <i class="fas fa-eye"></i>
-                        </button>
-                        <button class="btn btn-sm btn-outline-success" onclick="updateServiceStatus('${request.id}', 'in_progress')" title="Proses">
-                            <i class="fas fa-play"></i>
-                        </button>
-                        <button class="btn btn-sm btn-outline-warning" onclick="updateServiceStatus('${request.id}', 'completed')" title="Selesai">
-                            <i class="fas fa-check"></i>
-                        </button>
-                    </div>
-                </td>
-            </tr>
-        `).join('');
-    }
-    
-    // Update pagination
-    if (pagination) {
-        updatePagination(totalPages);
-    }
-}
-
-// Update Pagination
-function updatePagination(totalPages) {
-    const pagination = document.getElementById('serviceRequestsPagination');
-    if (!pagination) return;
-    
-    if (totalPages <= 1) {
-        pagination.innerHTML = '';
-        return;
-    }
-    
-    let paginationHTML = '';
-    
-    // Previous button
-    paginationHTML += `
-        <li class="page-item ${currentPage === 1 ? 'disabled' : ''}">
-            <a class="page-link" href="#" onclick="changePage(${currentPage - 1})">Previous</a>
-        </li>
-    `;
-    
-    // Page numbers
-    for (let i = 1; i <= totalPages; i++) {
-        if (i === 1 || i === totalPages || (i >= currentPage - 2 && i <= currentPage + 2)) {
-            paginationHTML += `
-                <li class="page-item ${i === currentPage ? 'active' : ''}">
-                    <a class="page-link" href="#" onclick="changePage(${i})">${i}</a>
-                </li>
-            `;
-        } else if (i === currentPage - 3 || i === currentPage + 3) {
-            paginationHTML += `<li class="page-item disabled"><span class="page-link">...</span></li>`;
-        }
-    }
-    
-    // Next button
-    paginationHTML += `
-        <li class="page-item ${currentPage === totalPages ? 'disabled' : ''}">
-            <a class="page-link" href="#" onclick="changePage(${currentPage + 1})">Next</a>
-        </li>
-    `;
-    
-    pagination.innerHTML = paginationHTML;
-}
-
-// Change Page
-function changePage(page) {
-    const totalPages = Math.ceil(serviceRequests.length / itemsPerPage);
-    if (page >= 1 && page <= totalPages) {
-        currentPage = page;
-        updateServiceRequestsTable();
-    }
-}
-
-// View Service Request Details
-function viewServiceRequest(requestId) {
-    const request = serviceRequests.find(req => req.id === requestId);
-    if (request) {
-        const detailModal = document.getElementById('serviceDetailModal');
-        if (detailModal) {
-            // Populate modal with detailed information
-            document.getElementById('detailTicketNumber').textContent = request.ticketNumber;
-            document.getElementById('detailDate').textContent = formatDate(request.date);
-            document.getElementById('detailRequester').textContent = request.requester;
-            document.getElementById('detailRequesterNIK').textContent = request.requesterNIK;
-            document.getElementById('detailServiceType').textContent = getServiceTypeLabel(request.serviceType);
-            document.getElementById('detailAnimal').textContent = request.animal;
-            document.getElementById('detailAnimalType').textContent = request.animalType;
-            document.getElementById('detailSymptoms').textContent = request.symptoms;
-            document.getElementById('detailPriority').textContent = getPriorityLabel(request.priority);
-            document.getElementById('detailStatus').textContent = getStatusLabel(request.status);
-            document.getElementById('detailVeterinarian').textContent = request.veterinarian;
-            document.getElementById('detailNotes').textContent = request.notes || 'Tidak ada catatan';
-            
-            // Show modal
-            const modal = new bootstrap.Modal(detailModal);
-            modal.show();
-        } else {
-            // Fallback to alert if modal doesn't exist
-            alert(`Detail Permohonan:\n\nID: ${request.id}\nNomor Tiket: ${request.ticketNumber}\nTanggal: ${formatDate(request.date)}\nPemohon: ${request.requester}\nNIK: ${request.requesterNIK}\nJenis: ${getServiceTypeLabel(request.serviceType)}\nHewan: ${request.animal} (${request.animalType})\nGejala: ${request.symptoms}\nPrioritas: ${getPriorityLabel(request.priority)}\nStatus: ${getStatusLabel(request.status)}\nDokter Hewan: ${request.veterinarian}\nCatatan: ${request.notes || 'Tidak ada'}`);
-        }
-    }
-}
-
-// Update Service Status
-function updateServiceStatus(requestId, newStatus) {
-    const request = serviceRequests.find(req => req.id === requestId);
-    if (request) {
-        request.status = newStatus;
-        
-        // Update in localStorage
-        if (request.type === 'service') {
-            const userServices = JSON.parse(localStorage.getItem('userServices') || '[]');
-            const serviceIndex = userServices.findIndex(s => s.id === requestId);
-            if (serviceIndex !== -1) {
-                userServices[serviceIndex].status = newStatus;
-                localStorage.setItem('userServices', JSON.stringify(userServices));
-            }
-        } else if (request.type === 'recommendation') {
-            const vetPracticeRecommendations = JSON.parse(localStorage.getItem('vetPracticeRecommendations') || '[]');
-            const recIndex = vetPracticeRecommendations.findIndex(r => r.id === requestId);
-            if (recIndex !== -1) {
-                vetPracticeRecommendations[recIndex].status = newStatus;
-                localStorage.setItem('vetPracticeRecommendations', JSON.stringify(vetPracticeRecommendations));
-            }
-        }
-        
-        showAlert(`Status permohonan berhasil diubah menjadi ${getStatusLabel(newStatus)}!`, 'success');
-        updateServiceRequestsTable();
-    }
-}
-
-// Utility Functions
-function getServiceTypeLabel(type) {
-    const labels = {
-        'pengobatan': 'Pengobatan',
-        'vaksinasi': 'Vaksinasi',
-        'konsultasi': 'Konsultasi',
-        'telemedicine': 'Telemedicine'
-    };
-    return labels[type] || type;
-}
-
-function getPriorityLabel(priority) {
-    const labels = {
-        'normal': 'Normal',
-        'urgent': 'Mendesak',
-        'emergency': 'Darurat'
-    };
-    return labels[priority] || priority;
-}
-
-function getPriorityColor(priority) {
-    const colors = {
-        'normal': 'secondary',
-        'urgent': 'warning',
-        'emergency': 'danger'
-    };
-    return colors[priority] || 'secondary';
-}
-
-function getStatusLabel(status) {
-    const labels = {
-        'pending': 'Menunggu',
-        'in_progress': 'Diproses',
-        'completed': 'Selesai',
-        'cancelled': 'Dibatalkan',
-        'submitted': 'Diajukan'
-    };
-    return labels[status] || status;
-}
-
-function getStatusColor(status) {
-    const colors = {
-        'pending': 'warning',
-        'in_progress': 'info',
-        'completed': 'success',
-        'cancelled': 'danger',
-        'submitted': 'primary'
-    };
-    return colors[status] || 'secondary';
-}
-
-function formatDate(dateString) {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('id-ID', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit'
-    });
-}
-
-
-// Logout Function
-function logout() {
-    // Show loading notification
-    showAlert('Sedang logout...', 'info');
-    
-    // Clear user data
-    localStorage.removeItem('currentUser');
-    localStorage.removeItem('userAnimals');
-    localStorage.removeItem('userServices');
-    currentUser = null;
-    isLoggedIn = false;
-    
-    // Close any open modals
-    const modals = document.querySelectorAll('.modal');
-    modals.forEach(modal => {
-        const modalInstance = bootstrap.Modal.getInstance(modal);
-        if (modalInstance) {
-            modalInstance.hide();
-        }
-    });
-    
-    // Redirect after short delay
     setTimeout(() => {
-        window.location.href = 'index.html';
-    }, 1000);
+        if (alertDiv.parentNode) {
+            alertDiv.parentNode.removeChild(alertDiv);
+        }
+    }, 5000);
 }
 
-// Confirm Logout Function
+// Navigation Functions
+function goToHomepage() {
+    window.location.href = 'index.html';
+}
+
 function confirmLogout() {
     const modal = new bootstrap.Modal(document.getElementById('logoutModal'));
     modal.show();
 }
 
-// Go to Homepage Function
-function goToHomepage() {
+function logout() {
+    localStorage.removeItem('currentUser');
     window.location.href = 'index.html';
 }
 
-// Show Alert Function
-function showAlert(message, type) {
-    // Remove existing alerts
-    const existingAlerts = document.querySelectorAll('.alert');
-    existingAlerts.forEach(alert => alert.remove());
-
-    // Create new alert
-    const alertDiv = document.createElement('div');
-    alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
-    alertDiv.innerHTML = `
-        ${message}
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-    `;
-
-    // Insert alert
-    const container = document.querySelector('.container');
-    if (container) {
-        container.insertBefore(alertDiv, container.firstChild);
-    }
-
-    // Auto remove after 5 seconds
-    setTimeout(() => {
-        if (alertDiv.parentNode) {
-            alertDiv.remove();
-        }
-    }, 5000);
-}
-
-// Document Viewer Functions
-let currentDocumentId = null;
-
-// View Document
-function viewDocument(documentId) {
-    const document = requirementsData.find(doc => doc.id === documentId);
-    if (document) {
-        currentDocumentId = documentId;
-        
-        // Populate modal with document information
-        document.getElementById('docRequesterName').textContent = document.requesterName;
-        document.getElementById('docType').textContent = document.documentTypeLabel;
-        document.getElementById('docFileName').textContent = document.fileName;
-        document.getElementById('docUploadDate').textContent = formatDate(document.uploadDate);
-        
-        // Show document preview (simulate)
-        const previewArea = document.getElementById('documentPreview');
-        previewArea.innerHTML = `
-            <div class="text-center">
-                <i class="fas fa-file-${getFileIcon(document.fileName)} fa-4x text-primary mb-3"></i>
-                <h5>${document.fileName}</h5>
-                <p class="text-muted">Jenis: ${document.documentTypeLabel}</p>
-                <p class="text-muted">Ukuran: ${getFileSize()}</p>
-                <button class="btn btn-primary" onclick="downloadDocument('${documentId}')">
-                    <i class="fas fa-download me-2"></i>Download Dokumen
-                </button>
-            </div>
-        `;
-        
-        // Show modal
-        const modal = new bootstrap.Modal(document.getElementById('documentViewerModal'));
-        modal.show();
-    }
-}
-
-// Approve Document
-function approveDocument(documentId) {
-    const document = requirementsData.find(doc => doc.id === documentId);
-    if (document) {
-        document.verificationStatus = 'verified';
-        document.notes = document.getElementById('verificationNotes')?.value || 'Dokumen disetujui';
-        updateRequirementsTable();
-        
-        // Show success message
-        alert('Dokumen berhasil disetujui!');
-    }
-}
-
-// Reject Document
-function rejectDocument(documentId) {
-    const document = requirementsData.find(doc => doc.id === documentId);
-    if (document) {
-        document.verificationStatus = 'rejected';
-        document.notes = document.getElementById('verificationNotes')?.value || 'Dokumen ditolak';
-        updateRequirementsTable();
-        
-        // Show rejection message
-        alert('Dokumen ditolak!');
-    }
-}
-
-// Download Document (simulate)
-function downloadDocument(documentId) {
-    const document = requirementsData.find(doc => doc.id === documentId);
-    if (document) {
-        // Simulate download
-        alert(`Downloading: ${document.fileName}`);
-    }
-}
-
-// Helper Functions for Documents
-function getVerificationStatusColor(status) {
-    switch (status) {
-        case 'verified': return 'success';
-        case 'rejected': return 'danger';
-        case 'pending': return 'warning';
-        default: return 'secondary';
-    }
-}
-
-function getVerificationStatusLabel(status) {
-    switch (status) {
-        case 'verified': return 'Disetujui';
-        case 'rejected': return 'Ditolak';
-        case 'pending': return 'Menunggu';
-        default: return 'Tidak Diketahui';
-    }
-}
-
-function getFileIcon(fileName) {
-    const extension = fileName.split('.').pop().toLowerCase();
-    switch (extension) {
-        case 'pdf': return 'file-pdf';
-        case 'jpg':
-        case 'jpeg':
-        case 'png': return 'file-image';
-        case 'doc':
-        case 'docx': return 'file-word';
-        default: return 'file';
-    }
-}
-
-function getFileSize() {
-    // Simulate file size
-    const sizes = ['2.5 MB', '1.8 MB', '3.2 MB', '4.1 MB', '1.5 MB'];
-    return sizes[Math.floor(Math.random() * sizes.length)];
-}
-
-// Export functions
-window.viewServiceRequest = viewServiceRequest;
-window.updateServiceStatus = updateServiceStatus;
+// Export functions for global access
 window.changePage = changePage;
-window.logout = logout;
-window.confirmLogout = confirmLogout;
+window.toggleSelectAll = toggleSelectAll;
+window.toggleServiceSelection = toggleServiceSelection;
+window.viewServiceDetail = viewServiceDetail;
+window.updateServiceStatusModal = updateServiceStatusModal;
+window.updateServiceStatus = updateServiceStatus;
+window.searchServiceRequests = searchServiceRequests;
+window.bulkApprove = bulkApprove;
+window.bulkInProgress = bulkInProgress;
+window.bulkReject = bulkReject;
 window.goToHomepage = goToHomepage;
-window.viewDocument = viewDocument;
-window.approveDocument = approveDocument;
-window.rejectDocument = rejectDocument;
-window.downloadDocument = downloadDocument;
-window.changeRequirementsPage = changeRequirementsPage;
-
-// Setup logout event listeners
-document.addEventListener('DOMContentLoaded', function() {
-    // Logout Links
-    const logoutLinks = document.querySelectorAll('[onclick="logout()"], [onclick="confirmLogout()"]');
-    logoutLinks.forEach(link => {
-        link.addEventListener('click', function(e) {
-            e.preventDefault();
-            if (this.getAttribute('onclick') === 'confirmLogout()') {
-                confirmLogout();
-            } else {
-                logout();
-            }
-        });
-    });
-    
-    // Requirements filter event listeners
-    const verificationStatusFilter = document.getElementById('verificationStatusFilter');
-    const documentTypeFilter = document.getElementById('documentTypeFilter');
-    const uploadDateFilter = document.getElementById('uploadDateFilter');
-    
-    if (verificationStatusFilter) {
-        verificationStatusFilter.addEventListener('change', updateRequirementsTable);
-    }
-    if (documentTypeFilter) {
-        documentTypeFilter.addEventListener('change', updateRequirementsTable);
-    }
-    if (uploadDateFilter) {
-        uploadDateFilter.addEventListener('change', updateRequirementsTable);
-    }
-});
+window.confirmLogout = confirmLogout;
+window.logout = logout;

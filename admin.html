@@ -6,7 +6,6 @@
     <title>Panel Administrator - Pelayanan Keswan</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.css" rel="stylesheet">
     <link href="styles.css" rel="stylesheet">
 </head>
 <body>
@@ -68,110 +67,43 @@
         <div class="container">
             <div class="row mb-4">
                 <div class="col-12">
-                    <h2 class="display-5 fw-bold text-navy mb-3">Dashboard Administrator</h2>
-                    <p class="lead text-muted">Panel administrator untuk mengelola permohonan layanan kesehatan hewan</p>
+                    <h2 class="display-5 fw-bold text-navy mb-3">Panel Kontrol Administrator</h2>
+                    <p class="lead text-muted">Kelola dan pantau semua pengajuan layanan dari masyarakat</p>
                 </div>
             </div>
 
-            <!-- Requirements Verification Section -->
+            <!-- Service Request Control Panel -->
             <div class="row g-4 mb-4">
                 <div class="col-12">
                     <div class="card">
-                        <div class="card-header bg-success text-white">
+                        <div class="card-header bg-primary text-white">
                             <h5 class="mb-0">
-                                <i class="fas fa-file-upload me-2"></i>Verifikasi Persyaratan dan Dokumen
-                            </h5>
-                        </div>
-                        <div class="card-body">
-                            <div class="row g-3 mb-4">
-                                <div class="col-md-4">
-                                    <label class="form-label">Filter Status Verifikasi</label>
-                                    <select class="form-select" id="verificationStatusFilter">
-                                        <option value="">Semua Status</option>
-                                        <option value="pending">Belum Diverifikasi</option>
-                                        <option value="verified">Sudah Diverifikasi</option>
-                                        <option value="rejected">Ditolak</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-4">
-                                    <label class="form-label">Jenis Dokumen</label>
-                                    <select class="form-select" id="documentTypeFilter">
-                                        <option value="">Semua Jenis</option>
-                                        <option value="ktp">KTP</option>
-                                        <option value="kk">Kartu Keluarga</option>
-                                        <option value="sertifikat">Sertifikat Hewan</option>
-                                        <option value="surat_keterangan">Surat Keterangan</option>
-                                        <option value="foto_hewan">Foto Hewan</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-4">
-                                    <label class="form-label">Tanggal Upload</label>
-                                    <input type="date" class="form-control" id="uploadDateFilter">
-                                </div>
-                            </div>
-
-                            <!-- Requirements Table -->
-                            <div class="table-responsive">
-                                <table class="table table-hover">
-                                    <thead>
-                                        <tr>
-                                            <th>ID</th>
-                                            <th>Pemohon</th>
-                                            <th>Jenis Dokumen</th>
-                                            <th>Nama File</th>
-                                            <th>Tanggal Upload</th>
-                                            <th>Status Verifikasi</th>
-                                            <th>Dokumen</th>
-                                            <th>Aksi</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="requirementsTable">
-                                        <!-- Data will be loaded here -->
-                                    </tbody>
-                                </table>
-                            </div>
-
-                            <!-- Pagination -->
-                            <nav aria-label="Requirements pagination">
-                                <ul class="pagination justify-content-center" id="requirementsPagination">
-                                    <!-- Pagination will be loaded here -->
-                                </ul>
-                            </nav>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Service Requests Data -->
-            <div class="row g-4">
-                <div class="col-12">
-                    <div class="card">
-                        <div class="card-header bg-navy text-white">
-                            <h5 class="mb-0">
-                                <i class="fas fa-clipboard-list me-2"></i>Data Permohonan Pelayanan
+                                <i class="fas fa-tasks me-2"></i>Panel Kontrol Pengajuan Layanan
                             </h5>
                         </div>
                         <div class="card-body">
                             <!-- Filter Controls -->
                             <div class="row g-3 mb-4">
                                 <div class="col-md-3">
-                                    <label class="form-label">Status</label>
-                                    <select class="form-select" id="statusFilter">
+                                    <label class="form-label">Status Layanan</label>
+                                    <select class="form-select" id="serviceStatusFilter">
                                         <option value="">Semua Status</option>
                                         <option value="pending">Menunggu</option>
                                         <option value="in_progress">Sedang Diproses</option>
                                         <option value="completed">Selesai</option>
                                         <option value="cancelled">Dibatalkan</option>
+                                        <option value="rejected">Ditolak</option>
                                     </select>
                                 </div>
                                 <div class="col-md-3">
                                     <label class="form-label">Jenis Layanan</label>
                                     <select class="form-select" id="serviceTypeFilter">
                                         <option value="">Semua Jenis</option>
-                                        <option value="pengobatan">Pengobatan</option>
-                                        <option value="vaksinasi">Vaksinasi</option>
-                                        <option value="konsultasi">Konsultasi</option>
-                                        <option value="telemedicine">Telemedicine</option>
+                                        <option value="animal_treatment">Pengobatan Hewan</option>
+                                        <option value="rabies_vaccination">Vaksinasi Rabies</option>
+                                        <option value="telemedicine_consultation">Konsultasi Telemedicine</option>
+                                        <option value="vet_practice_recommendation">Rekomendasi Praktek Dokter Hewan</option>
+                                        <option value="vet_control_recommendation">Rekomendasi Nomor Kontrol Veteriner</option>
                                     </select>
                                 </div>
                                 <div class="col-md-3">
@@ -184,11 +116,41 @@
                                 </div>
                             </div>
 
+                            <!-- Search and Actions -->
+                            <div class="row g-3 mb-4">
+                                <div class="col-md-6">
+                                    <label class="form-label">Cari Pengajuan</label>
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" id="searchInput" placeholder="Nomor tiket, nama pemohon, atau nama hewan...">
+                                        <button class="btn btn-outline-primary" onclick="searchServiceRequests()">
+                                            <i class="fas fa-search me-2"></i>Cari
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Aksi Massal</label>
+                                    <div class="btn-group" role="group">
+                                        <button class="btn btn-outline-success" onclick="bulkApprove()">
+                                            <i class="fas fa-check me-2"></i>Setujui Terpilih
+                                        </button>
+                                        <button class="btn btn-outline-warning" onclick="bulkInProgress()">
+                                            <i class="fas fa-clock me-2"></i>Proses Terpilih
+                                        </button>
+                                        <button class="btn btn-outline-danger" onclick="bulkReject()">
+                                            <i class="fas fa-times me-2"></i>Tolak Terpilih
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
                             <!-- Service Requests Table -->
                             <div class="table-responsive">
                                 <table class="table table-hover">
                                     <thead>
                                         <tr>
+                                            <th>
+                                                <input type="checkbox" id="selectAll" onchange="toggleSelectAll()">
+                                            </th>
                                             <th>ID</th>
                                             <th>Nomor Tiket</th>
                                             <th>Tanggal</th>
@@ -218,31 +180,63 @@
                 </div>
             </div>
 
-            <!-- Tracking Section -->
-            <div class="row mt-4">
-                <div class="col-12">
-                    <div class="card">
-                        <div class="card-header bg-success text-white">
-                            <h5 class="mb-0">
-                                <i class="fas fa-search me-2"></i>Tracking Status Layanan
-                            </h5>
-                        </div>
+            <!-- Statistics Cards -->
+            <div class="row g-4 mb-4">
+                <div class="col-md-3">
+                    <div class="card bg-primary text-white">
                         <div class="card-body">
-                            <div class="row g-3">
-                                <div class="col-md-8">
-                                    <label class="form-label">Masukkan Nomor Tiket</label>
-                                    <div class="input-group">
-                                        <input type="text" class="form-control" id="trackingTicketNumber" placeholder="Contoh: TK241201001">
-                                        <button class="btn btn-success" onclick="trackService()">
-                                            <i class="fas fa-search me-2"></i>Track
-                                        </button>
-                                    </div>
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h6 class="card-title">Total Pengajuan</h6>
+                                    <h3 id="totalRequests">0</h3>
                                 </div>
-                                <div class="col-md-4">
-                                    <label class="form-label">Status Terakhir</label>
-                                    <div id="trackingResult" class="text-muted">
-                                        <i class="fas fa-info-circle me-2"></i>Masukkan nomor tiket untuk melihat status
-                                    </div>
+                                <div class="align-self-center">
+                                    <i class="fas fa-clipboard-list fa-2x"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card bg-warning text-white">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h6 class="card-title">Menunggu</h6>
+                                    <h3 id="pendingRequests">0</h3>
+                                </div>
+                                <div class="align-self-center">
+                                    <i class="fas fa-clock fa-2x"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card bg-info text-white">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h6 class="card-title">Sedang Diproses</h6>
+                                    <h3 id="inProgressRequests">0</h3>
+                                </div>
+                                <div class="align-self-center">
+                                    <i class="fas fa-cog fa-2x"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card bg-success text-white">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h6 class="card-title">Selesai</h6>
+                                    <h3 id="completedRequests">0</h3>
+                                </div>
+                                <div class="align-self-center">
+                                    <i class="fas fa-check-circle fa-2x"></i>
                                 </div>
                             </div>
                         </div>
@@ -269,81 +263,14 @@
 
 
 
-    <!-- Document Viewer Modal -->
-    <div class="modal fade" id="documentViewerModal" tabindex="-1">
+
+    <!-- Service Request Detail Modal -->
+    <div class="modal fade" id="serviceDetailModal" tabindex="-1">
         <div class="modal-dialog modal-xl">
             <div class="modal-content">
-                <div class="modal-header bg-success text-white">
+                <div class="modal-header bg-primary text-white">
                     <h5 class="modal-title">
-                        <i class="fas fa-file-alt me-2"></i>Viewer Dokumen Persyaratan
-                    </h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="row g-3 mb-4">
-                        <div class="col-md-6">
-                            <label class="form-label fw-bold">Nama Pemohon</label>
-                            <p id="docRequesterName" class="form-control-plaintext">-</p>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label fw-bold">Jenis Dokumen</label>
-                            <p id="docType" class="form-control-plaintext">-</p>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label fw-bold">Nama File</label>
-                            <p id="docFileName" class="form-control-plaintext">-</p>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label fw-bold">Tanggal Upload</label>
-                            <p id="docUploadDate" class="form-control-plaintext">-</p>
-                        </div>
-                    </div>
-                    
-                    <!-- Document Preview Area -->
-                    <div class="document-preview-area">
-                        <div class="text-center mb-3">
-                            <h6>Preview Dokumen</h6>
-                        </div>
-                        <div id="documentPreview" class="border rounded p-3 text-center" style="min-height: 400px; background-color: #f8f9fa;">
-                            <div class="d-flex align-items-center justify-content-center h-100">
-                                <div>
-                                    <i class="fas fa-file-alt fa-3x text-muted mb-3"></i>
-                                    <p class="text-muted">Dokumen akan ditampilkan di sini</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Verification Actions -->
-                    <div class="row g-3 mt-4">
-                        <div class="col-12">
-                            <label class="form-label fw-bold">Catatan Verifikasi</label>
-                            <textarea class="form-control" id="verificationNotes" rows="3" placeholder="Masukkan catatan verifikasi dokumen..."></textarea>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                        <i class="fas fa-times me-2"></i>Tutup
-                    </button>
-                    <button type="button" class="btn btn-danger" onclick="rejectDocument()">
-                        <i class="fas fa-times-circle me-2"></i>Tolak
-                    </button>
-                    <button type="button" class="btn btn-success" onclick="approveDocument()">
-                        <i class="fas fa-check-circle me-2"></i>Setujui
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Service Detail Modal -->
-    <div class="modal fade" id="serviceDetailModal" tabindex="-1">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header bg-navy text-white">
-                    <h5 class="modal-title">
-                        <i class="fas fa-clipboard-list me-2"></i>Detail Permohonan Layanan
+                        <i class="fas fa-clipboard-list me-2"></i>Detail Pengajuan Layanan
                     </h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
@@ -354,7 +281,7 @@
                             <p id="detailTicketNumber" class="form-control-plaintext">-</p>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label fw-bold">Tanggal Permohonan</label>
+                            <label class="form-label fw-bold">Tanggal Pengajuan</label>
                             <p id="detailDate" class="form-control-plaintext">-</p>
                         </div>
                         <div class="col-md-6">
@@ -370,8 +297,8 @@
                             <p id="detailServiceType" class="form-control-plaintext">-</p>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label fw-bold">Dokter Hewan</label>
-                            <p id="detailVeterinarian" class="form-control-plaintext">-</p>
+                            <label class="form-label fw-bold">Status</label>
+                            <p id="detailStatus" class="form-control-plaintext">-</p>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label fw-bold">Nama Hewan</label>
@@ -386,8 +313,8 @@
                             <p id="detailPriority" class="form-control-plaintext">-</p>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label fw-bold">Status</label>
-                            <p id="detailStatus" class="form-control-plaintext">-</p>
+                            <label class="form-label fw-bold">Dokter Hewan</label>
+                            <p id="detailVeterinarian" class="form-control-plaintext">-</p>
                         </div>
                         <div class="col-12">
                             <label class="form-label fw-bold">Keluhan/Gejala</label>
@@ -402,6 +329,63 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
                         <i class="fas fa-times me-2"></i>Tutup
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Status Update Modal -->
+    <div class="modal fade" id="statusUpdateModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-warning text-white">
+                    <h5 class="modal-title">
+                        <i class="fas fa-edit me-2"></i>Update Status Layanan
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <label class="form-label fw-bold">Nomor Tiket</label>
+                            <p id="updateTicketNumber" class="form-control-plaintext">-</p>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label fw-bold">Status Saat Ini</label>
+                            <p id="currentStatus" class="form-control-plaintext">-</p>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label fw-bold">Status Baru</label>
+                            <select class="form-select" id="newStatus">
+                                <option value="pending">Menunggu</option>
+                                <option value="in_progress">Sedang Diproses</option>
+                                <option value="completed">Selesai</option>
+                                <option value="cancelled">Dibatalkan</option>
+                                <option value="rejected">Ditolak</option>
+                            </select>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label fw-bold">Dokter Hewan</label>
+                            <select class="form-select" id="assignedVeterinarian">
+                                <option value="">Pilih Dokter Hewan</option>
+                                <option value="drh_john_doe">Drh. John Doe</option>
+                                <option value="drh_jane_smith">Drh. Jane Smith</option>
+                                <option value="drh_mike_wilson">Drh. Mike Wilson</option>
+                            </select>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label fw-bold">Catatan Update</label>
+                            <textarea class="form-control" id="statusUpdateNotes" rows="3" placeholder="Masukkan catatan update status..."></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-2"></i>Batal
+                    </button>
+                    <button type="button" class="btn btn-warning" onclick="updateServiceStatus()">
+                        <i class="fas fa-save me-2"></i>Update Status
                     </button>
                 </div>
             </div>
@@ -435,7 +419,6 @@
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
     <!-- Supabase JS -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <!-- Supabase Config -->
