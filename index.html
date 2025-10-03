@@ -122,7 +122,60 @@
         </div>
     </section>
 
-
+    <!-- Pelayanan Rekomendasi -->
+    <section class="py-5 bg-light">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-10">
+                    <div class="unified-card">
+                        <div class="card-header">
+                            <h2 class="card-title">
+                                <i class="fas fa-lightbulb me-2"></i>Pelayanan Rekomendasi
+                            </h2>
+                            <p class="card-subtitle">Dapatkan rekomendasi terbaik untuk kesehatan hewan peliharaan Anda</p>
+                        </div>
+                        <div class="card-body">
+                            <!-- Services Row -->
+                            <div class="services-row">
+                                <div class="service-item" 
+                                     data-bs-toggle="tooltip" 
+                                     data-bs-placement="top" 
+                                     title="Rekomendasi praktek dokter hewan terdekat"
+                                     onclick="showVetPracticeRecommendation()">
+                                    <div class="service-icon">
+                                        <i class="fas fa-map-marker-alt"></i>
+                                    </div>
+                                    <div class="service-content">
+                                        <h5 class="service-title">Rekomendasi Praktek Dokter Hewan</h5>
+                                        <p class="service-desc">Dokter hewan terdekat</p>
+                                    </div>
+                                    <div class="service-status">
+                                        <span class="status-dot active"></span>
+                                    </div>
+                                </div>
+                                <div class="service-item" 
+                                     data-bs-toggle="tooltip" 
+                                     data-bs-placement="top" 
+                                     title="Rekomendasi nomor kontrol veteriner"
+                                     onclick="showVetControlNumberRecommendation()">
+                                    <div class="service-icon">
+                                        <i class="fas fa-id-card"></i>
+                                    </div>
+                                    <div class="service-content">
+                                        <h5 class="service-title">Rekomendasi Nomor Kontrol Veteriner</h5>
+                                        <p class="service-desc">Kontrol veteriner</p>
+                                    </div>
+                                    <div class="service-status">
+                                        <span class="status-dot active"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
     <!-- Footer -->
     <footer class="bg-navy text-white py-4">
