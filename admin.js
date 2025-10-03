@@ -88,7 +88,6 @@ const requirementsPerPage = 10;
 function loadRequirementsData() {
     // Load from localStorage - simulate uploaded documents
     const userServices = JSON.parse(localStorage.getItem('userServices') || '[]');
-    const vetPracticeRecommendations = JSON.parse(localStorage.getItem('vetPracticeRecommendations') || '[]');
     
     // Generate sample requirements data based on submissions
     requirementsData = [];
@@ -142,23 +141,6 @@ function loadRequirementsData() {
         }
     });
     
-    // Add requirements for practice recommendations
-    vetPracticeRecommendations.forEach(rec => {
-        if (rec.ownerName) {
-            requirementsData.push({
-                id: `req_${rec.id}_ktp`,
-                requesterName: rec.ownerName,
-                requesterNIK: rec.ownerNIK || 'N/A',
-                documentType: 'ktp',
-                documentTypeLabel: 'KTP',
-                fileName: `ktp_${rec.ownerName.replace(/\s+/g, '_')}.jpg`,
-                uploadDate: rec.createdAt,
-                verificationStatus: 'pending',
-                filePath: `uploads/ktp_${rec.id}.jpg`,
-                notes: ''
-            });
-        }
-    });
     
     // Sort by upload date (newest first)
     requirementsData.sort((a, b) => new Date(b.uploadDate) - new Date(a.uploadDate));
