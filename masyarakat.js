@@ -95,11 +95,6 @@ function setupEventListeners() {
         editProfileForm.addEventListener('submit', handleEditProfile);
     }
 
-    // Vet Practice Recommendation Form (Permentan 3/2019)
-    const vetPracticeRecommendationForm = document.getElementById('vetPracticeRecommendationForm');
-    if (vetPracticeRecommendationForm) {
-        vetPracticeRecommendationForm.addEventListener('submit', handleVetPracticeRecommendation);
-    }
     
     // Submission Card Event Listeners (backup for onclick)
     const submissionCards = document.querySelectorAll('.submission-card');
@@ -469,15 +464,7 @@ function showNewServiceModal() {
     modal.show();
 }
 
-function showVetPracticeRecommendationModal() {
-    const modal = new bootstrap.Modal(document.getElementById('vetPracticeRecommendationModal'));
-    modal.show();
-}
 
-function showVetControlNumberRecommendationModal() {
-    const modal = new bootstrap.Modal(document.getElementById('vetControlNumberRecommendationModal'));
-    modal.show();
-}
 
 function showVaccinationModal() {
     const modal = new bootstrap.Modal(document.getElementById('vaccinationModal'));
@@ -670,142 +657,8 @@ function getDirections() {
     showAlert('Fitur petunjuk arah akan segera tersedia!', 'info');
 }
 
-function applyControlNumber() {
-    showAlert('Pengajuan nomor kontrol berhasil! Tim kami akan menghubungi Anda dalam 1-2 hari kerja.', 'success');
-}
 
 // Handle Vet Practice Recommendation Submission (Permentan No. 3 Tahun 2019)
-function handleVetPracticeRecommendation(e) {
-    e.preventDefault();
-
-    const form = e.target;
-    const ticketNumber = generateTicketNumber();
-    const data = {
-        id: generateId(),
-        ticketNumber: ticketNumber,
-        type: 'rekomendasi_praktek_dokter_hewan',
-        drhName: document.getElementById('drhName').value.trim(),
-        drhNIK: document.getElementById('drhNIK').value.trim(),
-        strvNumber: document.getElementById('strvNumber').value.trim(),
-        strvIssuedAt: document.getElementById('strvIssuedAt').value,
-        strvValidUntil: document.getElementById('strvValidUntil').value,
-        domicileAddress: document.getElementById('domicileAddress').value.trim(),
-        practiceAddress: document.getElementById('practiceAddress').value.trim(),
-        practiceType: document.getElementById('practiceType').value,
-        qualification: document.getElementById('qualification').value.trim(),
-        facilities: document.getElementById('facilities').value.trim(),
-        reqHealthCert: document.getElementById('reqHealthCert').checked,
-        reqSKCK: document.getElementById('reqSKCK').checked,
-        reqDiploma: document.getElementById('reqDiploma').checked,
-        reqStatement: document.getElementById('reqStatement').checked,
-        ownerNIK: currentUser?.nik,
-        ownerName: currentUser?.fullName,
-        createdAt: new Date().toISOString(),
-        status: 'submitted'
-    };
-
-    // Basic validation & business rules per regulation intent
-    const errors = [];
-    if (!data.drhName) errors.push('Nama Dokter Hewan wajib diisi');
-    if (!data.drhNIK) errors.push('NIK wajib diisi');
-    if (!data.strvNumber) errors.push('Nomor STRV wajib diisi');
-    if (!data.strvIssuedAt) errors.push('Tanggal terbit STRV wajib diisi');
-    if (!data.strvValidUntil) errors.push('Tanggal berlaku STRV wajib diisi');
-    if (!data.domicileAddress) errors.push('Alamat domisili wajib diisi');
-    if (!data.practiceAddress) errors.push('Alamat tempat praktek wajib diisi');
-    if (!data.practiceType) errors.push('Jenis praktek wajib dipilih');
-    if (!(data.reqHealthCert && data.reqSKCK && data.reqDiploma && data.reqStatement)) {
-        errors.push('Semua pernyataan pemenuhan persyaratan harus dicentang');
-    }
-
-    // Date consistency: validUntil must be after issuedAt
-    if (data.strvIssuedAt && data.strvValidUntil) {
-        const issued = new Date(data.strvIssuedAt);
-        const validUntil = new Date(data.strvValidUntil);
-        if (validUntil <= issued) {
-            errors.push('Masa berlaku STRV harus setelah tanggal terbit');
-        }
-    }
-
-    if (errors.length > 0) {
-        showAlert('<strong>Validasi Gagal:</strong><br>' + errors.map(e => `- ${e}`).join('<br>'), 'danger');
-        return;
-    }
-
-    (async () => {
-        try {
-            // Optional uploads
-            const uploads = {};
-            const files = [
-                { id: 'healthCertFile', key: 'doc_health_cert' },
-                { id: 'skckFile', key: 'doc_skck' },
-                { id: 'diplomaFile', key: 'doc_diploma' },
-                { id: 'statementFile', key: 'doc_statement' }
-            ];
-
-            if (typeof uploadToBucket !== 'undefined' && typeof BUCKETS !== 'undefined') {
-                for (const f of files) {
-                    const input = document.getElementById(f.id);
-                    if (input && input.files && input.files[0]) {
-                        const file = input.files[0];
-                        if (file.size > 10 * 1024 * 1024) {
-                            showAlert('Ukuran file melebihi 10 MB: ' + file.name, 'danger');
-                            return;
-                        }
-                        const ext = file.name.split('.').pop();
-                        const path = `${currentUser?.nik || 'guest'}/${data.id}/${f.key}.${ext}`;
-                        try {
-                            const publicUrl = await uploadToBucket(BUCKETS.VET_PRACTICE_DOCS, path, file);
-                            uploads[f.key] = publicUrl;
-                        } catch (err) {
-                            console.warn('Upload gagal untuk', f.key, err);
-                        }
-                    }
-                }
-            }
-
-            const payload = {
-                drh_name: data.drhName,
-                drh_nik: data.drhNIK,
-                strv_number: data.strvNumber,
-                strv_issued_at: data.strvIssuedAt,
-                strv_valid_until: data.strvValidUntil,
-                domicile_address: data.domicileAddress,
-                practice_address: data.practiceAddress,
-                practice_type: data.practiceType,
-                qualification: data.qualification || null,
-                facilities: data.facilities || null,
-                req_health_cert: data.reqHealthCert,
-                req_skck: data.reqSKCK,
-                req_diploma: data.reqDiploma,
-                req_statement: data.reqStatement,
-                doc_health_cert: uploads.doc_health_cert || null,
-                doc_skck: uploads.doc_skck || null,
-                doc_diploma: uploads.doc_diploma || null,
-                doc_statement: uploads.doc_statement || null,
-                owner_nik: data.ownerNIK || null,
-                owner_name: data.ownerName || null,
-                status: 'submitted'
-            };
-
-            if (typeof VetPracticeRecommendationService !== 'undefined') {
-                await VetPracticeRecommendationService.submit(payload);
-            } else {
-                const submissions = JSON.parse(localStorage.getItem('vetPracticeRecommendations') || '[]');
-                submissions.push({ ...payload, id: data.id });
-                localStorage.setItem('vetPracticeRecommendations', JSON.stringify(submissions));
-            }
-
-            showAlert(`Pengajuan rekomendasi praktek dokter hewan berhasil dikirim!<br><strong>Nomor Tiket: ${ticketNumber}</strong><br>Gunakan nomor ini untuk tracking status pengajuan.`, 'success');
-            const modal = bootstrap.Modal.getInstance(document.getElementById('vetPracticeRecommendationModal'));
-            if (modal) modal.hide();
-            form.reset();
-        } catch (error) {
-            console.error('Submit vet practice recommendation error:', error);
-            showAlert('Gagal mengirim pengajuan: ' + (error.message || 'Unknown error'), 'danger');
-        }
-    })();
-}
 
 // Export functions
 window.showNewServiceModal = showNewServiceModal;
@@ -814,14 +667,11 @@ window.showTelemedicineModal = showTelemedicineModal;
 window.showAnimalModal = showAnimalModal;
 window.showProfileServiceModal = showProfileServiceModal;
 window.showEditProfileModal = showEditProfileModal;
-window.showVetPracticeRecommendationModal = showVetPracticeRecommendationModal;
-window.showVetControlNumberRecommendationModal = showVetControlNumberRecommendationModal;
 window.handleEditProfile = handleEditProfile;
 window.editAnimal = editAnimal;
 window.deleteAnimal = deleteAnimal;
 window.viewService = viewService;
 window.getDirections = getDirections;
-window.applyControlNumber = applyControlNumber;
 window.logout = logout;
 window.confirmLogout = confirmLogout;
 window.goToHomepage = goToHomepage;
