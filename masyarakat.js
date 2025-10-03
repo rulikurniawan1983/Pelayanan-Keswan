@@ -1594,7 +1594,18 @@ function submitVetControlForm() {
 
 // Service Button Functions
 function showTreatmentService() {
-    showSubmissionModal('pengobatan');
+    const modal = new bootstrap.Modal(document.getElementById('animalTreatmentModal'));
+    
+    // Pre-fill owner data from current user
+    if (currentUser) {
+        document.getElementById('treatmentOwnerName').value = currentUser.fullName || '';
+        document.getElementById('treatmentOwnerNIK').value = currentUser.nik || '';
+        document.getElementById('treatmentOwnerPhone').value = currentUser.phone || '';
+        document.getElementById('treatmentOwnerEmail').value = currentUser.email || '';
+        document.getElementById('treatmentOwnerAddress').value = currentUser.address || '';
+    }
+    
+    modal.show();
 }
 
 function showVaccinationService() {
@@ -1603,6 +1614,156 @@ function showVaccinationService() {
 
 function showTelemedicineService() {
     showSubmissionModal('telemedicine');
+}
+
+// Animal Treatment Form Functions
+function submitAnimalTreatmentForm() {
+    // Get form data
+    const ownerName = document.getElementById('treatmentOwnerName').value.trim();
+    const ownerNIK = document.getElementById('treatmentOwnerNIK').value.trim();
+    const ownerPhone = document.getElementById('treatmentOwnerPhone').value.trim();
+    const ownerEmail = document.getElementById('treatmentOwnerEmail').value.trim();
+    const ownerAddress = document.getElementById('treatmentOwnerAddress').value.trim();
+    
+    const animalName = document.getElementById('treatmentAnimalName').value.trim();
+    const animalType = document.getElementById('treatmentAnimalType').value;
+    const animalBreed = document.getElementById('treatmentAnimalBreed').value.trim();
+    const animalGender = document.getElementById('treatmentAnimalGender').value;
+    const animalAge = document.getElementById('treatmentAnimalAge').value.trim();
+    const animalWeight = document.getElementById('treatmentAnimalWeight').value;
+    const animalColor = document.getElementById('treatmentAnimalColor').value.trim();
+    const animalReproductive = document.getElementById('treatmentAnimalReproductive').value;
+    
+    const mainComplaint = document.getElementById('treatmentMainComplaint').value.trim();
+    const medicalHistory = document.getElementById('treatmentMedicalHistory').value.trim();
+    const vaccinationHistory = document.getElementById('treatmentVaccinationHistory').value.trim();
+    const treatmentHistory = document.getElementById('treatmentTreatmentHistory').value.trim();
+    const allergyHistory = document.getElementById('treatmentAllergyHistory').value.trim();
+    const duration = document.getElementById('treatmentDuration').value.trim();
+    const behaviorChanges = document.getElementById('treatmentBehaviorChanges').value.trim();
+    
+    const priority = document.getElementById('treatmentPriority').value;
+    const preferredSchedule = document.getElementById('treatmentPreferredSchedule').value;
+    const additionalNotes = document.getElementById('treatmentAdditionalNotes').value.trim();
+    
+    // Get file inputs
+    const ktpFile = document.getElementById('treatmentKTPFile').files[0];
+    const animalPhotoFile = document.getElementById('treatmentAnimalPhotoFile').files[0];
+    const medicalRecordFile = document.getElementById('treatmentMedicalRecordFile').files[0];
+    const otherFile = document.getElementById('treatmentOtherFile').files[0];
+    
+    // Validation
+    if (!ownerName || !ownerNIK || !ownerPhone || !ownerAddress) {
+        showAlert('Mohon lengkapi data pemilik hewan!', 'warning');
+        return;
+    }
+    
+    if (!animalName || !animalType || !animalBreed || !animalGender || !animalAge) {
+        showAlert('Mohon lengkapi data hewan!', 'warning');
+        return;
+    }
+    
+    if (!mainComplaint) {
+        showAlert('Mohon isi keluhan utama!', 'warning');
+        return;
+    }
+    
+    if (!priority) {
+        showAlert('Mohon pilih prioritas!', 'warning');
+        return;
+    }
+    
+    if (!ktpFile) {
+        showAlert('Mohon upload KTP pemilik!', 'warning');
+        return;
+    }
+    
+    // Create treatment request
+    const treatmentRequest = {
+        id: generateId(),
+        type: 'animal_treatment',
+        ticketNumber: generateTicketNumber(),
+        owner: {
+            name: ownerName,
+            nik: ownerNIK,
+            phone: ownerPhone,
+            email: ownerEmail,
+            address: ownerAddress
+        },
+        animal: {
+            name: animalName,
+            type: animalType,
+            breed: animalBreed,
+            gender: animalGender,
+            age: animalAge,
+            weight: animalWeight,
+            color: animalColor,
+            reproductiveStatus: animalReproductive
+        },
+        anamnesis: {
+            mainComplaint: mainComplaint,
+            medicalHistory: medicalHistory,
+            vaccinationHistory: vaccinationHistory,
+            treatmentHistory: treatmentHistory,
+            allergyHistory: allergyHistory,
+            duration: duration,
+            behaviorChanges: behaviorChanges
+        },
+        documents: {
+            ktp: ktpFile ? ktpFile.name : null,
+            animalPhoto: animalPhotoFile ? animalPhotoFile.name : null,
+            medicalRecord: medicalRecordFile ? medicalRecordFile.name : null,
+            other: otherFile ? otherFile.name : null
+        },
+        priority: priority,
+        preferredSchedule: preferredSchedule,
+        additionalNotes: additionalNotes,
+        status: 'pending',
+        ownerNIK: currentUser.nik,
+        ownerName: currentUser.fullName,
+        createdAt: new Date().toISOString()
+    };
+    
+    // Save to localStorage
+    let animalTreatmentRequests = JSON.parse(localStorage.getItem('animalTreatmentRequests') || '[]');
+    animalTreatmentRequests.push(treatmentRequest);
+    localStorage.setItem('animalTreatmentRequests', JSON.stringify(animalTreatmentRequests));
+    
+    // Also add to userServices for tracking
+    userServices.push({
+        id: treatmentRequest.id,
+        ticketNumber: treatmentRequest.ticketNumber,
+        serviceType: 'animal_treatment',
+        animalName: animalName,
+        animalType: animalType,
+        status: 'pending',
+        ownerNIK: currentUser.nik,
+        ownerName: currentUser.fullName,
+        createdAt: new Date().toISOString(),
+        description: 'Pengobatan Hewan - ' + animalName
+    });
+    localStorage.setItem('userServices', JSON.stringify(userServices));
+    
+    // Show success message
+    showAlert(`
+        <div class="text-center">
+            <i class="fas fa-check-circle fa-3x text-primary mb-3"></i>
+            <h5>Pengajuan Berhasil!</h5>
+            <p><strong>Nomor Tiket:</strong> ${treatmentRequest.ticketNumber}</p>
+            <p class="text-muted">Pengajuan pengobatan hewan <strong>${animalName}</strong> telah diajukan.</p>
+            <p class="text-muted">Prioritas: <strong>${priority}</strong></p>
+        </div>
+    `, 'success');
+    
+    // Close modal
+    const modal = bootstrap.Modal.getInstance(document.getElementById('animalTreatmentModal'));
+    modal.hide();
+    
+    // Reset form
+    document.getElementById('animalTreatmentForm').reset();
+    
+    // Update dashboard
+    updateDashboard();
 }
 
 // Export functions
@@ -1616,3 +1777,4 @@ window.submitVetControlForm = submitVetControlForm;
 window.showTreatmentService = showTreatmentService;
 window.showVaccinationService = showVaccinationService;
 window.showTelemedicineService = showTelemedicineService;
+window.submitAnimalTreatmentForm = submitAnimalTreatmentForm;
