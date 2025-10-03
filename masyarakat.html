@@ -66,6 +66,9 @@
                                 <button class="btn btn-navy" onclick="goToHomepage()">
                                     <i class="fas fa-list me-2"></i>Semua Layanan Service
                                 </button>
+                                <button class="btn btn-success" onclick="showPermentanForm()">
+                                    <i class="fas fa-file-signature me-2"></i>Surat Rekomendasi Praktek (Permentan 3/2019)
+                                </button>
                                 <button class="btn btn-outline-secondary" onclick="goToHomepage()">
                                     <i class="fas fa-home me-2"></i>Kembali ke Homepage
                                 </button>
@@ -79,6 +82,208 @@
             </div>
         </div>
     </section>
+
+    <!-- Permentan 3/2019 Veterinary Practice Recommendation Form Modal -->
+    <div class="modal fade" id="permentanModal" tabindex="-1">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title">
+                        <i class="fas fa-file-signature me-2"></i>Form Pengajuan Surat Rekomendasi Praktek Dokter Hewan
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        <strong>Informasi:</strong> Form ini mengacu pada Peraturan Menteri Pertanian Nomor 3 Tahun 2019 tentang Kewenangan Kabupaten dalam Pemberian Rekomendasi Praktek Dokter Hewan.
+                    </div>
+                    
+                    <form id="permentanForm">
+                        <div class="row g-3">
+                            <!-- Data Pemohon -->
+                            <div class="col-12">
+                                <h6 class="text-success mb-3">
+                                    <i class="fas fa-user me-2"></i>Data Pemohon
+                                </h6>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label class="form-label">Nama Lengkap <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="permentanApplicantName" required>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label class="form-label">NIK <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="permentanApplicantNIK" required>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label class="form-label">No. Telepon <span class="text-danger">*</span></label>
+                                <input type="tel" class="form-control" id="permentanApplicantPhone" required>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label class="form-label">Email</label>
+                                <input type="email" class="form-control" id="permentanApplicantEmail">
+                            </div>
+                            
+                            <div class="col-12">
+                                <label class="form-label">Alamat Lengkap <span class="text-danger">*</span></label>
+                                <textarea class="form-control" id="permentanApplicantAddress" rows="3" required></textarea>
+                        </div>
+                            
+                            <!-- Data Dokter Hewan -->
+                            <div class="col-12">
+                                <h6 class="text-success mb-3">
+                                    <i class="fas fa-user-md me-2"></i>Data Dokter Hewan
+                                </h6>
+    </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label">Nama Dokter Hewan <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="permentanVetName" required>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label class="form-label">NIK Dokter Hewan <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="permentanVetNIK" required>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label class="form-label">Nomor STRV <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="permentanSTRVNumber" placeholder="Nomor Surat Tanda Registrasi Veteriner" required>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label class="form-label">STRV Berlaku Hingga <span class="text-danger">*</span></label>
+                                <input type="date" class="form-control" id="permentanSTRVValidUntil" required>
+                            </div>
+                            
+                            <div class="col-12">
+                                <label class="form-label">Alamat Tempat Praktek <span class="text-danger">*</span></label>
+                                <textarea class="form-control" id="permentanPracticeAddress" rows="2" required></textarea>
+    </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label">Jenis Praktek <span class="text-danger">*</span></label>
+                                <select class="form-select" id="permentanPracticeType" required>
+                                    <option value="">Pilih Jenis Praktek</option>
+                                    <option value="mandiri">Praktek Mandiri</option>
+                                    <option value="klinik">Klinik Hewan</option>
+                                    <option value="rumah_sakit">Rumah Sakit Hewan</option>
+                                    <option value="mobil">Praktek Hewan Keliling</option>
+                                </select>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label class="form-label">Spesialisasi/Kualifikasi</label>
+                                <input type="text" class="form-control" id="permentanSpecialization" placeholder="Contoh: Bedah, Dermatologi, dll">
+                            </div>
+                            
+                            <!-- Persyaratan Permentan 3/2019 -->
+                            <div class="col-12">
+                                <h6 class="text-success mb-3">
+                                    <i class="fas fa-check-circle me-2"></i>Persyaratan Sesuai Permentan 3/2019
+                                </h6>
+                            </div>
+                            
+                            <div class="col-12">
+                                <div class="alert alert-warning">
+                                    <strong>Pernyataan Pemenuhan Persyaratan:</strong>
+                                    <div class="form-check mt-2">
+                                        <input class="form-check-input" type="checkbox" id="permentanHealthCert" required>
+                                        <label class="form-check-label" for="permentanHealthCert">
+                                            Surat Keterangan Sehat dari dokter
+                                        </label>
+                            </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="permentanSKCK" required>
+                                        <label class="form-check-label" for="permentanSKCK">
+                                            SKCK (Surat Keterangan Catatan Kepolisian) yang masih berlaku
+                                        </label>
+                        </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="permentanDiploma" required>
+                                        <label class="form-check-label" for="permentanDiploma">
+                                            Salinan Ijazah Kedokteran Hewan yang telah dilegalisir
+                                        </label>
+                        </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="permentanStatement" required>
+                                        <label class="form-check-label" for="permentanStatement">
+                                            Surat Pernyataan mematuhi peraturan perundang-undangan
+                                        </label>
+            </div>
+        </div>
+    </div>
+
+                            <!-- Dokumen Pendukung -->
+                            <div class="col-12">
+                                <h6 class="text-success mb-3">
+                                    <i class="fas fa-file-upload me-2"></i>Dokumen Pendukung
+                                </h6>
+    </div>
+
+                        <div class="col-md-6">
+                                <label class="form-label">KTP Pemohon <span class="text-danger">*</span></label>
+                                <input type="file" class="form-control" id="permentanKTPFile" accept=".pdf,.jpg,.jpeg,.png" required>
+                            </div>
+                            
+                        <div class="col-md-6">
+                                <label class="form-label">Surat Keterangan Sehat</label>
+                                <input type="file" class="form-control" id="permentanHealthCertFile" accept=".pdf,.jpg,.jpeg,.png">
+    </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label">SKCK</label>
+                                <input type="file" class="form-control" id="permentanSKCKFile" accept=".pdf,.jpg,.jpeg,.png">
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label class="form-label">Ijazah Kedokteran Hewan</label>
+                                <input type="file" class="form-control" id="permentanDiplomaFile" accept=".pdf,.jpg,.jpeg,.png">
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label class="form-label">Surat Pernyataan</label>
+                                <input type="file" class="form-control" id="permentanStatementFile" accept=".pdf,.jpg,.jpeg,.png">
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label class="form-label">STRV (Surat Tanda Registrasi Veteriner)</label>
+                                <input type="file" class="form-control" id="permentanSTRVFile" accept=".pdf,.jpg,.jpeg,.png">
+                            </div>
+                            
+                            <div class="col-12">
+                                <small class="text-muted">Format yang didukung: PDF, JPG, PNG. Maksimal 10MB per file.</small>
+                            </div>
+                            
+                            <!-- Tujuan Pengajuan -->
+                            <div class="col-12">
+                                <label class="form-label">Tujuan Pengajuan <span class="text-danger">*</span></label>
+                                <textarea class="form-control" id="permentanPurpose" rows="3" placeholder="Jelaskan tujuan dan alasan pengajuan surat rekomendasi praktek dokter hewan..." required></textarea>
+                            </div>
+                            
+                            <!-- Catatan -->
+                            <div class="col-12">
+                                <label class="form-label">Catatan Tambahan</label>
+                                <textarea class="form-control" id="permentanNotes" rows="2" placeholder="Catatan atau informasi tambahan (opsional)"></textarea>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-2"></i>Batal
+                    </button>
+                    <button type="button" class="btn btn-success" onclick="submitPermentanForm()">
+                        <i class="fas fa-paper-plane me-2"></i>Ajukan Surat Rekomendasi
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Scripts -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
