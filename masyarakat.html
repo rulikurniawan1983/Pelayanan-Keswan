@@ -911,6 +911,259 @@
         </div>
     </div>
 
+    <!-- Telemedicine Consultation Form Modal -->
+    <div class="modal fade" id="telemedicineModal" tabindex="-1">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header bg-info text-white">
+                    <h5 class="modal-title">
+                        <i class="fas fa-video me-2"></i>Form Pengajuan Konsultasi Telemedicine
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        <strong>Informasi:</strong> Form ini untuk pengajuan layanan konsultasi telemedicine dengan data pemilik dan anamnesis signalment hewan. Konsultasi dapat dilakukan melalui WhatsApp atau Zoom.
+                    </div>
+                    
+                    <form id="telemedicineForm">
+                        <div class="row g-3">
+                            <!-- Data Pemilik -->
+                            <div class="col-12">
+                                <h6 class="text-info mb-3">
+                                    <i class="fas fa-user me-2"></i>Data Pemilik Hewan
+                                </h6>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label class="form-label">Nama Lengkap Pemilik <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="telemedicineOwnerName" required>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label class="form-label">NIK Pemilik <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="telemedicineOwnerNIK" required>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label class="form-label">No. Telepon/WhatsApp <span class="text-danger">*</span></label>
+                                <input type="tel" class="form-control" id="telemedicineOwnerPhone" placeholder="Contoh: 08123456789" required>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label class="form-label">Email</label>
+                                <input type="email" class="form-control" id="telemedicineOwnerEmail">
+                            </div>
+                            
+                            <div class="col-12">
+                                <label class="form-label">Alamat Lengkap <span class="text-danger">*</span></label>
+                                <textarea class="form-control" id="telemedicineOwnerAddress" rows="3" required></textarea>
+                            </div>
+                            
+                            <!-- Data Anamnesis Signalment Hewan -->
+                            <div class="col-12">
+                                <h6 class="text-info mb-3">
+                                    <i class="fas fa-paw me-2"></i>Data Anamnesis Signalment Hewan
+                                </h6>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label class="form-label">Nama Hewan <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="telemedicineAnimalName" required>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label class="form-label">Jenis Hewan <span class="text-danger">*</span></label>
+                                <select class="form-select" id="telemedicineAnimalType" required>
+                                    <option value="">Pilih Jenis Hewan</option>
+                                    <option value="anjing">Anjing</option>
+                                    <option value="kucing">Kucing</option>
+                                    <option value="burung">Burung</option>
+                                    <option value="kelinci">Kelinci</option>
+                                    <option value="hamster">Hamster</option>
+                                    <option value="reptil">Reptil</option>
+                                    <option value="lainnya">Lainnya</option>
+                                </select>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label class="form-label">Ras/Breed <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="telemedicineAnimalBreed" placeholder="Contoh: Golden Retriever, Persia, dll" required>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label class="form-label">Jenis Kelamin <span class="text-danger">*</span></label>
+                                <select class="form-select" id="telemedicineAnimalGender" required>
+                                    <option value="">Pilih Jenis Kelamin</option>
+                                    <option value="jantan">Jantan</option>
+                                    <option value="betina">Betina</option>
+                                </select>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label class="form-label">Umur <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="telemedicineAnimalAge" placeholder="Contoh: 2 tahun, 6 bulan, dll" required>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label class="form-label">Berat Badan (kg)</label>
+                                <input type="number" class="form-control" id="telemedicineAnimalWeight" placeholder="Berat badan dalam kg" step="0.1">
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label class="form-label">Warna Bulu/Rambut</label>
+                                <input type="text" class="form-control" id="telemedicineAnimalColor" placeholder="Contoh: Coklat, Hitam, Putih, dll">
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label class="form-label">Status Reproduksi</label>
+                                <select class="form-select" id="telemedicineAnimalReproductive">
+                                    <option value="">Pilih Status</option>
+                                    <option value="intact">Intact (Belum dikebiri/disteril)</option>
+                                    <option value="neutered">Neutered (Sudah dikebiri/disteril)</option>
+                                    <option value="unknown">Tidak Diketahui</option>
+                                </select>
+                            </div>
+                            
+                            <!-- Keluhan dan Gejala -->
+                            <div class="col-12">
+                                <h6 class="text-info mb-3">
+                                    <i class="fas fa-clipboard-list me-2"></i>Keluhan dan Gejala
+                                </h6>
+                            </div>
+                            
+                            <div class="col-12">
+                                <label class="form-label">Keluhan Utama <span class="text-danger">*</span></label>
+                                <textarea class="form-control" id="telemedicineMainComplaint" rows="3" placeholder="Jelaskan keluhan utama yang dialami hewan..." required></textarea>
+                            </div>
+                            
+                            <div class="col-12">
+                                <label class="form-label">Gejala yang Terlihat</label>
+                                <textarea class="form-control" id="telemedicineSymptoms" rows="2" placeholder="Jelaskan gejala yang terlihat pada hewan (demam, muntah, diare, dll)"></textarea>
+                            </div>
+                            
+                            <div class="col-12">
+                                <label class="form-label">Lama Keluhan</label>
+                                <input type="text" class="form-control" id="telemedicineDuration" placeholder="Contoh: 3 hari, 1 minggu, 2 bulan, dll">
+                            </div>
+                            
+                            <div class="col-12">
+                                <label class="form-label">Perubahan Perilaku</label>
+                                <textarea class="form-control" id="telemedicineBehaviorChanges" rows="2" placeholder="Perubahan perilaku yang terlihat (makan, minum, aktivitas, dll)"></textarea>
+                            </div>
+                            
+                            <!-- Riwayat Kesehatan -->
+                            <div class="col-12">
+                                <h6 class="text-info mb-3">
+                                    <i class="fas fa-heartbeat me-2"></i>Riwayat Kesehatan
+                                </h6>
+                            </div>
+                            
+                            <div class="col-12">
+                                <label class="form-label">Riwayat Penyakit Sebelumnya</label>
+                                <textarea class="form-control" id="telemedicineMedicalHistory" rows="2" placeholder="Riwayat penyakit yang pernah dialami hewan (jika ada)"></textarea>
+                            </div>
+                            
+                            <div class="col-12">
+                                <label class="form-label">Riwayat Vaksinasi</label>
+                                <textarea class="form-control" id="telemedicineVaccinationHistory" rows="2" placeholder="Riwayat vaksinasi yang pernah diberikan (jika ada)"></textarea>
+                            </div>
+                            
+                            <div class="col-12">
+                                <label class="form-label">Riwayat Alergi</label>
+                                <textarea class="form-control" id="telemedicineAllergyHistory" rows="2" placeholder="Riwayat alergi yang diketahui (jika ada)"></textarea>
+                            </div>
+                            
+                            <div class="col-12">
+                                <label class="form-label">Riwayat Pengobatan</label>
+                                <textarea class="form-control" id="telemedicineTreatmentHistory" rows="2" placeholder="Riwayat pengobatan yang pernah diberikan (jika ada)"></textarea>
+                            </div>
+                            
+                            <!-- Platform Konsultasi -->
+                            <div class="col-12">
+                                <h6 class="text-info mb-3">
+                                    <i class="fas fa-video me-2"></i>Platform Konsultasi
+                                </h6>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label class="form-label">Platform Pilihan <span class="text-danger">*</span></label>
+                                <select class="form-select" id="telemedicinePlatform" required>
+                                    <option value="">Pilih Platform</option>
+                                    <option value="whatsapp">WhatsApp</option>
+                                    <option value="zoom">Zoom</option>
+                                    <option value="keduanya">Keduanya (WhatsApp & Zoom)</option>
+                                </select>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label class="form-label">Jadwal Konsultasi <span class="text-danger">*</span></label>
+                                <input type="datetime-local" class="form-control" id="telemedicinePreferredSchedule" required>
+                            </div>
+                            
+                            <div class="col-12">
+                                <label class="form-label">Durasi Konsultasi yang Diinginkan</label>
+                                <select class="form-select" id="telemedicineDuration">
+                                    <option value="">Pilih Durasi</option>
+                                    <option value="15">15 menit</option>
+                                    <option value="30">30 menit</option>
+                                    <option value="45">45 menit</option>
+                                    <option value="60">60 menit</option>
+                                </select>
+                            </div>
+                            
+                            <!-- Dokumen Pendukung -->
+                            <div class="col-12">
+                                <h6 class="text-info mb-3">
+                                    <i class="fas fa-file-upload me-2"></i>Dokumen Pendukung
+                                </h6>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label class="form-label">KTP Pemilik <span class="text-danger">*</span></label>
+                                <input type="file" class="form-control" id="telemedicineKTPFile" accept=".pdf,.jpg,.jpeg,.png" required>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label class="form-label">Foto Hewan</label>
+                                <input type="file" class="form-control" id="telemedicineAnimalPhotoFile" accept=".jpg,.jpeg,.png">
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label class="form-label">Video Hewan (jika ada)</label>
+                                <input type="file" class="form-control" id="telemedicineAnimalVideoFile" accept=".mp4,.mov,.avi">
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label class="form-label">Hasil Lab/Medical Record (jika ada)</label>
+                                <input type="file" class="form-control" id="telemedicineMedicalRecordFile" accept=".pdf,.jpg,.jpeg,.png">
+                            </div>
+                            
+                            <div class="col-12">
+                                <small class="text-muted">Format yang didukung: PDF, JPG, PNG, MP4, MOV, AVI. Maksimal 10MB per file.</small>
+                            </div>
+                            
+                            <!-- Catatan Tambahan -->
+                            <div class="col-12">
+                                <label class="form-label">Catatan Tambahan</label>
+                                <textarea class="form-control" id="telemedicineAdditionalNotes" rows="3" placeholder="Informasi tambahan yang perlu diketahui dokter hewan"></textarea>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-2"></i>Batal
+                    </button>
+                    <button type="button" class="btn btn-info" onclick="submitTelemedicineForm()">
+                        <i class="fas fa-paper-plane me-2"></i>Ajukan Konsultasi
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Scripts -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
     <script src="masyarakat.js"></script>

@@ -1624,7 +1624,18 @@ function showVaccinationService() {
 }
 
 function showTelemedicineService() {
-    showSubmissionModal('telemedicine');
+    const modal = new bootstrap.Modal(document.getElementById('telemedicineModal'));
+    
+    // Pre-fill owner data from current user
+    if (currentUser) {
+        document.getElementById('telemedicineOwnerName').value = currentUser.fullName || '';
+        document.getElementById('telemedicineOwnerNIK').value = currentUser.nik || '';
+        document.getElementById('telemedicineOwnerPhone').value = currentUser.phone || '';
+        document.getElementById('telemedicineOwnerEmail').value = currentUser.email || '';
+        document.getElementById('telemedicineOwnerAddress').value = currentUser.address || '';
+    }
+    
+    modal.show();
 }
 
 // Animal Treatment Form Functions
@@ -1937,6 +1948,188 @@ function submitRabiesVaccinationForm() {
     updateDashboard();
 }
 
+// Telemedicine Form Functions
+function submitTelemedicineForm() {
+    // Get form data
+    const ownerName = document.getElementById('telemedicineOwnerName').value.trim();
+    const ownerNIK = document.getElementById('telemedicineOwnerNIK').value.trim();
+    const ownerPhone = document.getElementById('telemedicineOwnerPhone').value.trim();
+    const ownerEmail = document.getElementById('telemedicineOwnerEmail').value.trim();
+    const ownerAddress = document.getElementById('telemedicineOwnerAddress').value.trim();
+    
+    const animalName = document.getElementById('telemedicineAnimalName').value.trim();
+    const animalType = document.getElementById('telemedicineAnimalType').value;
+    const animalBreed = document.getElementById('telemedicineAnimalBreed').value.trim();
+    const animalGender = document.getElementById('telemedicineAnimalGender').value;
+    const animalAge = document.getElementById('telemedicineAnimalAge').value.trim();
+    const animalWeight = document.getElementById('telemedicineAnimalWeight').value;
+    const animalColor = document.getElementById('telemedicineAnimalColor').value.trim();
+    const animalReproductive = document.getElementById('telemedicineAnimalReproductive').value;
+    
+    const mainComplaint = document.getElementById('telemedicineMainComplaint').value.trim();
+    const symptoms = document.getElementById('telemedicineSymptoms').value.trim();
+    const duration = document.getElementById('telemedicineDuration').value.trim();
+    const behaviorChanges = document.getElementById('telemedicineBehaviorChanges').value.trim();
+    
+    const medicalHistory = document.getElementById('telemedicineMedicalHistory').value.trim();
+    const vaccinationHistory = document.getElementById('telemedicineVaccinationHistory').value.trim();
+    const allergyHistory = document.getElementById('telemedicineAllergyHistory').value.trim();
+    const treatmentHistory = document.getElementById('telemedicineTreatmentHistory').value.trim();
+    
+    const platform = document.getElementById('telemedicinePlatform').value;
+    const preferredSchedule = document.getElementById('telemedicinePreferredSchedule').value;
+    const consultationDuration = document.getElementById('telemedicineDuration').value;
+    const additionalNotes = document.getElementById('telemedicineAdditionalNotes').value.trim();
+    
+    // Get file inputs
+    const ktpFile = document.getElementById('telemedicineKTPFile').files[0];
+    const animalPhotoFile = document.getElementById('telemedicineAnimalPhotoFile').files[0];
+    const animalVideoFile = document.getElementById('telemedicineAnimalVideoFile').files[0];
+    const medicalRecordFile = document.getElementById('telemedicineMedicalRecordFile').files[0];
+    
+    // Validation
+    if (!ownerName || !ownerNIK || !ownerPhone || !ownerAddress) {
+        showAlert('Mohon lengkapi data pemilik hewan!', 'warning');
+        return;
+    }
+    
+    if (!animalName || !animalType || !animalBreed || !animalGender || !animalAge) {
+        showAlert('Mohon lengkapi data hewan!', 'warning');
+        return;
+    }
+    
+    if (!mainComplaint) {
+        showAlert('Mohon isi keluhan utama!', 'warning');
+        return;
+    }
+    
+    if (!platform) {
+        showAlert('Mohon pilih platform konsultasi!', 'warning');
+        return;
+    }
+    
+    if (!preferredSchedule) {
+        showAlert('Mohon pilih jadwal konsultasi!', 'warning');
+        return;
+    }
+    
+    if (!ktpFile) {
+        showAlert('Mohon upload KTP pemilik!', 'warning');
+        return;
+    }
+    
+    // Create telemedicine consultation request
+    const telemedicineRequest = {
+        id: generateId(),
+        type: 'telemedicine_consultation',
+        ticketNumber: generateTicketNumber(),
+        owner: {
+            name: ownerName,
+            nik: ownerNIK,
+            phone: ownerPhone,
+            email: ownerEmail,
+            address: ownerAddress
+        },
+        animal: {
+            name: animalName,
+            type: animalType,
+            breed: animalBreed,
+            gender: animalGender,
+            age: animalAge,
+            weight: animalWeight,
+            color: animalColor,
+            reproductiveStatus: animalReproductive
+        },
+        consultation: {
+            mainComplaint: mainComplaint,
+            symptoms: symptoms,
+            duration: duration,
+            behaviorChanges: behaviorChanges,
+            medicalHistory: medicalHistory,
+            vaccinationHistory: vaccinationHistory,
+            allergyHistory: allergyHistory,
+            treatmentHistory: treatmentHistory
+        },
+        platform: {
+            platform: platform,
+            preferredSchedule: preferredSchedule,
+            consultationDuration: consultationDuration
+        },
+        documents: {
+            ktp: ktpFile ? ktpFile.name : null,
+            animalPhoto: animalPhotoFile ? animalPhotoFile.name : null,
+            animalVideo: animalVideoFile ? animalVideoFile.name : null,
+            medicalRecord: medicalRecordFile ? medicalRecordFile.name : null
+        },
+        additionalNotes: additionalNotes,
+        status: 'pending',
+        ownerNIK: currentUser.nik,
+        ownerName: currentUser.fullName,
+        createdAt: new Date().toISOString()
+    };
+    
+    // Save to localStorage
+    let telemedicineRequests = JSON.parse(localStorage.getItem('telemedicineRequests') || '[]');
+    telemedicineRequests.push(telemedicineRequest);
+    localStorage.setItem('telemedicineRequests', JSON.stringify(telemedicineRequests));
+    
+    // Also add to userServices for tracking
+    userServices.push({
+        id: telemedicineRequest.id,
+        ticketNumber: telemedicineRequest.ticketNumber,
+        serviceType: 'telemedicine_consultation',
+        animalName: animalName,
+        animalType: animalType,
+        status: 'pending',
+        ownerNIK: currentUser.nik,
+        ownerName: currentUser.fullName,
+        createdAt: new Date().toISOString(),
+        description: 'Konsultasi Telemedicine - ' + animalName
+    });
+    localStorage.setItem('userServices', JSON.stringify(userServices));
+    
+    // Generate WhatsApp and Zoom links
+    const whatsappMessage = `Halo, saya ingin melakukan konsultasi telemedicine untuk hewan saya ${animalName} (${animalType}). Keluhan: ${mainComplaint}. Nomor Tiket: ${telemedicineRequest.ticketNumber}`;
+    const whatsappLink = `https://wa.me/6281234567890?text=${encodeURIComponent(whatsappMessage)}`;
+    
+    // Show success message with platform links
+    let platformLinks = '';
+    if (platform === 'whatsapp' || platform === 'keduanya') {
+        platformLinks += `<a href="${whatsappLink}" target="_blank" class="btn btn-success me-2">
+            <i class="fab fa-whatsapp me-2"></i>Chat WhatsApp
+        </a>`;
+    }
+    if (platform === 'zoom' || platform === 'keduanya') {
+        platformLinks += `<button class="btn btn-primary" onclick="alert('Link Zoom akan dikirim via WhatsApp')">
+            <i class="fas fa-video me-2"></i>Join Zoom
+        </button>`;
+    }
+    
+    showAlert(`
+        <div class="text-center">
+            <i class="fas fa-check-circle fa-3x text-info mb-3"></i>
+            <h5>Pengajuan Berhasil!</h5>
+            <p><strong>Nomor Tiket:</strong> ${telemedicineRequest.ticketNumber}</p>
+            <p class="text-muted">Konsultasi telemedicine untuk <strong>${animalName}</strong> telah diajukan.</p>
+            <p class="text-muted">Platform: <strong>${platform}</strong></p>
+            <p class="text-muted">Jadwal: <strong>${new Date(preferredSchedule).toLocaleDateString('id-ID')}</strong></p>
+            <div class="mt-3">
+                ${platformLinks}
+            </div>
+        </div>
+    `, 'success');
+    
+    // Close modal
+    const modal = bootstrap.Modal.getInstance(document.getElementById('telemedicineModal'));
+    modal.hide();
+    
+    // Reset form
+    document.getElementById('telemedicineForm').reset();
+    
+    // Update dashboard
+    updateDashboard();
+}
+
 // Export functions
 window.showSubmissionModal = showSubmissionModal;
 window.submitServiceRequest = submitServiceRequest;
@@ -1950,3 +2143,4 @@ window.showVaccinationService = showVaccinationService;
 window.showTelemedicineService = showTelemedicineService;
 window.submitAnimalTreatmentForm = submitAnimalTreatmentForm;
 window.submitRabiesVaccinationForm = submitRabiesVaccinationForm;
+window.submitTelemedicineForm = submitTelemedicineForm;
