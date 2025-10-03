@@ -746,26 +746,19 @@ function initializeStatistics() {
 function updateStatistics() {
     // Load data from localStorage
     const userServices = JSON.parse(localStorage.getItem('userServices') || '[]');
+    const userAnimals = JSON.parse(localStorage.getItem('userAnimals') || '[]');
     const vetPracticeRecommendations = JSON.parse(localStorage.getItem('vetPracticeRecommendations') || '[]');
     
-    // Calculate statistics
-    const totalServices = userServices.length + vetPracticeRecommendations.length;
-    const pendingServices = userServices.filter(s => s.status === 'pending').length + 
-                           vetPracticeRecommendations.filter(r => r.status === 'submitted').length;
-    const inProgressServices = userServices.filter(s => s.status === 'in_progress').length;
-    const completedServices = userServices.filter(s => s.status === 'completed').length;
-    const vaccinationServices = userServices.filter(s => s.serviceType === 'vaksinasi').length;
-    const telemedicineServices = userServices.filter(s => s.serviceType === 'telemedicine').length;
-    const recommendationServices = vetPracticeRecommendations.length;
+    // Calculate total animals handled (unique animals from services and recommendations)
+    const animalsFromServices = userServices.map(service => service.animalId).filter(id => id);
+    const animalsFromRecommendations = vetPracticeRecommendations.map(rec => rec.animalId).filter(id => id);
+    const allAnimalIds = [...new Set([...animalsFromServices, ...animalsFromRecommendations])];
     
-    // Update DOM elements
-    updateStatElement('totalServices', totalServices);
-    updateStatElement('pendingServices', pendingServices);
-    updateStatElement('inProgressServices', inProgressServices);
-    updateStatElement('completedServices', completedServices);
-    updateStatElement('vaccinationServices', vaccinationServices);
-    updateStatElement('telemedicineServices', telemedicineServices);
-    updateStatElement('recommendationServices', recommendationServices);
+    // Total animals handled is the count of unique animals that have been processed
+    const totalAnimalsHandled = allAnimalIds.length;
+    
+    // Update DOM element
+    updateStatElement('totalAnimalsHandled', totalAnimalsHandled);
 }
 
 // Update individual statistic element with animation
