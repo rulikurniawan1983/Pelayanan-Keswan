@@ -73,65 +73,70 @@
                 </div>
             </div>
 
-            <!-- Statistics Cards -->
+            <!-- Requirements Verification Section -->
             <div class="row g-4 mb-4">
-                <div class="col-lg-3 col-md-6">
-                    <div class="card bg-primary text-white">
-                        <div class="card-body">
-                            <div class="d-flex justify-content-between">
-                                <div>
-                                    <h4 id="totalRequests" class="mb-0">0</h4>
-                                    <p class="mb-0">Total Permohonan</p>
-                                </div>
-                                <div class="align-self-center">
-                                    <i class="fas fa-clipboard-list fa-2x"></i>
-                                </div>
-                            </div>
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header bg-success text-white">
+                            <h5 class="mb-0">
+                                <i class="fas fa-file-upload me-2"></i>Verifikasi Persyaratan dan Dokumen
+                            </h5>
                         </div>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-6">
-                    <div class="card bg-warning text-white">
                         <div class="card-body">
-                            <div class="d-flex justify-content-between">
-                                <div>
-                                    <h4 id="pendingRequests" class="mb-0">0</h4>
-                                    <p class="mb-0">Menunggu</p>
+                            <div class="row g-3 mb-4">
+                                <div class="col-md-4">
+                                    <label class="form-label">Filter Status Verifikasi</label>
+                                    <select class="form-select" id="verificationStatusFilter">
+                                        <option value="">Semua Status</option>
+                                        <option value="pending">Belum Diverifikasi</option>
+                                        <option value="verified">Sudah Diverifikasi</option>
+                                        <option value="rejected">Ditolak</option>
+                                    </select>
                                 </div>
-                                <div class="align-self-center">
-                                    <i class="fas fa-clock fa-2x"></i>
+                                <div class="col-md-4">
+                                    <label class="form-label">Jenis Dokumen</label>
+                                    <select class="form-select" id="documentTypeFilter">
+                                        <option value="">Semua Jenis</option>
+                                        <option value="ktp">KTP</option>
+                                        <option value="kk">Kartu Keluarga</option>
+                                        <option value="sertifikat">Sertifikat Hewan</option>
+                                        <option value="surat_keterangan">Surat Keterangan</option>
+                                        <option value="foto_hewan">Foto Hewan</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">Tanggal Upload</label>
+                                    <input type="date" class="form-control" id="uploadDateFilter">
                                 </div>
                             </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-6">
-                    <div class="card bg-info text-white">
-                        <div class="card-body">
-                            <div class="d-flex justify-content-between">
-                                <div>
-                                    <h4 id="inProgressRequests" class="mb-0">0</h4>
-                                    <p class="mb-0">Diproses</p>
-                                </div>
-                                <div class="align-self-center">
-                                    <i class="fas fa-cogs fa-2x"></i>
-                                </div>
+
+                            <!-- Requirements Table -->
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Pemohon</th>
+                                            <th>Jenis Dokumen</th>
+                                            <th>Nama File</th>
+                                            <th>Tanggal Upload</th>
+                                            <th>Status Verifikasi</th>
+                                            <th>Dokumen</th>
+                                            <th>Aksi</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="requirementsTable">
+                                        <!-- Data will be loaded here -->
+                                    </tbody>
+                                </table>
                             </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-6">
-                    <div class="card bg-success text-white">
-                        <div class="card-body">
-                            <div class="d-flex justify-content-between">
-                                <div>
-                                    <h4 id="completedRequests" class="mb-0">0</h4>
-                                    <p class="mb-0">Selesai</p>
-                                </div>
-                                <div class="align-self-center">
-                                    <i class="fas fa-check-circle fa-2x"></i>
-                                </div>
-                            </div>
+
+                            <!-- Pagination -->
+                            <nav aria-label="Requirements pagination">
+                                <ul class="pagination justify-content-center" id="requirementsPagination">
+                                    <!-- Pagination will be loaded here -->
+                                </ul>
+                            </nav>
                         </div>
                     </div>
                 </div>
@@ -265,6 +270,74 @@
 
 
 
+
+    <!-- Document Viewer Modal -->
+    <div class="modal fade" id="documentViewerModal" tabindex="-1">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title">
+                        <i class="fas fa-file-alt me-2"></i>Viewer Dokumen Persyaratan
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Nama Pemohon</label>
+                            <p id="docRequesterName" class="form-control-plaintext">-</p>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Jenis Dokumen</label>
+                            <p id="docType" class="form-control-plaintext">-</p>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Nama File</label>
+                            <p id="docFileName" class="form-control-plaintext">-</p>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Tanggal Upload</label>
+                            <p id="docUploadDate" class="form-control-plaintext">-</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Document Preview Area -->
+                    <div class="document-preview-area">
+                        <div class="text-center mb-3">
+                            <h6>Preview Dokumen</h6>
+                        </div>
+                        <div id="documentPreview" class="border rounded p-3 text-center" style="min-height: 400px; background-color: #f8f9fa;">
+                            <div class="d-flex align-items-center justify-content-center h-100">
+                                <div>
+                                    <i class="fas fa-file-alt fa-3x text-muted mb-3"></i>
+                                    <p class="text-muted">Dokumen akan ditampilkan di sini</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Verification Actions -->
+                    <div class="row g-3 mt-4">
+                        <div class="col-12">
+                            <label class="form-label fw-bold">Catatan Verifikasi</label>
+                            <textarea class="form-control" id="verificationNotes" rows="3" placeholder="Masukkan catatan verifikasi dokumen..."></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-2"></i>Tutup
+                    </button>
+                    <button type="button" class="btn btn-danger" onclick="rejectDocument()">
+                        <i class="fas fa-times-circle me-2"></i>Tolak
+                    </button>
+                    <button type="button" class="btn btn-success" onclick="approveDocument()">
+                        <i class="fas fa-check-circle me-2"></i>Setujui
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Service Detail Modal -->
     <div class="modal fade" id="serviceDetailModal" tabindex="-1">

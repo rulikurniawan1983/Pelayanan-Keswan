@@ -83,7 +83,7 @@ function loadServiceRequests() {
     serviceRequests.sort((a, b) => new Date(b.date) - new Date(a.date));
     
     updateServiceRequestsTable();
-    updateDashboardStats();
+    loadRequirementsData();
 }
 
 // Generate ticket number
@@ -96,23 +96,221 @@ function generateTicketNumber() {
     return `TK${year}${month}${day}${random}`;
 }
 
-// Update Dashboard Statistics
-function updateDashboardStats() {
-    const totalRequests = serviceRequests.length;
-    const pendingRequests = serviceRequests.filter(req => req.status === 'pending').length;
-    const inProgressRequests = serviceRequests.filter(req => req.status === 'in_progress').length;
-    const completedRequests = serviceRequests.filter(req => req.status === 'completed').length;
+// Requirements/Documents Data
+let requirementsData = [];
+let currentRequirementsPage = 1;
+const requirementsPerPage = 10;
+
+// Load Requirements Data
+function loadRequirementsData() {
+    // Load from localStorage - simulate uploaded documents
+    const userServices = JSON.parse(localStorage.getItem('userServices') || '[]');
+    const vetPracticeRecommendations = JSON.parse(localStorage.getItem('vetPracticeRecommendations') || '[]');
     
-    // Update stats display if elements exist
-    const totalElement = document.getElementById('totalRequests');
-    const pendingElement = document.getElementById('pendingRequests');
-    const inProgressElement = document.getElementById('inProgressRequests');
-    const completedElement = document.getElementById('completedRequests');
+    // Generate sample requirements data based on submissions
+    requirementsData = [];
     
-    if (totalElement) totalElement.textContent = totalRequests;
-    if (pendingElement) pendingElement.textContent = pendingRequests;
-    if (inProgressElement) inProgressElement.textContent = inProgressRequests;
-    if (completedElement) completedElement.textContent = completedRequests;
+    // Add requirements for each service submission
+    userServices.forEach(service => {
+        if (service.ownerName) {
+            // Add KTP requirement
+            requirementsData.push({
+                id: `req_${service.id}_ktp`,
+                requesterName: service.ownerName,
+                requesterNIK: service.ownerNIK || 'N/A',
+                documentType: 'ktp',
+                documentTypeLabel: 'KTP',
+                fileName: `ktp_${service.ownerName.replace(/\s+/g, '_')}.jpg`,
+                uploadDate: service.createdAt,
+                verificationStatus: 'pending',
+                filePath: `uploads/ktp_${service.id}.jpg`,
+                notes: ''
+            });
+            
+            // Add KK requirement
+            requirementsData.push({
+                id: `req_${service.id}_kk`,
+                requesterName: service.ownerName,
+                requesterNIK: service.ownerNIK || 'N/A',
+                documentType: 'kk',
+                documentTypeLabel: 'Kartu Keluarga',
+                fileName: `kk_${service.ownerName.replace(/\s+/g, '_')}.jpg`,
+                uploadDate: service.createdAt,
+                verificationStatus: 'pending',
+                filePath: `uploads/kk_${service.id}.jpg`,
+                notes: ''
+            });
+            
+            // Add animal certificate if available
+            if (service.animalName) {
+                requirementsData.push({
+                    id: `req_${service.id}_cert`,
+                    requesterName: service.ownerName,
+                    requesterNIK: service.ownerNIK || 'N/A',
+                    documentType: 'sertifikat',
+                    documentTypeLabel: 'Sertifikat Hewan',
+                    fileName: `sertifikat_${service.animalName.replace(/\s+/g, '_')}.pdf`,
+                    uploadDate: service.createdAt,
+                    verificationStatus: 'pending',
+                    filePath: `uploads/sertifikat_${service.id}.pdf`,
+                    notes: ''
+                });
+            }
+        }
+    });
+    
+    // Add requirements for practice recommendations
+    vetPracticeRecommendations.forEach(rec => {
+        if (rec.ownerName) {
+            requirementsData.push({
+                id: `req_${rec.id}_ktp`,
+                requesterName: rec.ownerName,
+                requesterNIK: rec.ownerNIK || 'N/A',
+                documentType: 'ktp',
+                documentTypeLabel: 'KTP',
+                fileName: `ktp_${rec.ownerName.replace(/\s+/g, '_')}.jpg`,
+                uploadDate: rec.createdAt,
+                verificationStatus: 'pending',
+                filePath: `uploads/ktp_${rec.id}.jpg`,
+                notes: ''
+            });
+        }
+    });
+    
+    // Sort by upload date (newest first)
+    requirementsData.sort((a, b) => new Date(b.uploadDate) - new Date(a.uploadDate));
+    
+    updateRequirementsTable();
+}
+
+// Update Requirements Table
+function updateRequirementsTable() {
+    const tbody = document.getElementById('requirementsTable');
+    const pagination = document.getElementById('requirementsPagination');
+    
+    if (!tbody) return;
+    
+    // Apply filters
+    const statusFilter = document.getElementById('verificationStatusFilter')?.value || '';
+    const typeFilter = document.getElementById('documentTypeFilter')?.value || '';
+    const dateFilter = document.getElementById('uploadDateFilter')?.value || '';
+    
+    let filteredRequirements = requirementsData.filter(req => {
+        const statusMatch = !statusFilter || req.verificationStatus === statusFilter;
+        const typeMatch = !typeFilter || req.documentType === typeFilter;
+        const dateMatch = !dateFilter || req.uploadDate.startsWith(dateFilter);
+        
+        return statusMatch && typeMatch && dateMatch;
+    });
+    
+    // Pagination
+    const totalPages = Math.ceil(filteredRequirements.length / requirementsPerPage);
+    const startIndex = (currentRequirementsPage - 1) * requirementsPerPage;
+    const endIndex = startIndex + requirementsPerPage;
+    const paginatedRequirements = filteredRequirements.slice(startIndex, endIndex);
+    
+    // Update table
+    if (paginatedRequirements.length === 0) {
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="8" class="text-center text-muted">
+                    <i class="fas fa-inbox me-2"></i>Tidak ada dokumen persyaratan
+                </td>
+            </tr>
+        `;
+    } else {
+        tbody.innerHTML = paginatedRequirements.map(req => `
+            <tr>
+                <td><code>${req.id.substring(0, 8)}</code></td>
+                <td>
+                    <div>
+                        <strong>${req.requesterName}</strong>
+                        <br><small class="text-muted">NIK: ${req.requesterNIK}</small>
+                    </div>
+                </td>
+                <td>
+                    <span class="badge bg-info">${req.documentTypeLabel}</span>
+                </td>
+                <td>
+                    <div>
+                        <strong>${req.fileName}</strong>
+                        <br><small class="text-muted">${req.filePath}</small>
+                    </div>
+                </td>
+                <td>${formatDate(req.uploadDate)}</td>
+                <td>
+                    <span class="badge bg-${getVerificationStatusColor(req.verificationStatus)}">${getVerificationStatusLabel(req.verificationStatus)}</span>
+                </td>
+                <td>
+                    <button class="btn btn-sm btn-outline-primary" onclick="viewDocument('${req.id}')" title="Lihat Dokumen">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                </td>
+                <td>
+                    <div class="btn-group" role="group">
+                        <button class="btn btn-sm btn-outline-success" onclick="approveDocument('${req.id}')" title="Setujui">
+                            <i class="fas fa-check"></i>
+                        </button>
+                        <button class="btn btn-sm btn-outline-danger" onclick="rejectDocument('${req.id}')" title="Tolak">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+        `).join('');
+    }
+    
+    // Update pagination
+    if (pagination) {
+        updateRequirementsPagination(totalPages);
+    }
+}
+
+// Update Requirements Pagination
+function updateRequirementsPagination(totalPages) {
+    const pagination = document.getElementById('requirementsPagination');
+    if (!pagination) return;
+    
+    if (totalPages <= 1) {
+        pagination.innerHTML = '';
+        return;
+    }
+    
+    let paginationHTML = '';
+    
+    // Previous button
+    paginationHTML += `
+        <li class="page-item ${currentRequirementsPage === 1 ? 'disabled' : ''}">
+            <a class="page-link" href="#" onclick="changeRequirementsPage(${currentRequirementsPage - 1})">Previous</a>
+        </li>
+    `;
+    
+    // Page numbers
+    for (let i = 1; i <= totalPages; i++) {
+        paginationHTML += `
+            <li class="page-item ${i === currentRequirementsPage ? 'active' : ''}">
+                <a class="page-link" href="#" onclick="changeRequirementsPage(${i})">${i}</a>
+            </li>
+        `;
+    }
+    
+    // Next button
+    paginationHTML += `
+        <li class="page-item ${currentRequirementsPage === totalPages ? 'disabled' : ''}">
+            <a class="page-link" href="#" onclick="changeRequirementsPage(${currentRequirementsPage + 1})">Next</a>
+        </li>
+    `;
+    
+    pagination.innerHTML = paginationHTML;
+}
+
+// Change Requirements Page
+function changeRequirementsPage(page) {
+    const totalPages = Math.ceil(requirementsData.length / requirementsPerPage);
+    if (page < 1 || page > totalPages) return;
+    
+    currentRequirementsPage = page;
+    updateRequirementsTable();
 }
 
 // Update Service Requests Table
@@ -454,6 +652,114 @@ function showAlert(message, type) {
     }, 5000);
 }
 
+// Document Viewer Functions
+let currentDocumentId = null;
+
+// View Document
+function viewDocument(documentId) {
+    const document = requirementsData.find(doc => doc.id === documentId);
+    if (document) {
+        currentDocumentId = documentId;
+        
+        // Populate modal with document information
+        document.getElementById('docRequesterName').textContent = document.requesterName;
+        document.getElementById('docType').textContent = document.documentTypeLabel;
+        document.getElementById('docFileName').textContent = document.fileName;
+        document.getElementById('docUploadDate').textContent = formatDate(document.uploadDate);
+        
+        // Show document preview (simulate)
+        const previewArea = document.getElementById('documentPreview');
+        previewArea.innerHTML = `
+            <div class="text-center">
+                <i class="fas fa-file-${getFileIcon(document.fileName)} fa-4x text-primary mb-3"></i>
+                <h5>${document.fileName}</h5>
+                <p class="text-muted">Jenis: ${document.documentTypeLabel}</p>
+                <p class="text-muted">Ukuran: ${getFileSize()}</p>
+                <button class="btn btn-primary" onclick="downloadDocument('${documentId}')">
+                    <i class="fas fa-download me-2"></i>Download Dokumen
+                </button>
+            </div>
+        `;
+        
+        // Show modal
+        const modal = new bootstrap.Modal(document.getElementById('documentViewerModal'));
+        modal.show();
+    }
+}
+
+// Approve Document
+function approveDocument(documentId) {
+    const document = requirementsData.find(doc => doc.id === documentId);
+    if (document) {
+        document.verificationStatus = 'verified';
+        document.notes = document.getElementById('verificationNotes')?.value || 'Dokumen disetujui';
+        updateRequirementsTable();
+        
+        // Show success message
+        alert('Dokumen berhasil disetujui!');
+    }
+}
+
+// Reject Document
+function rejectDocument(documentId) {
+    const document = requirementsData.find(doc => doc.id === documentId);
+    if (document) {
+        document.verificationStatus = 'rejected';
+        document.notes = document.getElementById('verificationNotes')?.value || 'Dokumen ditolak';
+        updateRequirementsTable();
+        
+        // Show rejection message
+        alert('Dokumen ditolak!');
+    }
+}
+
+// Download Document (simulate)
+function downloadDocument(documentId) {
+    const document = requirementsData.find(doc => doc.id === documentId);
+    if (document) {
+        // Simulate download
+        alert(`Downloading: ${document.fileName}`);
+    }
+}
+
+// Helper Functions for Documents
+function getVerificationStatusColor(status) {
+    switch (status) {
+        case 'verified': return 'success';
+        case 'rejected': return 'danger';
+        case 'pending': return 'warning';
+        default: return 'secondary';
+    }
+}
+
+function getVerificationStatusLabel(status) {
+    switch (status) {
+        case 'verified': return 'Disetujui';
+        case 'rejected': return 'Ditolak';
+        case 'pending': return 'Menunggu';
+        default: return 'Tidak Diketahui';
+    }
+}
+
+function getFileIcon(fileName) {
+    const extension = fileName.split('.').pop().toLowerCase();
+    switch (extension) {
+        case 'pdf': return 'file-pdf';
+        case 'jpg':
+        case 'jpeg':
+        case 'png': return 'file-image';
+        case 'doc':
+        case 'docx': return 'file-word';
+        default: return 'file';
+    }
+}
+
+function getFileSize() {
+    // Simulate file size
+    const sizes = ['2.5 MB', '1.8 MB', '3.2 MB', '4.1 MB', '1.5 MB'];
+    return sizes[Math.floor(Math.random() * sizes.length)];
+}
+
 // Export functions
 window.viewServiceRequest = viewServiceRequest;
 window.updateServiceStatus = updateServiceStatus;
@@ -461,6 +767,11 @@ window.changePage = changePage;
 window.logout = logout;
 window.confirmLogout = confirmLogout;
 window.goToHomepage = goToHomepage;
+window.viewDocument = viewDocument;
+window.approveDocument = approveDocument;
+window.rejectDocument = rejectDocument;
+window.downloadDocument = downloadDocument;
+window.changeRequirementsPage = changeRequirementsPage;
 
 // Setup logout event listeners
 document.addEventListener('DOMContentLoaded', function() {
@@ -476,4 +787,19 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
+    
+    // Requirements filter event listeners
+    const verificationStatusFilter = document.getElementById('verificationStatusFilter');
+    const documentTypeFilter = document.getElementById('documentTypeFilter');
+    const uploadDateFilter = document.getElementById('uploadDateFilter');
+    
+    if (verificationStatusFilter) {
+        verificationStatusFilter.addEventListener('change', updateRequirementsTable);
+    }
+    if (documentTypeFilter) {
+        documentTypeFilter.addEventListener('change', updateRequirementsTable);
+    }
+    if (uploadDateFilter) {
+        uploadDateFilter.addEventListener('change', updateRequirementsTable);
+    }
 });
