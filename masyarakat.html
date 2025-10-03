@@ -105,6 +105,81 @@
                 </div>
             </div>
 
+            <!-- Submission Menu -->
+            <div class="row g-4 mb-4">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header bg-success text-white">
+                            <h5 class="mb-0">
+                                <i class="fas fa-file-upload me-2"></i>Menu Submission
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row g-3">
+                                <div class="col-md-4">
+                                    <div class="submission-card" onclick="showSubmissionModal('pengobatan')">
+                                        <div class="submission-icon bg-primary">
+                                            <i class="fas fa-stethoscope"></i>
+                                        </div>
+                                        <div class="submission-content">
+                                            <h6>Pengobatan Hewan</h6>
+                                            <p class="text-muted">Ajukan permohonan pengobatan hewan</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="submission-card" onclick="showSubmissionModal('vaksinasi')">
+                                        <div class="submission-icon bg-warning">
+                                            <i class="fas fa-syringe"></i>
+                                        </div>
+                                        <div class="submission-content">
+                                            <h6>Vaksinasi Rabies</h6>
+                                            <p class="text-muted">Ajukan permohonan vaksinasi rabies</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="submission-card" onclick="showSubmissionModal('telemedicine')">
+                                        <div class="submission-icon bg-info">
+                                            <i class="fas fa-video"></i>
+                                        </div>
+                                        <div class="submission-content">
+                                            <h6>Telemedicine</h6>
+                                            <p class="text-muted">Konsultasi online dengan dokter hewan</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Submission Status -->
+                            <div class="row mt-4">
+                                <div class="col-12">
+                                    <h6 class="mb-3">
+                                        <i class="fas fa-history me-2"></i>Status Submission Terbaru
+                                    </h6>
+                                    <div class="table-responsive">
+                                        <table class="table table-sm">
+                                            <thead>
+                                                <tr>
+                                                    <th>Tanggal</th>
+                                                    <th>Jenis Layanan</th>
+                                                    <th>Hewan</th>
+                                                    <th>Status</th>
+                                                    <th>Aksi</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="submissionStatusTable">
+                                                <!-- Data will be loaded here -->
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- Layanan Cepat -->
             <div class="row g-4">
                 <div class="col-12">
@@ -779,6 +854,117 @@
                     </button>
                     <button type="button" class="btn btn-success" onclick="applyControlNumber()">
                         <i class="fas fa-apply me-2"></i>Ajukan Nomor Kontrol
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Submission Modal -->
+    <div class="modal fade" id="submissionModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title">
+                        <i class="fas fa-file-upload me-2"></i>Form Submission Layanan
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="submissionForm">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Jenis Layanan <span class="text-danger">*</span></label>
+                                <select class="form-select" id="serviceType" required>
+                                    <option value="">Pilih Jenis Layanan</option>
+                                    <option value="pengobatan">Pengobatan Hewan</option>
+                                    <option value="vaksinasi">Vaksinasi Rabies</option>
+                                    <option value="telemedicine">Telemedicine</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Dokter Hewan <span class="text-danger">*</span></label>
+                                <select class="form-select" id="veterinarian" required>
+                                    <option value="">Pilih Dokter Hewan</option>
+                                    <option value="drh_john_doe">Drh. John Doe</option>
+                                    <option value="drh_jane_smith">Drh. Jane Smith</option>
+                                    <option value="drh_mike_wilson">Drh. Mike Wilson</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Nama Hewan <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="animalName" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Jenis Hewan <span class="text-danger">*</span></label>
+                                <select class="form-select" id="animalType" required>
+                                    <option value="">Pilih Jenis Hewan</option>
+                                    <option value="anjing">Anjing</option>
+                                    <option value="kucing">Kucing</option>
+                                    <option value="burung">Burung</option>
+                                    <option value="kelinci">Kelinci</option>
+                                    <option value="lainnya">Lainnya</option>
+                                </select>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label">Keluhan/Gejala <span class="text-danger">*</span></label>
+                                <textarea class="form-control" id="symptoms" rows="3" required placeholder="Jelaskan keluhan atau gejala yang dialami hewan..."></textarea>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Prioritas</label>
+                                <select class="form-select" id="priority">
+                                    <option value="normal">Normal</option>
+                                    <option value="urgent">Mendesak</option>
+                                    <option value="emergency">Darurat</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Tanggal Perkiraan Layanan</label>
+                                <input type="date" class="form-control" id="preferredDate">
+                            </div>
+                            
+                            <!-- Document Upload Section -->
+                            <div class="col-12">
+                                <hr>
+                                <h6 class="mb-3">
+                                    <i class="fas fa-file-upload me-2"></i>Upload Dokumen Persyaratan
+                                </h6>
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label">KTP <span class="text-danger">*</span></label>
+                                        <input type="file" class="form-control" id="ktpFile" accept=".pdf,.jpg,.jpeg,.png" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Kartu Keluarga <span class="text-danger">*</span></label>
+                                        <input type="file" class="form-control" id="kkFile" accept=".pdf,.jpg,.jpeg,.png" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Sertifikat Hewan</label>
+                                        <input type="file" class="form-control" id="animalCertFile" accept=".pdf,.jpg,.jpeg,.png">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Foto Hewan</label>
+                                        <input type="file" class="form-control" id="animalPhotoFile" accept=".jpg,.jpeg,.png">
+                                    </div>
+                                    <div class="col-12">
+                                        <small class="text-muted">Format yang didukung: PDF, JPG, PNG. Maks 10 MB per file.</small>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-12">
+                                <label class="form-label">Catatan Tambahan</label>
+                                <textarea class="form-control" id="notes" rows="2" placeholder="Catatan tambahan (opsional)..."></textarea>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-2"></i>Batal
+                    </button>
+                    <button type="button" class="btn btn-success" onclick="submitServiceRequest()">
+                        <i class="fas fa-paper-plane me-2"></i>Ajukan Permohonan
                     </button>
                 </div>
             </div>

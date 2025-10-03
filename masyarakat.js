@@ -114,6 +114,7 @@ function updateDashboard() {
     updateSelectedServices();
     updateAvailableServices();
     updateHistoryServices();
+    updateSubmissionStatusTable();
 }
 
 // Update User Info
@@ -1209,3 +1210,205 @@ function getServiceIcon(serviceType) {
             return 'fas fa-paw';
     }
 }
+
+// Submission Menu Functions
+function showSubmissionModal(serviceType) {
+    const modal = new bootstrap.Modal(document.getElementById('submissionModal'));
+    
+    // Pre-fill service type if provided
+    if (serviceType) {
+        document.getElementById('serviceType').value = serviceType;
+    }
+    
+    // Clear form
+    document.getElementById('submissionForm').reset();
+    
+    // Set default date to tomorrow
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    document.getElementById('preferredDate').value = tomorrow.toISOString().split('T')[0];
+    
+    modal.show();
+}
+
+function submitServiceRequest() {
+    // Get form data
+    const serviceType = document.getElementById('serviceType').value;
+    const veterinarian = document.getElementById('veterinarian').value;
+    const animalName = document.getElementById('animalName').value;
+    const animalType = document.getElementById('animalType').value;
+    const symptoms = document.getElementById('symptoms').value;
+    const priority = document.getElementById('priority').value;
+    const preferredDate = document.getElementById('preferredDate').value;
+    const notes = document.getElementById('notes').value;
+    
+    // Get file inputs
+    const ktpFile = document.getElementById('ktpFile').files[0];
+    const kkFile = document.getElementById('kkFile').files[0];
+    const animalCertFile = document.getElementById('animalCertFile').files[0];
+    const animalPhotoFile = document.getElementById('animalPhotoFile').files[0];
+    
+    // Validate required fields
+    if (!serviceType || !veterinarian || !animalName || !animalType || !symptoms) {
+        showAlert('Mohon lengkapi semua field yang wajib diisi!', 'warning');
+        return;
+    }
+    
+    if (!ktpFile || !kkFile) {
+        showAlert('Mohon upload KTP dan Kartu Keluarga!', 'warning');
+        return;
+    }
+    
+    // Create service request
+    const serviceRequest = {
+        id: generateId(),
+        serviceType: serviceType,
+        veterinarian: veterinarian,
+        animalName: animalName,
+        animalType: animalType,
+        symptoms: symptoms,
+        priority: priority,
+        preferredDate: preferredDate,
+        notes: notes,
+        status: 'pending',
+        ownerName: currentUser.name,
+        ownerNIK: currentUser.nik,
+        createdAt: new Date().toISOString(),
+        ticketNumber: generateTicketNumber(),
+        // File information (simulated)
+        documents: {
+            ktp: ktpFile ? ktpFile.name : null,
+            kk: kkFile ? kkFile.name : null,
+            animalCert: animalCertFile ? animalCertFile.name : null,
+            animalPhoto: animalPhotoFile ? animalPhotoFile.name : null
+        }
+    };
+    
+    // Add to user services
+    userServices.push(serviceRequest);
+    localStorage.setItem('userServices', JSON.stringify(userServices));
+    
+    // Show success message
+    showAlert('Permohonan layanan berhasil diajukan! Nomor tiket: ' + serviceRequest.ticketNumber, 'success');
+    
+    // Close modal
+    const modal = bootstrap.Modal.getInstance(document.getElementById('submissionModal'));
+    modal.hide();
+    
+    // Update dashboard
+    updateDashboard();
+    updateSubmissionStatusTable();
+}
+
+function updateSubmissionStatusTable() {
+    const tbody = document.getElementById('submissionStatusTable');
+    if (!tbody) return;
+    
+    // Get recent submissions (last 5)
+    const recentServices = userServices
+        .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+        .slice(0, 5);
+    
+    if (recentServices.length === 0) {
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="5" class="text-center text-muted">
+                    <i class="fas fa-inbox me-2"></i>Belum ada submission
+                </td>
+            </tr>
+        `;
+    } else {
+        tbody.innerHTML = recentServices.map(service => `
+            <tr>
+                <td>${formatDate(service.createdAt)}</td>
+                <td>
+                    <span class="badge bg-${getServiceTypeColor(service.serviceType)}">
+                        ${getServiceTypeLabel(service.serviceType)}
+                    </span>
+                </td>
+                <td>${service.animalName}</td>
+                <td>
+                    <span class="badge bg-${getStatusColor(service.status)}">
+                        ${getStatusLabel(service.status)}
+                    </span>
+                </td>
+                <td>
+                    <button class="btn btn-sm btn-outline-primary" onclick="viewSubmissionDetail('${service.id}')" title="Lihat Detail">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                </td>
+            </tr>
+        `).join('');
+    }
+}
+
+function viewSubmissionDetail(serviceId) {
+    const service = userServices.find(s => s.id === serviceId);
+    if (service) {
+        alert(`Detail Submission:\n\nNomor Tiket: ${service.ticketNumber}\nJenis Layanan: ${getServiceTypeLabel(service.serviceType)}\nHewan: ${service.animalName}\nDokter Hewan: ${service.veterinarian}\nStatus: ${getStatusLabel(service.status)}\nTanggal: ${formatDate(service.createdAt)}`);
+    }
+}
+
+// Helper functions for submission
+function generateTicketNumber() {
+    const now = new Date();
+    const year = now.getFullYear().toString().slice(-2);
+    const month = (now.getMonth() + 1).toString().padStart(2, '0');
+    const day = now.getDate().toString().padStart(2, '0');
+    const random = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
+    return `TK${year}${month}${day}${random}`;
+}
+
+function getServiceTypeLabel(type) {
+    const labels = {
+        'pengobatan': 'Pengobatan Hewan',
+        'vaksinasi': 'Vaksinasi Rabies',
+        'telemedicine': 'Telemedicine'
+    };
+    return labels[type] || type;
+}
+
+function getServiceTypeColor(type) {
+    const colors = {
+        'pengobatan': 'primary',
+        'vaksinasi': 'warning',
+        'telemedicine': 'info'
+    };
+    return colors[type] || 'secondary';
+}
+
+function getStatusLabel(status) {
+    const labels = {
+        'pending': 'Menunggu',
+        'in_progress': 'Diproses',
+        'completed': 'Selesai',
+        'cancelled': 'Dibatalkan'
+    };
+    return labels[status] || status;
+}
+
+function getStatusColor(status) {
+    const colors = {
+        'pending': 'warning',
+        'in_progress': 'info',
+        'completed': 'success',
+        'cancelled': 'danger'
+    };
+    return colors[status] || 'secondary';
+}
+
+function formatDate(dateString) {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('id-ID', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+    });
+}
+
+// Export functions
+window.showSubmissionModal = showSubmissionModal;
+window.submitServiceRequest = submitServiceRequest;
+window.viewSubmissionDetail = viewSubmissionDetail;
