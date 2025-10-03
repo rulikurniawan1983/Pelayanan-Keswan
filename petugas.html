@@ -69,22 +69,197 @@
     <!-- Dashboard Section -->
     <section id="dashboard" class="py-5">
         <div class="container">
-            <div class="row justify-content-center">
-                <div class="col-md-8">
+            <div class="row mb-4">
+                <div class="col-12">
+                    <h2 class="display-5 fw-bold text-navy mb-3">Panel Petugas</h2>
+                    <p class="lead text-muted">Tangani submission layanan dari masyarakat</p>
+                </div>
+            </div>
+
+            <!-- Submission Handling Panel -->
+            <div class="row g-4 mb-4">
+                <div class="col-12">
                     <div class="card">
-                        <div class="card-body text-center py-5">
-                            <h2 class="display-5 fw-bold text-navy mb-3">Panel Petugas</h2>
-                            <p class="lead text-muted mb-4">Selamat datang di panel petugas</p>
-                            
-                            <div class="d-grid gap-2 d-md-flex justify-content-md-center">
-                                <button class="btn btn-outline-secondary" onclick="goToHomepage()">
-                                    <i class="fas fa-home me-2"></i>Kembali ke Homepage
-                                </button>
-                                <button class="btn btn-outline-danger" onclick="confirmLogout()">
-                                    <i class="fas fa-sign-out-alt me-2"></i>Logout
-                                </button>
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="mb-0">
+                                <i class="fas fa-tasks me-2"></i>Tangani Submission Layanan
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <!-- Service Type Tabs -->
+                            <ul class="nav nav-tabs mb-4" id="serviceTabs" role="tablist">
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link active" id="treatment-tab" data-bs-toggle="tab" data-bs-target="#treatment" type="button" role="tab">
+                                        <i class="fas fa-stethoscope me-2"></i>Pengobatan Hewan
+                                    </button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link" id="vaccination-tab" data-bs-toggle="tab" data-bs-target="#vaccination" type="button" role="tab">
+                                        <i class="fas fa-syringe me-2"></i>Vaksinasi Rabies
+                                    </button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link" id="telemedicine-tab" data-bs-toggle="tab" data-bs-target="#telemedicine" type="button" role="tab">
+                                        <i class="fas fa-video me-2"></i>Telemedicine
+                                    </button>
+                                </li>
+                            </ul>
+
+                            <!-- Tab Content -->
+                            <div class="tab-content" id="serviceTabContent">
+                                <!-- Animal Treatment Tab -->
+                                <div class="tab-pane fade show active" id="treatment" role="tabpanel">
+                                    <div class="row g-3 mb-4">
+                                        <div class="col-md-4">
+                                            <label class="form-label">Filter Status</label>
+                                            <select class="form-select" id="treatmentStatusFilter">
+                                                <option value="">Semua Status</option>
+                                                <option value="pending">Menunggu</option>
+                                                <option value="in_progress">Sedang Diproses</option>
+                                                <option value="completed">Selesai</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label class="form-label">Filter Prioritas</label>
+                                            <select class="form-select" id="treatmentPriorityFilter">
+                                                <option value="">Semua Prioritas</option>
+                                                <option value="darurat">Darurat</option>
+                                                <option value="tinggi">Tinggi</option>
+                                                <option value="sedang">Sedang</option>
+                                                <option value="rendah">Rendah</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label class="form-label">Cari</label>
+                                            <input type="text" class="form-control" id="treatmentSearch" placeholder="Nama hewan, pemilik, atau tiket...">
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="table-responsive">
+                                        <table class="table table-hover">
+                                            <thead>
+                                                <tr>
+                                                    <th>No. Tiket</th>
+                                                    <th>Tanggal</th>
+                                                    <th>Pemilik</th>
+                                                    <th>Hewan</th>
+                                                    <th>Prioritas</th>
+                                                    <th>Status</th>
+                                                    <th>Aksi</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="treatmentTable">
+                                                <!-- Treatment data will be loaded here -->
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+
+                                <!-- Rabies Vaccination Tab -->
+                                <div class="tab-pane fade" id="vaccination" role="tabpanel">
+                                    <div class="row g-3 mb-4">
+                                        <div class="col-md-4">
+                                            <label class="form-label">Filter Status</label>
+                                            <select class="form-select" id="vaccinationStatusFilter">
+                                                <option value="">Semua Status</option>
+                                                <option value="pending">Menunggu</option>
+                                                <option value="in_progress">Sedang Diproses</option>
+                                                <option value="completed">Selesai</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label class="form-label">Filter Jadwal</label>
+                                            <input type="date" class="form-control" id="vaccinationDateFilter">
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label class="form-label">Cari</label>
+                                            <input type="text" class="form-control" id="vaccinationSearch" placeholder="Nama hewan, pemilik, atau tiket...">
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="table-responsive">
+                                        <table class="table table-hover">
+                                            <thead>
+                                                <tr>
+                                                    <th>No. Tiket</th>
+                                                    <th>Tanggal</th>
+                                                    <th>Pemilik</th>
+                                                    <th>Hewan</th>
+                                                    <th>Jadwal</th>
+                                                    <th>Status</th>
+                                                    <th>Aksi</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="vaccinationTable">
+                                                <!-- Vaccination data will be loaded here -->
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+
+                                <!-- Telemedicine Tab -->
+                                <div class="tab-pane fade" id="telemedicine" role="tabpanel">
+                                    <div class="row g-3 mb-4">
+                                        <div class="col-md-4">
+                                            <label class="form-label">Filter Status</label>
+                                            <select class="form-select" id="telemedicineStatusFilter">
+                                                <option value="">Semua Status</option>
+                                                <option value="pending">Menunggu</option>
+                                                <option value="in_progress">Sedang Diproses</option>
+                                                <option value="completed">Selesai</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label class="form-label">Filter Platform</label>
+                                            <select class="form-select" id="telemedicinePlatformFilter">
+                                                <option value="">Semua Platform</option>
+                                                <option value="whatsapp">WhatsApp</option>
+                                                <option value="zoom">Zoom</option>
+                                                <option value="keduanya">Keduanya</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label class="form-label">Cari</label>
+                                            <input type="text" class="form-control" id="telemedicineSearch" placeholder="Nama hewan, pemilik, atau tiket...">
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="table-responsive">
+                                        <table class="table table-hover">
+                                            <thead>
+                                                <tr>
+                                                    <th>No. Tiket</th>
+                                                    <th>Tanggal</th>
+                                                    <th>Pemilik</th>
+                                                    <th>Hewan</th>
+                                                    <th>Platform</th>
+                                                    <th>Jadwal</th>
+                                                    <th>Status</th>
+                                                    <th>Aksi</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="telemedicineTable">
+                                                <!-- Telemedicine data will be loaded here -->
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
                             </div>
                         </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-center">
+                        <button class="btn btn-outline-secondary" onclick="goToHomepage()">
+                            <i class="fas fa-home me-2"></i>Kembali ke Homepage
+                        </button>
+                        <button class="btn btn-outline-danger" onclick="confirmLogout()">
+                            <i class="fas fa-sign-out-alt me-2"></i>Logout
+                        </button>
                     </div>
                 </div>
             </div>
@@ -315,6 +490,320 @@
                             </button>
                         </div>
                     </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Diagnosis and Treatment Modal -->
+    <div class="modal fade" id="diagnosisTreatmentModal" tabindex="-1">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title">
+                        <i class="fas fa-stethoscope me-2"></i>Diagnosis dan Treatment
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <!-- Patient Information -->
+                        <div class="col-12">
+                            <h6 class="text-primary mb-3">
+                                <i class="fas fa-info-circle me-2"></i>Informasi Pasien
+                            </h6>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Nomor Tiket</label>
+                            <p id="patientTicketNumber" class="form-control-plaintext">-</p>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Nama Pemilik</label>
+                            <p id="patientOwner" class="form-control-plaintext">-</p>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Nama Hewan</label>
+                            <p id="patientAnimal" class="form-control-plaintext">-</p>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Jenis Hewan</label>
+                            <p id="patientAnimalType" class="form-control-plaintext">-</p>
+                        </div>
+                        
+                        <!-- Diagnosis Section -->
+                        <div class="col-12">
+                            <h6 class="text-primary mb-3">
+                                <i class="fas fa-clipboard-list me-2"></i>Diagnosis
+                            </h6>
+                        </div>
+                        
+                        <div class="col-12">
+                            <label class="form-label">Diagnosis Utama <span class="text-danger">*</span></label>
+                            <textarea class="form-control" id="mainDiagnosis" rows="3" placeholder="Masukkan diagnosis utama..." required></textarea>
+                        </div>
+                        
+                        <div class="col-12">
+                            <label class="form-label">Diagnosis Banding</label>
+                            <textarea class="form-control" id="differentialDiagnosis" rows="2" placeholder="Masukkan diagnosis banding (jika ada)..."></textarea>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <label class="form-label">Tingkat Keparahan</label>
+                            <select class="form-select" id="severityLevel">
+                                <option value="">Pilih Tingkat Keparahan</option>
+                                <option value="ringan">Ringan</option>
+                                <option value="sedang">Sedang</option>
+                                <option value="berat">Berat</option>
+                                <option value="kritis">Kritis</option>
+                            </select>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <label class="form-label">Prognosis</label>
+                            <select class="form-select" id="prognosis">
+                                <option value="">Pilih Prognosis</option>
+                                <option value="baik">Baik</option>
+                                <option value="hati-hati">Hati-hati</option>
+                                <option value="buruk">Buruk</option>
+                                <option value="tidak-tentu">Tidak Tentu</option>
+                            </select>
+                        </div>
+                        
+                        <!-- Treatment Section -->
+                        <div class="col-12">
+                            <h6 class="text-primary mb-3">
+                                <i class="fas fa-pills me-2"></i>Treatment
+                            </h6>
+                        </div>
+                        
+                        <div class="col-12">
+                            <label class="form-label">Rencana Treatment <span class="text-danger">*</span></label>
+                            <textarea class="form-control" id="treatmentPlan" rows="4" placeholder="Masukkan rencana treatment..." required></textarea>
+                        </div>
+                        
+                        <div class="col-12">
+                            <label class="form-label">Obat yang Diberikan</label>
+                            <textarea class="form-control" id="medications" rows="3" placeholder="Masukkan obat yang diberikan (nama obat, dosis, cara pemberian)..."></textarea>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <label class="form-label">Durasi Treatment</label>
+                            <input type="text" class="form-control" id="treatmentDuration" placeholder="Contoh: 7 hari, 2 minggu, dll">
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <label class="form-label">Follow-up</label>
+                            <input type="date" class="form-control" id="followUpDate">
+                        </div>
+                        
+                        <!-- Additional Notes -->
+                        <div class="col-12">
+                            <label class="form-label">Catatan Tambahan</label>
+                            <textarea class="form-control" id="additionalNotes" rows="3" placeholder="Catatan tambahan untuk pemilik hewan..."></textarea>
+                        </div>
+                        
+                        <!-- Recommendations -->
+                        <div class="col-12">
+                            <label class="form-label">Rekomendasi untuk Pemilik</label>
+                            <textarea class="form-control" id="ownerRecommendations" rows="3" placeholder="Rekomendasi perawatan di rumah, diet, dll..."></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-2"></i>Batal
+                    </button>
+                    <button type="button" class="btn btn-primary" onclick="saveDiagnosisTreatment()">
+                        <i class="fas fa-save me-2"></i>Simpan Diagnosis & Treatment
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Vaccination Record Modal -->
+    <div class="modal fade" id="vaccinationRecordModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-warning text-white">
+                    <h5 class="modal-title">
+                        <i class="fas fa-syringe me-2"></i>Catatan Vaksinasi
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <!-- Patient Information -->
+                        <div class="col-12">
+                            <h6 class="text-warning mb-3">
+                                <i class="fas fa-info-circle me-2"></i>Informasi Pasien
+                            </h6>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Nomor Tiket</label>
+                            <p id="vaccTicketNumber" class="form-control-plaintext">-</p>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Nama Pemilik</label>
+                            <p id="vaccOwner" class="form-control-plaintext">-</p>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Nama Hewan</label>
+                            <p id="vaccAnimal" class="form-control-plaintext">-</p>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Jenis Hewan</label>
+                            <p id="vaccAnimalType" class="form-control-plaintext">-</p>
+                        </div>
+                        
+                        <!-- Vaccination Details -->
+                        <div class="col-12">
+                            <h6 class="text-warning mb-3">
+                                <i class="fas fa-syringe me-2"></i>Detail Vaksinasi
+                            </h6>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <label class="form-label">Jenis Vaksin <span class="text-danger">*</span></label>
+                            <select class="form-select" id="vaccineType" required>
+                                <option value="">Pilih Jenis Vaksin</option>
+                                <option value="rabies">Vaksin Rabies</option>
+                                <option value="dhpp">DHPP (Anjing)</option>
+                                <option value="fvr">FVR (Kucing)</option>
+                                <option value="lainnya">Lainnya</option>
+                            </select>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <label class="form-label">Tanggal Vaksinasi <span class="text-danger">*</span></label>
+                            <input type="datetime-local" class="form-control" id="vaccinationDate" required>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <label class="form-label">Batch Number</label>
+                            <input type="text" class="form-control" id="batchNumber" placeholder="Nomor batch vaksin">
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <label class="form-label">Expiry Date</label>
+                            <input type="date" class="form-control" id="expiryDate">
+                        </div>
+                        
+                        <div class="col-12">
+                            <label class="form-label">Catatan Vaksinasi</label>
+                            <textarea class="form-control" id="vaccinationNotes" rows="3" placeholder="Catatan khusus tentang vaksinasi..."></textarea>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <label class="form-label">Vaksinasi Berikutnya</label>
+                            <input type="date" class="form-control" id="nextVaccinationDate">
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <label class="form-label">Status Vaksinasi</label>
+                            <select class="form-select" id="vaccinationStatus">
+                                <option value="completed">Selesai</option>
+                                <option value="partial">Sebagian</option>
+                                <option value="failed">Gagal</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-2"></i>Batal
+                    </button>
+                    <button type="button" class="btn btn-warning" onclick="saveVaccinationRecord()">
+                        <i class="fas fa-save me-2"></i>Simpan Catatan Vaksinasi
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Telemedicine Consultation Modal -->
+    <div class="modal fade" id="telemedicineConsultationModal" tabindex="-1">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header bg-info text-white">
+                    <h5 class="modal-title">
+                        <i class="fas fa-video me-2"></i>Konsultasi Telemedicine
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <!-- Patient Information -->
+                        <div class="col-12">
+                            <h6 class="text-info mb-3">
+                                <i class="fas fa-info-circle me-2"></i>Informasi Pasien
+                            </h6>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Nomor Tiket</label>
+                            <p id="teleTicketNumber" class="form-control-plaintext">-</p>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Nama Pemilik</label>
+                            <p id="teleOwner" class="form-control-plaintext">-</p>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Nama Hewan</label>
+                            <p id="teleAnimal" class="form-control-plaintext">-</p>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Platform</label>
+                            <p id="telePlatform" class="form-control-plaintext">-</p>
+                        </div>
+                        
+                        <!-- Consultation Details -->
+                        <div class="col-12">
+                            <h6 class="text-info mb-3">
+                                <i class="fas fa-video me-2"></i>Detail Konsultasi
+                            </h6>
+                        </div>
+                        
+                        <div class="col-12">
+                            <label class="form-label">Keluhan Utama <span class="text-danger">*</span></label>
+                            <textarea class="form-control" id="consultationComplaint" rows="3" placeholder="Keluhan utama yang disampaikan pemilik..." required></textarea>
+                        </div>
+                        
+                        <div class="col-12">
+                            <label class="form-label">Hasil Konsultasi</label>
+                            <textarea class="form-control" id="consultationResult" rows="4" placeholder="Hasil konsultasi dan saran yang diberikan..."></textarea>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <label class="form-label">Durasi Konsultasi (menit)</label>
+                            <input type="number" class="form-control" id="consultationDuration" placeholder="Durasi dalam menit">
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <label class="form-label">Tanggal Konsultasi</label>
+                            <input type="datetime-local" class="form-control" id="consultationDate">
+                        </div>
+                        
+                        <div class="col-12">
+                            <label class="form-label">Rekomendasi Tindak Lanjut</label>
+                            <textarea class="form-control" id="followUpRecommendations" rows="3" placeholder="Rekomendasi tindak lanjut untuk pemilik..."></textarea>
+                        </div>
+                        
+                        <div class="col-12">
+                            <label class="form-label">Catatan Konsultasi</label>
+                            <textarea class="form-control" id="consultationNotes" rows="3" placeholder="Catatan tambahan tentang konsultasi..."></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-2"></i>Batal
+                    </button>
+                    <button type="button" class="btn btn-info" onclick="saveTelemedicineConsultation()">
+                        <i class="fas fa-save me-2"></i>Simpan Konsultasi
+                    </button>
                 </div>
             </div>
         </div>
