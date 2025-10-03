@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Migrate Data to Supabase - Pelayanan Keswan</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            min-height: 100vh;
+        }
+        .migration-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(30, 58, 138, 0.1);
+            border: 1px solid rgba(30, 58, 138, 0.1);
+        }
+        .status-item {
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            border-left: 4px solid #e2e8f0;
+        }
+        .status-success {
+            background: #f0fdf4;
+            border-left-color: #22c55e;
+            color: #166534;
+        }
+        .status-error {
+            background: #fef2f2;
+            border-left-color: #ef4444;
+            color: #dc2626;
+        }
+        .status-info {
+            background: #eff6ff;
+            border-left-color: #3b82f6;
+            color: #1e40af;
+        }
+        .log-container {
+            background: #1e293b;
+            color: #e2e8f0;
+            border-radius: 10px;
+            padding: 1rem;
+            font-family: 'Courier New', monospace;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="migration-card p-4">
+                    <div class="text-center mb-4">
+                        <h2 class="text-primary">
+                            <i class="fas fa-database me-2"></i>Migrate Data to Supabase
+                        </h2>
+                        <p class="text-muted">Transfer localStorage data to Supabase database</p>
+                    </div>
+
+                    <!-- Connection Status -->
+                    <div class="mb-4">
+                        <h5><i class="fas fa-link me-2"></i>Connection Status</h5>
+                        <div id="connectionStatus" class="status-item status-info">
+                            <i class="fas fa-spinner fa-spin me-2"></i>Checking Supabase connection...
+                        </div>
+                    </div>
+
+                    <!-- Migration Controls -->
+                    <div class="mb-4">
+                        <h5><i class="fas fa-cogs me-2"></i>Migration Controls</h5>
+                        <div class="d-grid gap-2">
+                            <button id="migrateBtn" class="btn btn-primary btn-lg" onclick="startMigration()">
+                                <i class="fas fa-upload me-2"></i>Start Migration
+                            </button>
+                            <button id="checkStatsBtn" class="btn btn-outline-info" onclick="checkStatistics()">
+                                <i class="fas fa-chart-bar me-2"></i>Check Database Statistics
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Migration Progress -->
+                    <div class="mb-4">
+                        <h5><i class="fas fa-tasks me-2"></i>Migration Progress</h5>
+                        <div id="migrationProgress">
+                            <div class="status-item status-info">
+                                <i class="fas fa-info-circle me-2"></i>Ready to start migration
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Console Log -->
+                    <div class="mb-4">
+                        <h5><i class="fas fa-terminal me-2"></i>Console Log</h5>
+                        <div id="consoleLog" class="log-container">
+                            <div>🚀 Migration console ready...</div>
+                        </div>
+                    </div>
+
+                    <!-- Statistics Display -->
+                    <div class="mb-4">
+                        <h5><i class="fas fa-chart-pie me-2"></i>Database Statistics</h5>
+                        <div id="statisticsDisplay" class="row">
+                            <div class="col-md-3">
+                                <div class="text-center p-3 bg-light rounded">
+                                    <h4 id="usersCount" class="text-primary">-</h4>
+                                    <small>Users</small>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="text-center p-3 bg-light rounded">
+                                    <h4 id="animalsCount" class="text-success">-</h4>
+                                    <small>Animals</small>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="text-center p-3 bg-light rounded">
+                                    <h4 id="servicesCount" class="text-warning">-</h4>
+                                    <small>Services</small>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="text-center p-3 bg-light rounded">
+                                    <h4 id="recommendationsCount" class="text-info">-</h4>
+                                    <small>Recommendations</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-config.js"></script>
+    <script src="update-supabase-data.js"></script>
+    
+    <script>
+        // Console logging function
+        function logToConsole(message) {
+            const consoleLog = document.getElementById('consoleLog');
+            const timestamp = new Date().toLocaleTimeString();
+            consoleLog.innerHTML += `<div>[${timestamp}] ${message}</div>`;
+            consoleLog.scrollTop = consoleLog.scrollHeight;
+        }
+
+        // Update status display
+        function updateStatus(elementId, message, type = 'info') {
+            const element = document.getElementById(elementId);
+            const iconClass = type === 'success' ? 'fa-check-circle' : 
+                            type === 'error' ? 'fa-times-circle' : 'fa-info-circle';
+            const iconColor = type === 'success' ? 'text-success' : 
+                            type === 'error' ? 'text-danger' : 'text-info';
+            
+            element.innerHTML = `<i class="fas ${iconClass} ${iconColor} me-2"></i>${message}`;
+            element.className = `status-item status-${type}`;
+        }
+
+        // Check connection on page load
+        async function checkConnection() {
+            logToConsole('🔍 Checking Supabase connection...');
+            try {
+                const isConnected = await checkSupabaseConnection();
+                if (isConnected) {
+                    updateStatus('connectionStatus', '✅ Connected to Supabase successfully', 'success');
+                    logToConsole('✅ Supabase connection successful');
+                } else {
+                    updateStatus('connectionStatus', '❌ Failed to connect to Supabase', 'error');
+                    logToConsole('❌ Supabase connection failed');
+                }
+            } catch (error) {
+                updateStatus('connectionStatus', '❌ Connection error: ' + error.message, 'error');
+                logToConsole('❌ Connection error: ' + error.message);
+            }
+        }
+
+        // Start migration
+        async function startMigration() {
+            const migrateBtn = document.getElementById('migrateBtn');
+            migrateBtn.disabled = true;
+            migrateBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Migrating...';
+            
+            logToConsole('🚀 Starting data migration to Supabase...');
+            updateStatus('migrationProgress', '🔄 Migration in progress...', 'info');
+            
+            try {
+                const result = await migrateAllDataToSupabase();
+                
+                if (result.success) {
+                    updateStatus('migrationProgress', '✅ Migration completed successfully!', 'success');
+                    logToConsole('✅ Migration completed successfully');
+                    
+                    // Update statistics
+                    await checkStatistics();
+                } else {
+                    updateStatus('migrationProgress', '❌ Migration failed: ' + result.error, 'error');
+                    logToConsole('❌ Migration failed: ' + result.error);
+                }
+            } catch (error) {
+                updateStatus('migrationProgress', '❌ Migration error: ' + error.message, 'error');
+                logToConsole('❌ Migration error: ' + error.message);
+            } finally {
+                migrateBtn.disabled = false;
+                migrateBtn.innerHTML = '<i class="fas fa-upload me-2"></i>Start Migration';
+            }
+        }
+
+        // Check statistics
+        async function checkStatistics() {
+            logToConsole('📊 Fetching database statistics...');
+            try {
+                const stats = await getSupabaseStatistics();
+                if (stats.success) {
+                    document.getElementById('usersCount').textContent = stats.data.totalUsers;
+                    document.getElementById('animalsCount').textContent = stats.data.totalAnimals;
+                    document.getElementById('servicesCount').textContent = stats.data.totalServices;
+                    document.getElementById('recommendationsCount').textContent = stats.data.totalRecommendations;
+                    logToConsole('📊 Statistics updated successfully');
+                } else {
+                    logToConsole('❌ Failed to fetch statistics: ' + stats.error);
+                }
+            } catch (error) {
+                logToConsole('❌ Error fetching statistics: ' + error.message);
+            }
+        }
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            logToConsole('🔄 Migration page loaded');
+            checkConnection();
+        });
+    </script>
+</body>
+</html>

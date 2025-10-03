@@ -738,13 +738,37 @@ function closeRecommendationModal() {
 // Initialize Real-time Statistics
 function initializeStatistics() {
     updateStatistics();
+    initializePieChart();
     // Update statistics every 30 seconds
     setInterval(updateStatistics, 30000);
 }
 
 // Update Statistics Display
-function updateStatistics() {
-    // Load data from localStorage
+async function updateStatistics() {
+    try {
+        // Try to get data from Supabase first
+        if (typeof supabaseClient !== 'undefined') {
+            const [animalsResult, servicesResult, recommendationsResult] = await Promise.all([
+                supabaseClient.from('animals').select('id'),
+                supabaseClient.from('services').select('id, service_type'),
+                supabaseClient.from('vet_practice_recommendations').select('id')
+            ]);
+            
+            if (!animalsResult.error && !servicesResult.error && !recommendationsResult.error) {
+                // Use Supabase data
+                const totalAnimalsHandled = animalsResult.data.length;
+                updateStatElement('totalAnimalsHandled', totalAnimalsHandled);
+                
+                // Update pie chart with Supabase data
+                await updatePieChartWithSupabaseData(servicesResult.data, recommendationsResult.data);
+                return;
+            }
+        }
+    } catch (error) {
+        console.log('Supabase not available, using localStorage fallback');
+    }
+    
+    // Fallback to localStorage
     const userServices = JSON.parse(localStorage.getItem('userServices') || '[]');
     const userAnimals = JSON.parse(localStorage.getItem('userAnimals') || '[]');
     const vetPracticeRecommendations = JSON.parse(localStorage.getItem('vetPracticeRecommendations') || '[]');
@@ -759,6 +783,9 @@ function updateStatistics() {
     
     // Update DOM element
     updateStatElement('totalAnimalsHandled', totalAnimalsHandled);
+    
+    // Update pie chart
+    updatePieChart();
 }
 
 // Update individual statistic element with animation
@@ -1006,6 +1033,130 @@ async function refreshStatisticsChart() {
 
 // Store chart instance globally for updates
 window.statisticsChart = null;
+window.servicesPieChart = null;
+
+// Initialize Pie Chart
+function initializePieChart() {
+    const ctx = document.getElementById('servicesPieChart');
+    if (!ctx) return;
+
+    const chart = new Chart(ctx, {
+        type: 'pie',
+        data: {
+            labels: ['Pengobatan', 'Vaksinasi', 'Telemedicine', 'Rekomendasi'],
+            datasets: [{
+                data: [0, 0, 0, 0],
+                backgroundColor: [
+                    'rgba(59, 130, 246, 0.8)',   // Blue for treatment
+                    'rgba(16, 185, 129, 0.8)',   // Green for vaccination
+                    'rgba(245, 158, 11, 0.8)',   // Orange for telemedicine
+                    'rgba(139, 92, 246, 0.8)'    // Purple for recommendations
+                ],
+                borderColor: [
+                    'rgba(59, 130, 246, 1)',
+                    'rgba(16, 185, 129, 1)',
+                    'rgba(245, 158, 11, 1)',
+                    'rgba(139, 92, 246, 1)'
+                ],
+                borderWidth: 2,
+                hoverOffset: 10
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'bottom',
+                    labels: {
+                        usePointStyle: true,
+                        padding: 15,
+                        font: {
+                            size: 12,
+                            weight: 'bold'
+                        }
+                    }
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(30, 58, 138, 0.9)',
+                    titleColor: 'white',
+                    bodyColor: 'white',
+                    borderColor: 'rgba(59, 130, 246, 0.5)',
+                    borderWidth: 1,
+                    cornerRadius: 8,
+                    displayColors: true,
+                    callbacks: {
+                        title: function(context) {
+                            return context[0].label;
+                        },
+                        label: function(context) {
+                            const value = context.parsed;
+                            const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                            const percentage = total > 0 ? ((value / total) * 100).toFixed(1) : 0;
+                            return `${value} layanan (${percentage}%)`;
+                        }
+                    }
+                }
+            },
+            animation: {
+                duration: 2000,
+                easing: 'easeInOutQuart'
+            }
+        }
+    });
+
+    // Store chart instance globally
+    window.servicesPieChart = chart;
+}
+
+// Update Pie Chart with Real Data
+function updatePieChart() {
+    if (!window.servicesPieChart) return;
+
+    // Load data from localStorage
+    const userServices = JSON.parse(localStorage.getItem('userServices') || '[]');
+    const vetPracticeRecommendations = JSON.parse(localStorage.getItem('vetPracticeRecommendations') || '[]');
+    
+    // Calculate service counts
+    const treatmentCount = userServices.filter(s => s.serviceType === 'treatment' || s.serviceType === 'pengobatan').length;
+    const vaccinationCount = userServices.filter(s => s.serviceType === 'vaccination' || s.serviceType === 'vaksinasi').length;
+    const telemedicineCount = userServices.filter(s => s.serviceType === 'telemedicine').length;
+    const recommendationCount = vetPracticeRecommendations.length;
+    
+    // Update chart data
+    window.servicesPieChart.data.datasets[0].data = [
+        treatmentCount,
+        vaccinationCount,
+        telemedicineCount,
+        recommendationCount
+    ];
+    
+    // Update chart
+    window.servicesPieChart.update('active');
+}
+
+// Update Pie Chart with Supabase Data
+async function updatePieChartWithSupabaseData(servicesData, recommendationsData) {
+    if (!window.servicesPieChart) return;
+
+    // Calculate service counts from Supabase data
+    const treatmentCount = servicesData.filter(s => s.service_type === 'treatment' || s.service_type === 'pengobatan').length;
+    const vaccinationCount = servicesData.filter(s => s.service_type === 'vaccination' || s.service_type === 'vaksinasi').length;
+    const telemedicineCount = servicesData.filter(s => s.service_type === 'telemedicine').length;
+    const recommendationCount = recommendationsData.length;
+    
+    // Update chart data
+    window.servicesPieChart.data.datasets[0].data = [
+        treatmentCount,
+        vaccinationCount,
+        telemedicineCount,
+        recommendationCount
+    ];
+    
+    // Update chart
+    window.servicesPieChart.update('active');
+}
 
 // Export functions for use in other pages
 window.showRegisterModal = showRegisterModal;
