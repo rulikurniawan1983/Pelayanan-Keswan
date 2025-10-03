@@ -63,32 +63,15 @@ function setupEventListeners() {
 
 // Load All Service Requests
 function loadAllServiceRequests() {
-    // Load from localStorage
-    const userServices = JSON.parse(localStorage.getItem('userServices') || '[]');
+    // Load from localStorage - only the four required services
     const animalTreatmentRequests = JSON.parse(localStorage.getItem('animalTreatmentRequests') || '[]');
     const rabiesVaccinationRequests = JSON.parse(localStorage.getItem('rabiesVaccinationRequests') || '[]');
     const telemedicineRequests = JSON.parse(localStorage.getItem('telemedicineRequests') || '[]');
     const vetPracticeRecommendations = JSON.parse(localStorage.getItem('vetPracticeRecommendations') || '[]');
     const vetControlRecommendations = JSON.parse(localStorage.getItem('vetControlRecommendations') || '[]');
     
-    // Combine all service requests
+    // Combine all service requests - only the four required services
     allServiceRequests = [
-        ...userServices.map(service => ({
-            id: service.id,
-            ticketNumber: service.ticketNumber || generateTicketNumber(),
-            date: service.createdAt,
-            requester: service.ownerName || 'Unknown',
-            requesterNIK: service.ownerNIK || '',
-            serviceType: service.serviceType || 'unknown',
-            animal: service.animalName || 'N/A',
-            animalType: service.animalType || 'N/A',
-            priority: service.priority || 'normal',
-            status: service.status || 'pending',
-            veterinarian: service.veterinarian || 'Belum Ditugaskan',
-            symptoms: service.description || 'N/A',
-            notes: service.notes || '',
-            source: 'userServices'
-        })),
         ...animalTreatmentRequests.map(request => ({
             id: request.id,
             ticketNumber: request.ticketNumber,
@@ -439,16 +422,6 @@ function updateServiceStatus() {
 function updateRequestInStorage(request) {
     // Update based on source
     switch (request.source) {
-        case 'userServices':
-            const userServices = JSON.parse(localStorage.getItem('userServices') || '[]');
-            const userServiceIndex = userServices.findIndex(s => s.id === request.id);
-            if (userServiceIndex !== -1) {
-                userServices[userServiceIndex].status = request.status;
-                userServices[userServiceIndex].veterinarian = request.veterinarian;
-                userServices[userServiceIndex].notes = request.notes;
-                localStorage.setItem('userServices', JSON.stringify(userServices));
-            }
-            break;
         case 'animalTreatmentRequests':
             const animalTreatmentRequests = JSON.parse(localStorage.getItem('animalTreatmentRequests') || '[]');
             const animalIndex = animalTreatmentRequests.findIndex(r => r.id === request.id);
@@ -579,11 +552,7 @@ function getServiceTypeLabel(type) {
         'rabies_vaccination': 'Vaksinasi Rabies',
         'telemedicine_consultation': 'Konsultasi Telemedicine',
         'vet_practice_recommendation': 'Rekomendasi Praktek Dokter Hewan',
-        'vet_control_recommendation': 'Rekomendasi Nomor Kontrol Veteriner',
-        'pengobatan': 'Pengobatan',
-        'vaksinasi': 'Vaksinasi',
-        'konsultasi': 'Konsultasi',
-        'telemedicine': 'Telemedicine'
+        'vet_control_recommendation': 'Rekomendasi Nomor Kontrol Veteriner'
     };
     return labels[type] || type;
 }
