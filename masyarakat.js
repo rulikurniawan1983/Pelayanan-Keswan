@@ -122,14 +122,10 @@ function updateUserInfo() {
     document.getElementById('userName').textContent = currentUser.fullName || 'Pengguna';
 }
 
-// Update Stats
+// Update Stats (removed - statistics section deleted)
 function updateStats() {
-    document.getElementById('totalHewan').textContent = userAnimals.length;
-    document.getElementById('totalLayanan').textContent = userServices.length;
-    document.getElementById('totalVaksinasi').textContent = 
-        userServices.filter(s => s.serviceType === 'vaksinasi').length;
-    document.getElementById('totalTelemedicine').textContent = 
-        userServices.filter(s => s.serviceType === 'telemedicine').length;
+    // Statistics section has been removed from the UI
+    // This function is kept for compatibility but does nothing
 }
 
 // Update Recent Services
