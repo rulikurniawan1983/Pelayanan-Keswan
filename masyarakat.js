@@ -1297,54 +1297,48 @@ function formatDate(dateString) {
     });
 }
 
-// Permentan 3/2019 Form Functions
-function showPermentanForm() {
-    const modal = new bootstrap.Modal(document.getElementById('permentanModal'));
+// Veterinary Practice Recommendation Form Functions
+function showVetPracticeForm() {
+    const modal = new bootstrap.Modal(document.getElementById('vetPracticeModal'));
     
     // Pre-fill applicant data from current user
     if (currentUser) {
-        document.getElementById('permentanApplicantName').value = currentUser.fullName || '';
-        document.getElementById('permentanApplicantNIK').value = currentUser.nik || '';
-        document.getElementById('permentanApplicantPhone').value = currentUser.phone || '';
-        document.getElementById('permentanApplicantEmail').value = currentUser.email || '';
-        document.getElementById('permentanApplicantAddress').value = currentUser.address || '';
+        document.getElementById('vetPracticeApplicantName').value = currentUser.fullName || '';
+        document.getElementById('vetPracticeApplicantNIK').value = currentUser.nik || '';
+        document.getElementById('vetPracticeApplicantPhone').value = currentUser.phone || '';
+        document.getElementById('vetPracticeApplicantEmail').value = currentUser.email || '';
+        document.getElementById('vetPracticeApplicantAddress').value = currentUser.address || '';
     }
     
     modal.show();
 }
 
-function submitPermentanForm() {
+function submitVetPracticeForm() {
     // Get form data
-    const applicantName = document.getElementById('permentanApplicantName').value.trim();
-    const applicantNIK = document.getElementById('permentanApplicantNIK').value.trim();
-    const applicantPhone = document.getElementById('permentanApplicantPhone').value.trim();
-    const applicantEmail = document.getElementById('permentanApplicantEmail').value.trim();
-    const applicantAddress = document.getElementById('permentanApplicantAddress').value.trim();
+    const applicantName = document.getElementById('vetPracticeApplicantName').value.trim();
+    const applicantNIK = document.getElementById('vetPracticeApplicantNIK').value.trim();
+    const applicantPhone = document.getElementById('vetPracticeApplicantPhone').value.trim();
+    const applicantEmail = document.getElementById('vetPracticeApplicantEmail').value.trim();
+    const applicantAddress = document.getElementById('vetPracticeApplicantAddress').value.trim();
     
-    const vetName = document.getElementById('permentanVetName').value.trim();
-    const vetNIK = document.getElementById('permentanVetNIK').value.trim();
-    const strvNumber = document.getElementById('permentanSTRVNumber').value.trim();
-    const strvValidUntil = document.getElementById('permentanSTRVValidUntil').value;
-    const practiceAddress = document.getElementById('permentanPracticeAddress').value.trim();
-    const practiceType = document.getElementById('permentanPracticeType').value;
-    const specialization = document.getElementById('permentanSpecialization').value.trim();
+    const vetName = document.getElementById('vetPracticeVetName').value.trim();
+    const vetNIK = document.getElementById('vetPracticeVetNIK').value.trim();
+    const strvNumber = document.getElementById('vetPracticeSTRVNumber').value.trim();
+    const strvValidUntil = document.getElementById('vetPracticeSTRVValidUntil').value;
+    const practiceAddress = document.getElementById('vetPracticeAddress').value.trim();
+    const practiceType = document.getElementById('vetPracticeType').value;
+    const specialization = document.getElementById('vetPracticeSpecialization').value.trim();
     
-    const purpose = document.getElementById('permentanPurpose').value.trim();
-    const notes = document.getElementById('permentanNotes').value.trim();
-    
-    // Check required checkboxes
-    const healthCert = document.getElementById('permentanHealthCert').checked;
-    const skck = document.getElementById('permentanSKCK').checked;
-    const diploma = document.getElementById('permentanDiploma').checked;
-    const statement = document.getElementById('permentanStatement').checked;
+    const purpose = document.getElementById('vetPracticePurpose').value.trim();
+    const notes = document.getElementById('vetPracticeNotes').value.trim();
     
     // Get file inputs
-    const ktpFile = document.getElementById('permentanKTPFile').files[0];
-    const healthCertFile = document.getElementById('permentanHealthCertFile').files[0];
-    const skckFile = document.getElementById('permentanSKCKFile').files[0];
-    const diplomaFile = document.getElementById('permentanDiplomaFile').files[0];
-    const statementFile = document.getElementById('permentanStatementFile').files[0];
-    const strvFile = document.getElementById('permentanSTRVFile').files[0];
+    const ktpFile = document.getElementById('vetPracticeKTPFile').files[0];
+    const healthCertFile = document.getElementById('vetPracticeHealthCertFile').files[0];
+    const skckFile = document.getElementById('vetPracticeSKCKFile').files[0];
+    const diplomaFile = document.getElementById('vetPracticeDiplomaFile').files[0];
+    const statementFile = document.getElementById('vetPracticeStatementFile').files[0];
+    const strvFile = document.getElementById('vetPracticeSTRVFile').files[0];
     
     // Validation
     if (!applicantName || !applicantNIK || !applicantPhone || !applicantAddress) {
@@ -1354,11 +1348,6 @@ function submitPermentanForm() {
     
     if (!vetName || !vetNIK || !strvNumber || !strvValidUntil || !practiceAddress || !practiceType) {
         showAlert('Mohon lengkapi data dokter hewan!', 'warning');
-        return;
-    }
-    
-    if (!healthCert || !skck || !diploma || !statement) {
-        showAlert('Mohon centang semua pernyataan persyaratan!', 'warning');
         return;
     }
     
@@ -1375,7 +1364,7 @@ function submitPermentanForm() {
     // Create recommendation request
     const recommendationRequest = {
         id: generateId(),
-        type: 'permentan_vet_practice',
+        type: 'vet_practice_recommendation',
         ticketNumber: generateTicketNumber(),
         applicant: {
             name: applicantName,
@@ -1392,12 +1381,6 @@ function submitPermentanForm() {
             practiceAddress: practiceAddress,
             practiceType: practiceType,
             specialization: specialization
-        },
-        requirements: {
-            healthCert: healthCert,
-            skck: skck,
-            diploma: diploma,
-            statement: statement
         },
         documents: {
             ktp: ktpFile ? ktpFile.name : null,
@@ -1417,22 +1400,22 @@ function submitPermentanForm() {
     };
     
     // Save to localStorage
-    let permentanRequests = JSON.parse(localStorage.getItem('permentanRequests') || '[]');
-    permentanRequests.push(recommendationRequest);
-    localStorage.setItem('permentanRequests', JSON.stringify(permentanRequests));
+    let vetPracticeRequests = JSON.parse(localStorage.getItem('vetPracticeRequests') || '[]');
+    vetPracticeRequests.push(recommendationRequest);
+    localStorage.setItem('vetPracticeRequests', JSON.stringify(vetPracticeRequests));
     
     // Also add to userServices for tracking
     userServices.push({
         id: recommendationRequest.id,
         ticketNumber: recommendationRequest.ticketNumber,
-        serviceType: 'permentan_vet_practice',
+        serviceType: 'vet_practice_recommendation',
         animalName: 'N/A',
         animalType: 'N/A',
         status: 'pending',
         ownerNIK: currentUser.nik,
         ownerName: currentUser.fullName,
         createdAt: new Date().toISOString(),
-        description: 'Surat Rekomendasi Praktek Dokter Hewan (Permentan 3/2019)'
+        description: 'Surat Rekomendasi Praktek Dokter Hewan'
     });
     localStorage.setItem('userServices', JSON.stringify(userServices));
     
@@ -1442,16 +1425,168 @@ function submitPermentanForm() {
             <i class="fas fa-check-circle fa-3x text-success mb-3"></i>
             <h5>Pengajuan Berhasil!</h5>
             <p><strong>Nomor Tiket:</strong> ${recommendationRequest.ticketNumber}</p>
-            <p class="text-muted">Surat rekomendasi praktek dokter hewan telah diajukan sesuai Permentan No. 3 Tahun 2019.</p>
+            <p class="text-muted">Surat rekomendasi praktek dokter hewan telah diajukan.</p>
         </div>
     `, 'success');
     
     // Close modal
-    const modal = bootstrap.Modal.getInstance(document.getElementById('permentanModal'));
+    const modal = bootstrap.Modal.getInstance(document.getElementById('vetPracticeModal'));
     modal.hide();
     
     // Reset form
-    document.getElementById('permentanForm').reset();
+    document.getElementById('vetPracticeForm').reset();
+    
+    // Update dashboard
+    updateDashboard();
+}
+
+// Veterinary Control Number Recommendation Form Functions
+function showVetControlForm() {
+    const modal = new bootstrap.Modal(document.getElementById('vetControlModal'));
+    
+    // Pre-fill applicant data from current user
+    if (currentUser) {
+        document.getElementById('vetControlApplicantName').value = currentUser.fullName || '';
+        document.getElementById('vetControlApplicantNIK').value = currentUser.nik || '';
+        document.getElementById('vetControlApplicantPhone').value = currentUser.phone || '';
+        document.getElementById('vetControlApplicantEmail').value = currentUser.email || '';
+        document.getElementById('vetControlApplicantAddress').value = currentUser.address || '';
+    }
+    
+    modal.show();
+}
+
+function submitVetControlForm() {
+    // Get form data
+    const applicantName = document.getElementById('vetControlApplicantName').value.trim();
+    const applicantNIK = document.getElementById('vetControlApplicantNIK').value.trim();
+    const applicantPhone = document.getElementById('vetControlApplicantPhone').value.trim();
+    const applicantEmail = document.getElementById('vetControlApplicantEmail').value.trim();
+    const applicantAddress = document.getElementById('vetControlApplicantAddress').value.trim();
+    
+    const businessName = document.getElementById('vetControlBusinessName').value.trim();
+    const businessType = document.getElementById('vetControlBusinessType').value;
+    const businessAddress = document.getElementById('vetControlBusinessAddress').value.trim();
+    const businessLicense = document.getElementById('vetControlBusinessLicense').value.trim();
+    const businessDate = document.getElementById('vetControlBusinessDate').value;
+    
+    const productType = document.getElementById('vetControlProductType').value.trim();
+    const productionVolume = document.getElementById('vetControlProductionVolume').value.trim();
+    const marketingTarget = document.getElementById('vetControlMarketingTarget').value;
+    
+    const purpose = document.getElementById('vetControlPurpose').value.trim();
+    const notes = document.getElementById('vetControlNotes').value.trim();
+    
+    // Get file inputs
+    const ktpFile = document.getElementById('vetControlKTPFile').files[0];
+    const npwpFile = document.getElementById('vetControlNPWPFile').files[0];
+    const licenseFile = document.getElementById('vetControlLicenseFile').files[0];
+    const halalFile = document.getElementById('vetControlHalalFile').files[0];
+    const haccpFile = document.getElementById('vetControlHACCPFile').files[0];
+    const otherFile = document.getElementById('vetControlOtherFile').files[0];
+    
+    // Validation
+    if (!applicantName || !applicantNIK || !applicantPhone || !applicantAddress) {
+        showAlert('Mohon lengkapi data pemohon!', 'warning');
+        return;
+    }
+    
+    if (!businessName || !businessType || !businessAddress) {
+        showAlert('Mohon lengkapi data usaha/fasilitas!', 'warning');
+        return;
+    }
+    
+    if (!productType) {
+        showAlert('Mohon isi jenis produk!', 'warning');
+        return;
+    }
+    
+    if (!purpose) {
+        showAlert('Mohon isi tujuan pengajuan!', 'warning');
+        return;
+    }
+    
+    if (!ktpFile) {
+        showAlert('Mohon upload KTP pemohon!', 'warning');
+        return;
+    }
+    
+    // Create recommendation request
+    const recommendationRequest = {
+        id: generateId(),
+        type: 'vet_control_recommendation',
+        ticketNumber: generateTicketNumber(),
+        applicant: {
+            name: applicantName,
+            nik: applicantNIK,
+            phone: applicantPhone,
+            email: applicantEmail,
+            address: applicantAddress
+        },
+        business: {
+            name: businessName,
+            type: businessType,
+            address: businessAddress,
+            license: businessLicense,
+            establishedDate: businessDate
+        },
+        product: {
+            type: productType,
+            volume: productionVolume,
+            marketingTarget: marketingTarget
+        },
+        documents: {
+            ktp: ktpFile ? ktpFile.name : null,
+            npwp: npwpFile ? npwpFile.name : null,
+            license: licenseFile ? licenseFile.name : null,
+            halal: halalFile ? halalFile.name : null,
+            haccp: haccpFile ? haccpFile.name : null,
+            other: otherFile ? otherFile.name : null
+        },
+        purpose: purpose,
+        notes: notes,
+        status: 'pending',
+        ownerNIK: currentUser.nik,
+        ownerName: currentUser.fullName,
+        createdAt: new Date().toISOString()
+    };
+    
+    // Save to localStorage
+    let vetControlRequests = JSON.parse(localStorage.getItem('vetControlRequests') || '[]');
+    vetControlRequests.push(recommendationRequest);
+    localStorage.setItem('vetControlRequests', JSON.stringify(vetControlRequests));
+    
+    // Also add to userServices for tracking
+    userServices.push({
+        id: recommendationRequest.id,
+        ticketNumber: recommendationRequest.ticketNumber,
+        serviceType: 'vet_control_recommendation',
+        animalName: 'N/A',
+        animalType: 'N/A',
+        status: 'pending',
+        ownerNIK: currentUser.nik,
+        ownerName: currentUser.fullName,
+        createdAt: new Date().toISOString(),
+        description: 'Surat Rekomendasi Nomor Kontrol Veteriner'
+    });
+    localStorage.setItem('userServices', JSON.stringify(userServices));
+    
+    // Show success message
+    showAlert(`
+        <div class="text-center">
+            <i class="fas fa-check-circle fa-3x text-info mb-3"></i>
+            <h5>Pengajuan Berhasil!</h5>
+            <p><strong>Nomor Tiket:</strong> ${recommendationRequest.ticketNumber}</p>
+            <p class="text-muted">Surat rekomendasi nomor kontrol veteriner telah diajukan.</p>
+        </div>
+    `, 'success');
+    
+    // Close modal
+    const modal = bootstrap.Modal.getInstance(document.getElementById('vetControlModal'));
+    modal.hide();
+    
+    // Reset form
+    document.getElementById('vetControlForm').reset();
     
     // Update dashboard
     updateDashboard();
@@ -1461,5 +1596,7 @@ function submitPermentanForm() {
 window.showSubmissionModal = showSubmissionModal;
 window.submitServiceRequest = submitServiceRequest;
 window.viewSubmissionDetail = viewSubmissionDetail;
-window.showPermentanForm = showPermentanForm;
-window.submitPermentanForm = submitPermentanForm;
+window.showVetPracticeForm = showVetPracticeForm;
+window.submitVetPracticeForm = submitVetPracticeForm;
+window.showVetControlForm = showVetControlForm;
+window.submitVetControlForm = submitVetControlForm;
